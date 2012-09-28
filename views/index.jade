@@ -1,22 +1,38 @@
 extends layout
 
 block body
-  div(ng-controller='AppCtrl')
-    h2 Hello {{name}}
-    ul.menu
-      li
-        a(href='view1') view1
-      li
-        a(href='view2') view2
+  //- Navbar, maybe should go in layout.jade?
+  .navbar.navbar-fixed-top
+    .navbar-inner
+      .container-fluid
+        a.btn.btn-navbar(data-toggle='collapse', data-target='.nav-collapse')
+          span.icon-bar
+          span.icon-bar
+          span.icon-bar
+        a.brand(href='#') SizzlingStats
+        //- WE CAN PUT IN SEARCH LATER.
+        .nav-collapse
+          ul.nav
+            li.home
+              a(href='#') Home
+            li.about
+              a(href='#') About
+  //- Main Content
+  .container-fluid
+    .row-fluid
+      .span3
+        //- listmatches
+      .span9
+        //- content
+    hr
+    footer
+      p &copy; 2012 Chris "techno" Kim &amp; Jordan "SizzlingCalamari" Cristiano
 
-    div(ng-view)
 
-    div
-      | Angular Socket.io seed app: v
-      span(app-version)
-
+  script(src='js/lib/jquery/jquery-1.8.2.min.js')
   script(src='js/lib/angular/angular.js')
   //- script(src='/socket.io/socket.io.js')
+  script(src='js/lib/bootstrap/bootstrap.min.js')
   script(src='js/app.js')
   script(src='js/services.js')
   script(src='js/controllers.js')
