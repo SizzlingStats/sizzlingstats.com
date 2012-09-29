@@ -3,8 +3,13 @@
  * Module dependencies.
  */
 
-var express = require('express'),
-  routes = require('./routes');
+var express = require('express');
+var mongoose = require('mongoose');
+// var db = mongoose.createConnection('localhost', 'sizzlingstats');
+mongoose.connect('mongodb://localhost/sizzlingstats');
+
+var routes = require('./routes'),
+  api = require('./routes/api');
   // socket = require('./routes/socket.js');
 
 var app = module.exports = express.createServer();
@@ -39,6 +44,11 @@ app.configure('production', function(){
 
 app.get('/', routes.index);
 app.get('/partials/:name', routes.partials);
+
+// JSON API
+
+app.get('/api/stats/:id', api.stats);
+app.get('/api/matches', api.matches);
 
 // redirect all others to the index (HTML5 history)
 app.get('*', routes.index);
