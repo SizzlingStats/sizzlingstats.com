@@ -19,7 +19,7 @@ exports.stats = function(req, res) {
 };
 
 exports.matches = function(req, res) {
-  Match.find({}, function(err, matches) {
+  Match.find({}).sort({matchid:-1}).limit(10).exec(function(err, matches) {
     if (err) {
       res.json(false);
     }
