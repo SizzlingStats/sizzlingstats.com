@@ -1,0 +1,51 @@
+#stats
+  #stats-overview
+    h2
+      span.redname {{stats.redname}}
+      |  {{scoreComparison}} 
+      span.bluname {{stats.bluname}}
+      |  {{redScore}} - {{bluScore}}
+    .servername Server: {{stats.hostname}}
+    .mapname Map: {{stats.map}}
+    table#score-table.table-bordered
+      thead
+        tr
+          th
+          th(ng-repeat='n in stats.redscore') R{{$index + 1}}
+          th: abbr(title='Total Score') T
+          th: abbr(title='Total Damage') DMG
+          th: abbr(title='Total Frags') F
+      tbody
+        tr
+          td.red {{stats.redname}}
+          td(ng-repeat='score in redRoundScores') {{score}}
+          td {{redScore}}
+          td {{totalDamage[2]}}
+          td {{totalFrags[2]}}
+        tr
+          td.blu {{stats.bluname}}
+          td(ng-repeat='score in bluRoundScores') {{score}}
+          td {{bluScore}}
+          td {{totalDamage[3]}}
+          td {{totalFrags[3]}}
+    table#stats-table.table.table-striped.table-condensed
+      thead
+        tr
+          th name
+          th frags
+          th assists
+          th deaths
+          th damage
+          th heals
+          th medpicks
+      tbody
+        tr(ng-repeat='player in stats.players', class='{{player.team}}')
+          td.name
+            img(src='/img/steam-default-32.jpg')
+            span {{player.name}}
+          td {{player.totalFrags}}
+          td {{player.totalAssists}}
+          td {{player.totalDeaths}}
+          td {{player.totalDamage}}
+          td {{player.totalHeals}}
+          td {{player.totalMedPicks}}

@@ -5,6 +5,14 @@
 var app = angular.module('myApp', ['myApp.filters', 'myApp.services', 'myApp.directives']).
   config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
     $routeProvider
+      .when('/match/:id', {
+        templateUrl: 'partials/stats',
+        controller: StatsCtrl
+      })
+      .when('/about', {
+        templateUrl: 'partials/about'
+        // controller: AboutCtrl
+      })
       .when('/view1', {
         templateUrl: 'partials/partial1',
         controller: MyCtrl1
@@ -14,7 +22,9 @@ var app = angular.module('myApp', ['myApp.filters', 'myApp.services', 'myApp.dir
         controller: MyCtrl2
       })
       .otherwise({
-        redirectTo: '/view1'
+        redirectTo: '/',
+        templateUrl: 'partials/home'
+        // controller: HomeCtrl
       });
     $locationProvider.html5Mode(true);
   }]);

@@ -14,9 +14,9 @@ block body
         .nav-collapse
           ul.nav
             li.home
-              a(href='#') Home
+              a(href='/') Home
             li.about
-              a(href='#') About
+              a(href='/about') About
   //- Main Content
   .container-fluid
     .row-fluid
@@ -26,13 +26,12 @@ block body
           ul.nav.nav-list
             li.nav-header Recent Matches
             li(ng-repeat='match in matches')
-              a(href='#') {{match.hostname}}: {{match.redname}} vs {{match.bluname}}
-      .span9
+              a(href='/match/{{match.matchid}}') {{match.hostname}}: {{match.redname}} vs {{match.bluname}}
+      .span9(ng-view)
         //- content
     hr
     footer
       p &copy; 2012 Chris "techno" Kim &amp; Jordan "SizzlingCalamari" Cristiano
-
 
   script(src='js/lib/jquery/jquery-1.8.2.min.js')
   script(src='js/lib/angular/angular.js')
