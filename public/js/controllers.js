@@ -2,6 +2,13 @@
 
 /* Controllers */
 
+function SideBarCtrl($scope, $http) {
+  $http.get('/api/matches').
+    success(function(data, status, headers, config) {
+      $scope.matches = data.matches;
+    });
+}
+
 function AppCtrl($scope, socket) {
   socket.on('send:name', function (data) {
     $scope.name = data.name;

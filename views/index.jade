@@ -22,6 +22,11 @@ block body
     .row-fluid
       .span3
         //- listmatches
+        .well.sidebar-nav(ng-controller='SideBarCtrl')
+          ul.nav.nav-list
+            li.nav-header Recent Matches
+            li(ng-repeat='match in matches')
+              a(href='#') {{match.hostname}}: {{match.redname}} vs {{match.bluname}}
       .span9
         //- content
     hr
