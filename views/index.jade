@@ -25,7 +25,7 @@ block body
         .well.sidebar-nav(ng-controller='SideBarCtrl')
           ul.nav.nav-list
             li.nav-header Recent Matches
-            li(ng-repeat='match in matches')
+            li(ng-repeat='match in matches', ng-class='{active: isActive()}')
               a(href='/match/{{match.matchid}}') {{match.hostname}}: {{match.redname}} vs {{match.bluname}}
       .span9(ng-view)
         //- content

@@ -2,11 +2,14 @@
 
 /* Controllers */
 
-function SideBarCtrl($scope, $http) {
+function SideBarCtrl($scope, $http, $routeParams) {
   $http.get('/api/matches')
     .success(function(data, status, headers, config) {
       $scope.matches = data.matches;
     });
+  $scope.isActive = function() {
+    return this.match.matchid === parseInt($routeParams.id,10);
+  }
 }
 
 function StatsCtrl($scope, $http, $routeParams) {
