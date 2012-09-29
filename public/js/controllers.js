@@ -15,7 +15,7 @@ function SideBarCtrl($scope, $http, $routeParams) {
     });
   $scope.isActive = function() {
     return this.match.matchid === parseInt($routeParams.id,10);
-  }
+  };
 }
 
 function StatsCtrl($scope, $http, $routeParams) {
@@ -64,7 +64,7 @@ function sumArray(array) {
     if (value) sum += value;
   });
   return sum;
-};
+}
 
 function AppCtrl($scope, socket) {
   socket.on('send:name', function (data) {
