@@ -2,6 +2,12 @@
 
 /* Controllers */
 
+function NavBarCtrl($scope, $location) {
+  $scope.path = function() {
+    return $location.path();
+  };
+}
+
 function SideBarCtrl($scope, $http, $routeParams) {
   $http.get('/api/matches')
     .success(function(data, status, headers, config) {

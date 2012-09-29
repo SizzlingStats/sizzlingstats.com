@@ -9,13 +9,13 @@ block body
           span.icon-bar
           span.icon-bar
           span.icon-bar
-        a.brand(href='#') SizzlingStats
+        a.brand(href='/') SizzlingStats
         //- WE CAN PUT IN SEARCH LATER.
         .nav-collapse
-          ul.nav
-            li.home
+          ul.nav(ng-controller='NavBarCtrl')
+            li(class='home', ng-class='{active:path()=="/"}')
               a(href='/') Home
-            li.about
+            li(class='about', ng-class='{active:path()=="/about"}')
               a(href='/about') About
   //- Main Content
   .container-fluid
