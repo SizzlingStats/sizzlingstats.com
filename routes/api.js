@@ -13,7 +13,7 @@ var Session = require('../models/session');
 exports.stats = function(req, res) {
   var id = req.params.id;
   // Maybe change this to findById
-  Stats.findOne({ matchid: id }, function(err, stats) {
+  Stats.findById(id, function(err, stats) {
     if (err || !stats) {
       return res.json(false);
     }
@@ -22,7 +22,7 @@ exports.stats = function(req, res) {
 };
 
 exports.matches = function(req, res) {
-  Match.find({}).sort({matchid:-1}).limit(10).exec(function(err, matches) {
+  Match.find({}).sort({_id:-1}).limit(10).exec(function(err, matches) {
     if (err || !matches) {
       return res.json(false);
     }
@@ -63,7 +63,10 @@ exports.addStats = function(req, res) {
                              { $inc: {next:1} },
                              function(err, matchCounter) {
       // not sure how to handle err here, fix it later
-      // if (err) return handleError(err);
+      if (err || !matchCounter) {
+        console.log(err);
+        return res.json(false);
+      }
       matchid = matchCounter.next;
       // Create a cfg variable for this or something goddamn
       res.setHeader('matchurl', 'http://206.253.166.149/match/'+matchid);
@@ -71,21 +74,21 @@ exports.addStats = function(req, res) {
 
       // 3. Create new session, match, and stats documents
       new Session({
-        sessionid: sessionid,
+        _id: sessionid,
         matchid: matchid,
         ip: ip,
         timeout: date + TIMEOUT }).save(function(e) {
         // not sure how to handle err here, fix it later
-        // if (e) throw e;
+        if (e) console.log(e);
       });
 
       new Match({
-        matchid: matchid,
+        _id: matchid,
         hostname: req.body.stats.hostname,
         bluname: req.body.stats.bluname,
         redname:req.body.stats.redname }).save(function(e) {
         // not sure how to handle err here, fix it later
-        // if (e) throw e;
+        if (e) console.log(e);
       });
 
       // Massage JSON into a form that we like
@@ -100,24 +103,30 @@ exports.addStats = function(req, res) {
           }
         }
       });
-      stats.matchid = matchid;
+      stats._id = matchid;
 
       new Stats(stats).save(function(e) {
         // not sure how to handle err here, fix it later
-        // if (e) throw e;
+        if (e) {
+          console.log(e);
+          return res.json(false);
+        }
         res.json(true);
       });
     });
   } else {
     // Validate sessionid
-    Session.findOne({ 'sessionid': sessionid }, function(err, session) {
-      if (err) {} //do something
+    Session.findById(sessionid, function(err, session) {
+      if (err) console.log(err); //do something
       if (!session || ip !== session.ip) return res.json(false);
 
       // The request is validated, now we have to massage the new data into the old
       matchid = session.matchid;
-      Stats.findOne({ "matchid" : matchid }, function(err, stats) {
-        if (err || !stats) return res.json(false);
+      Stats.findById(matchid, function(err, stats) {
+        if (err || !stats) {
+          console.log(err);
+          return res.json(false);
+        }
 
         var newstats = req.body.stats;
         var round = stats.round += 1;
@@ -177,14 +186,17 @@ exports.addStats = function(req, res) {
 
         // Update Stats document
 
-        Stats.update({matchid:matchid},
+        Stats.update({_id:matchid},
                      {$set: {
                         bluscore: stats.bluscore,
                         redscore: stats.redscore,
                         round: round,
                         players: stats.players}},
                      function(err) {
-          // if (err) do something
+          if (err) {
+            console.log(err);
+            return res.json(false);
+          }
           res.json(true);
         });
 

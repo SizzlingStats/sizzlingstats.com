@@ -14,7 +14,7 @@ function SideBarCtrl($scope, $http, $routeParams) {
       $scope.matches = data.matches;
     });
   $scope.isActive = function() {
-    return this.match.matchid === parseInt($routeParams.id,10);
+    return this.match._id === parseInt($routeParams.id,10);
   };
 }
 

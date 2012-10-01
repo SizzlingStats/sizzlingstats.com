@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 
 // Mongoose Bullshit
 var statsSchema = new mongoose.Schema({
+  _id: Number, // matchid
   bluname: String,
   redname: String,
   bluscore: [Number],
@@ -9,8 +10,6 @@ var statsSchema = new mongoose.Schema({
   hostname: String,
   map: String,
   round: Number,
-  sessionid: String,
-  matchid: Number, // Change this to mongoose.Schema.Types.ObjectId?
   players: [{
     steamid: String,
     team: Number,
