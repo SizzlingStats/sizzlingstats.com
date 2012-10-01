@@ -3,6 +3,8 @@
  */
 var mongoose = require('mongoose');
 var crypto = require('crypto');
+var cfg = require('../cfg/cfg');
+var secrets = require('../cfg/secrets');
 var Stats = require('../models/stats');
 var Match = require('../models/match');
 var Counter = require('../models/counter');
@@ -49,12 +51,9 @@ exports.addStats = function(req, res) {
   var ip = req.connection.remoteAddress;
   var matchid;
   if (!sessionid) {
-    var TIMEOUT = 3*60*60*1000;
-    var SESSIONSECRET = 'this is a really secure key';
-
     // We probably need some more/better information in the hmac
     var date = Date.now();
-    var hmac = crypto.createHmac('sha1',SESSIONSECRET);
+    var hmac = crypto.createHmac('sha1',secrets.statssession);
     hmac.update(ip + date);
     sessionid = hmac.digest('hex');
 
@@ -68,8 +67,7 @@ exports.addStats = function(req, res) {
         return res.json(false);
       }
       matchid = matchCounter.next;
-      // Create a cfg variable for this or something goddamn
-      res.setHeader('matchurl', 'http://206.253.166.149/match/'+matchid);
+      res.setHeader('matchurl', cfg.hosturl + 'match/' +matchid);
       res.setHeader('sessionid', sessionid);
 
       // 3. Create new session, match, and stats documents
@@ -77,7 +75,7 @@ exports.addStats = function(req, res) {
         _id: sessionid,
         matchid: matchid,
         ip: ip,
-        timeout: date + TIMEOUT }).save(function(e) {
+        timeout: cfg.statstimeout }).save(function(e) {
         // not sure how to handle err here, fix it later
         if (e) console.log(e);
       });
