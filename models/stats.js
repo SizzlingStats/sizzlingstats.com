@@ -5,6 +5,7 @@ var statsSchema = new mongoose.Schema({
   bluname: String,
   redname: String,
   bluscore: [Number],
+  redscore: [Number],
   hostname: String,
   map: String,
   round: Number,

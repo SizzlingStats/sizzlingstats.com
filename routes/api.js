@@ -2,8 +2,11 @@
  * Serve JSON to our AngularJS client
  */
 var mongoose = require('mongoose');
+var crypto = require('crypto');
 var Stats = require('../models/stats');
 var Match = require('../models/match');
+var Counter = require('../models/counter');
+var Session = require('../models/session');
 
 // GET
 
@@ -11,22 +14,183 @@ exports.stats = function(req, res) {
   var id = req.params.id;
   // Maybe change this to findById
   Stats.findOne({ matchid: id }, function(err, stats) {
-    if (err) {
-      res.json(false);
+    if (err || !stats) {
+      return res.json(false);
     }
-    else res.json({ stats: stats });
+    res.json({ stats: stats });
   });
 };
 
 exports.matches = function(req, res) {
   Match.find({}).sort({matchid:-1}).limit(10).exec(function(err, matches) {
-    if (err) {
-      res.json(false);
+    if (err || !matches) {
+      return res.json(false);
     }
-    else {
-      res.json({
-        matches: matches
-      });
-    }
+    res.json({ matches: matches });
   });
+};
+
+// POST
+
+exports.addStats = function(req, res) {
+  // Change this later to reject requests that
+  // exceed a certain size
+
+  // Control flow:
+  // 1. Check header for api version
+  if (!req.body.stats || req.headers.sizzlingstats !== 'v0.1') {
+    return res.json(false);
+  }
+  
+  // 2. Check header for sessionid, generate session if needed.
+  // If sessionid is supplied, validate it.
+  // 3. Then insert stats into database.
+  var sessionid = req.headers.sessionid;
+  var ip = req.connection.remoteAddress;
+  var matchid;
+  if (!sessionid) {
+    var TIMEOUT = 3*60*60*1000;
+    var SESSIONSECRET = 'this is a really secure key';
+
+    // We probably need some more/better information in the hmac
+    var date = Date.now();
+    var hmac = crypto.createHmac('sha1',SESSIONSECRET);
+    hmac.update(ip + date);
+    sessionid = hmac.digest('hex');
+
+    // Get matchid
+    Counter.findOneAndUpdate({ "counter" : "matches" },
+                             { $inc: {next:1} },
+                             function(err, matchCounter) {
+      // not sure how to handle err here, fix it later
+      // if (err) return handleError(err);
+      matchid = matchCounter.next;
+      // Create a cfg variable for this or something goddamn
+      res.setHeader('matchurl', 'http://206.253.166.149/match/'+matchid);
+      res.setHeader('sessionid', sessionid);
+
+      // 3. Create new session, match, and stats documents
+      new Session({
+        sessionid: sessionid,
+        matchid: matchid,
+        ip: ip,
+        timeout: date + TIMEOUT }).save(function(e) {
+        // not sure how to handle err here, fix it later
+        // if (e) throw e;
+      });
+
+      new Match({
+        matchid: matchid,
+        hostname: req.body.stats.hostname,
+        bluname: req.body.stats.bluname,
+        redname:req.body.stats.redname }).save(function(e) {
+        // not sure how to handle err here, fix it later
+        // if (e) throw e;
+      });
+
+      // Massage JSON into a form that we like
+      var stats = req.body.stats;
+      stats.round = 0;
+      stats.bluscore = [stats.bluscore];
+      stats.redscore = [stats.redscore];
+      stats.players.forEach(function (player) {
+        for (var field in player) {
+          if (field !== "steamid" && field !== "team" && field !== "name") {
+            player[field] = [player[field]];
+          }
+        }
+      });
+      stats.matchid = matchid;
+
+      new Stats(stats).save(function(e) {
+        // not sure how to handle err here, fix it later
+        // if (e) throw e;
+        res.json(true);
+      });
+    });
+  } else {
+    // Validate sessionid
+    Session.findOne({ 'sessionid': sessionid }, function(err, session) {
+      if (err) {} //do something
+      if (!session || ip !== session.ip) return res.json(false);
+
+      // The request is validated, now we have to massage the new data into the old
+      matchid = session.matchid;
+      Stats.findOne({ "matchid" : matchid }, function(err, stats) {
+        if (err || !stats) return res.json(false);
+
+        var newstats = req.body.stats;
+        var round = stats.round += 1;
+
+        stats.bluscore[round] = newstats.bluscore;
+        stats.redscore[round] = newstats.redscore;
+        newstats.players.forEach(function(player) {
+          var isNewPlayer = true;
+
+          // look for the oldPlayer with a matching steamid
+          // and add new values to the stat arrays
+          stats.players.forEach(function(oldPlayer) {
+            if (oldPlayer.steamid === player.steamid) {
+              isNewPlayer = false;
+              
+              oldPlayer.kills[round] = player.kills;
+              oldPlayer.assists[round] = player.assists;
+              oldPlayer.deaths[round] = player.deaths;
+              oldPlayer.damage[round] = player.damage;
+              oldPlayer.heals[round] = player.heals;
+              oldPlayer.medkills[round] = player.medkills;
+
+              return;
+            }
+          });
+
+
+          // If a matching oldPlayer can't be found, then we
+          // need to turn newPlayer's stats into arrays, and
+          // then push newPlayer into the existing document
+          if (isNewPlayer) {
+            
+            var newPlayer = {
+              steamid: player.steamid,
+              team: player.team,
+              name: player.name
+            };
+
+            newPlayer.kills = [];
+            newPlayer.kills[round] = player.kills;
+            newPlayer.assists = [];
+            newPlayer.assists[round] = player.assits;
+            newPlayer.deaths = [];
+            newPlayer.deaths[round] = player.deaths;
+            newPlayer.damage = [];
+            newPlayer.damage[round] = player.damage;
+            newPlayer.heals = [];
+            newPlayer.heals[round] = player.heals;
+            newPlayer.medkills = [];
+            newPlayer.medkills[round] = player.medkills;
+
+
+            stats.players.push(newPlayer);
+          }
+
+        });
+
+        // Update Stats document
+
+        Stats.update({matchid:matchid},
+                     {$set: {
+                        bluscore: stats.bluscore,
+                        redscore: stats.redscore,
+                        round: round,
+                        players: stats.players}},
+                     function(err) {
+          // if (err) do something
+          res.json(true);
+        });
+
+      });
+    });
+
+  } // end else
+
 };

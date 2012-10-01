@@ -50,6 +50,8 @@ app.get('/partials/:name', routes.partials);
 app.get('/api/stats/:id', api.stats);
 app.get('/api/matches', api.matches);
 
+app.post('/api/stats', api.addStats);
+
 // redirect all others to the index (HTML5 history)
 app.get('*', routes.index);
 
