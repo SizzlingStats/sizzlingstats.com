@@ -36,35 +36,59 @@ function StatsCtrl($scope, $http, $routeParams) {
       bluRoundScores[i] = stats.bluscore[i] - stats.bluscore[i-1];
     }
     // Calculate total damage for each team
-    var totalDamage = $scope.totalDamage = [];
+    var totalDamage = $scope.totalDamage = [0,0,0,0];
     angular.forEach(stats.players, function(player) {
-      totalDamage[player.team] = (totalDamage[player.team] || 0) + sumArray(player.damage);
+      totalDamage[player.team] += sumArray(player.damagedone);
     });
     // Calculate total frags for each team
-    var totalFrags = $scope.totalFrags = [];
+    var totalFrags = $scope.totalFrags = [0,0,0,0];
     angular.forEach(stats.players, function(player) {
-      totalFrags[player.team] = (totalFrags[player.team] || 0) + sumArray(player.kills);
+      totalFrags[player.team] += sumArray(player.kills);
     });
     // Sum up individual players' stats from each round
-    // The variable names are kind of vague, maybe I should fix that
     angular.forEach(stats.players, function(player) {
-      player.totalFrags = (player.totalFrags || 0) + sumArray(player.kills);
-      player.totalAssists = (player.totalAssists || 0) + sumArray(player.assists);
-      player.totalDeaths = (player.totalDeaths || 0) + sumArray(player.deaths);
-      player.totalDamage = (player.totalDamage || 0) + sumArray(player.damage);
-      player.totalHeals = (player.totalHeals || 0) + sumArray(player.heals);
-      player.totalMedPicks = (player.totalMedPicks || 0) + sumArray(player.medkills);
+      player.totalPoints = sumArray2(player.points);
+      player.totalKills = sumArray2(player.kills);
+      player.totalAssists = sumArray2(player.killassists);
+      player.totalDeaths = sumArray2(player.deaths);
+      player.totalDamage = sumArray2(player.damagedone);
+      player.totalMedPicks = sumArray2(player.medpicks);
+      player.totalCaptures = sumArray2(player.captures);
+      player.totalDefenses = sumArray2(player.defenses);
+      player.totalSuicides = sumArray2(player.suicides);
+      player.totalDominations = sumArray2(player.dominations);
+      player.totalRevenges = sumArray2(player.revenge);
+      player.totalBuildingsBuilt = sumArray2(player.buildingsbuilt);
+      player.totalBuildingsDestroyed = sumArray2(player.buildingsdestroyed);
+      player.totalHeadshots = sumArray2(player.headshots);
+      player.totalBackstabs = sumArray2(player.backstabs);
+      player.totalHeals = sumArray2(player.healpoints);
+      player.totalUbers = sumArray2(player.invulns);
+      player.totalTeleports = sumArray2(player.teleports);
+      player.totalCrits = sumArray2(player.crits);
+      player.totalResupplyPoints = sumArray2(player.resupplypoints);
+      player.totalBonusPoints = sumArray2(player.bonuspoints);
+      player.totalHealsReceived = sumArray2(player.healsreceived);
+      player.totalUbersDropped = sumArray2(player.ubersdropped);
     });
   });
-}
 
-// Helper function, THIS DOES NOT BELONG HERE
-function sumArray(array) {
-  var sum = 0;
-  angular.forEach(array, function(value) {
-    if (value) sum += value;
-  });
-  return sum;
+  // Helper functions
+  var sumArray = function(array) {
+    var sum = 0;
+    angular.forEach(array, function(value) {
+      if (value) sum += value;
+    });
+    return sum;
+  };
+  var sumArray2 = function(array) {
+    if (!array.length) return '-'; // this is a hack
+    var sum = 0;
+    angular.forEach(array, function(value) {
+      if (value) sum += value;
+    });
+    return sum;
+  };
 }
 
 function AppCtrl($scope, socket) {

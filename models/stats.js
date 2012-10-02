@@ -13,15 +13,31 @@ var statsSchema = new mongoose.Schema({
   round: { type: Number, min: 0, required: true },
   players: [{
     steamid: { type: String, required: true },
-    // avatar: String,
     team: { type: Number, required: true },
     name: String,
     kills: [Number],
+    killassists: [Number],
     deaths: [Number],
-    damage: [Number],
-    heals: [Number],
-    medkills: [Number],
-    assists: [Number]
+    captures: [Number],
+    defenses: [Number],
+    suicides: [Number],
+    dominations: [Number],
+    revenge: [Number],
+    buildingsbuilt: [Number],
+    buildingsdestroyed: [Number],
+    headshots: [Number],
+    backstabs: [Number],
+    healpoints: [Number],
+    invulns: [Number],
+    teleports: [Number],
+    damagedone: [Number],
+    crits: [Number],
+    resupplypoints: [Number],
+    bonuspoints: [Number],
+    points: [Number],
+    healsreceived: [Number],
+    ubersdropped: [Number],
+    medpicks: [Number]
   }],
   created: { type: Date }
 });
@@ -57,12 +73,11 @@ statsSchema.methods.appendStats = function(newStats, cb) {
       if (oldPlayer.steamid === player.steamid) {
         isNewPlayer = false;
         
-        oldPlayer.kills[round] = player.kills;
-        oldPlayer.assists[round] = player.assists;
-        oldPlayer.deaths[round] = player.deaths;
-        oldPlayer.damage[round] = player.damage;
-        oldPlayer.heals[round] = player.heals;
-        oldPlayer.medkills[round] = player.medkills;
+        for (var field in player) {
+          if (field !== "steamid" && field !== "team" && field !== "name") {
+            oldPlayer[field][round] = player[field];
+          }
+        }
 
         return;
       }
@@ -78,18 +93,12 @@ statsSchema.methods.appendStats = function(newStats, cb) {
         name: player.name
       };
 
-      newPlayer.kills = [];
-      newPlayer.kills[round] = player.kills;
-      newPlayer.assists = [];
-      newPlayer.assists[round] = player.assits;
-      newPlayer.deaths = [];
-      newPlayer.deaths[round] = player.deaths;
-      newPlayer.damage = [];
-      newPlayer.damage[round] = player.damage;
-      newPlayer.heals = [];
-      newPlayer.heals[round] = player.heals;
-      newPlayer.medkills = [];
-      newPlayer.medkills[round] = player.medkills;
+      for (var field in player) {
+        if (field !== "steamid" && field !== "team" && field !== "name") {
+          newPlayer[field] = [];
+          newPlayer[field][round] = player[field];
+        }
+      }
 
       stats.players.push(newPlayer);
     }
