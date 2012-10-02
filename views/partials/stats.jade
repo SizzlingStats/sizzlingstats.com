@@ -41,7 +41,7 @@
       tbody
         tr(ng-repeat='player in stats.players', class='{{player.team}}')
           td.name
-            img(src='/img/steam-default-32.jpg')
+            img(ng-src='{{playerMetaData[player.steamid].avatar}}')
             span {{player.name}}
           td {{player.totalFrags}}
           td {{player.totalAssists}}

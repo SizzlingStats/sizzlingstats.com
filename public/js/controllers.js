@@ -22,6 +22,7 @@ function StatsCtrl($scope, $http, $routeParams) {
   $http.get('/api/stats/' + $routeParams.id)
   .success(function(data, status, headers, config) {
     var stats = $scope.stats = data.stats;
+    $scope.playerMetaData = data.playerdata;
     var numRounds = stats.redscore.length;
     // Ask sizzling to send only individual round scores instead of cumulative
     // It will make things a lot easier.

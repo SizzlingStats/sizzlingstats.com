@@ -9,17 +9,41 @@ var Stats = require('../models/stats');
 var Match = require('../models/match');
 var Counter = require('../models/counter');
 var Session = require('../models/session');
+var Player = require('../models/player');
 
 // GET
 
 exports.stats = function(req, res) {
   var id = req.params.id;
-  // Maybe change this to findById
   Stats.findById(id, function(err, stats) {
     if (err || !stats) {
+      console.log(err);
       return res.json(false);
     }
-    res.json({ stats: stats });
+
+    // Build an array of steamids and retrieve those players
+    var steamids = [];
+    stats.players.forEach(function(player) {
+      steamids.push(player.steamid);
+    });
+
+    Player.find( { _id: { $in : steamids } }).exec(function(err, players) {
+      if (err) {
+        console.log(err);
+        return res.json(false);
+      }
+
+      var playerdata = {};
+      players.forEach(function(player) {
+        playerdata[player._id] = {
+          avatar: player.avatar,
+          numericid: player.numericid,
+          country: player.country
+        };
+      });
+      res.json({ stats: stats, playerdata: playerdata });
+    });
+
   });
 };
 
@@ -61,7 +85,6 @@ exports.addStats = function(req, res) {
     Counter.findOneAndUpdate({ "counter" : "matches" },
                              { $inc: {next:1} },
                              function(err, matchCounter) {
-      // not sure how to handle err here, fix it later
       if (err || !matchCounter) {
         console.log(err);
         return res.json(false);
@@ -76,49 +99,46 @@ exports.addStats = function(req, res) {
         matchid: matchid,
         ip: ip,
         timeout: cfg.statstimeout }).save(function(e) {
-        // not sure how to handle err here, fix it later
-        if (e) console.log(e);
-      });
-
-      new Match({
-        _id: matchid,
-        hostname: req.body.stats.hostname,
-        bluname: req.body.stats.bluname,
-        redname:req.body.stats.redname }).save(function(e) {
-        // not sure how to handle err here, fix it later
-        if (e) console.log(e);
-      });
-
-      // Massage JSON into a form that we like
-      var stats = req.body.stats;
-      stats.round = 0;
-      stats.bluscore = [stats.bluscore];
-      stats.redscore = [stats.redscore];
-      stats.players.forEach(function (player) {
-        for (var field in player) {
-          if (field !== "steamid" && field !== "team" && field !== "name") {
-            player[field] = [player[field]];
-          }
-        }
-      });
-      stats._id = matchid;
-
-      new Stats(stats).save(function(e) {
-        // not sure how to handle err here, fix it later
         if (e) {
           console.log(e);
           return res.json(false);
         }
-        res.json(true);
-      });
-    });
+
+        new Match({
+          _id: matchid,
+          hostname: req.body.stats.hostname,
+          bluname: req.body.stats.bluname,
+          redname: req.body.stats.redname }).save(function(e) {
+          if (e) {
+            console.log(e);
+            return res.json(false);
+          }
+
+          var stats = req.body.stats;
+          stats.round = 0;
+          stats._id = matchid;
+          stats.created = new Date();
+
+          new Stats(stats).save(function(e) {
+            if (e) {
+              console.log(e);
+              return res.json(false);
+            }
+            return res.json(true);
+          }); // End Stats.save()
+        }); // End Match.save()
+      }); // End Session.save()
+    }); // End Counter.findOneAndUpdate()
   } else {
     // Validate sessionid
     Session.findById(sessionid, function(err, session) {
-      if (err) console.log(err); //do something
+      if (err) {
+        console.log(err);
+        return res.json(false);
+      }
       if (!session || ip !== session.ip) return res.json(false);
 
-      // The request is validated, now we have to massage the new data into the old
+      // The request is validated, now we have to append the new data to the old
       matchid = session.matchid;
       Stats.findById(matchid, function(err, stats) {
         if (err || !stats) {
@@ -126,81 +146,14 @@ exports.addStats = function(req, res) {
           return res.json(false);
         }
 
-        var newstats = req.body.stats;
-        var round = stats.round += 1;
-
-        stats.bluscore[round] = newstats.bluscore;
-        stats.redscore[round] = newstats.redscore;
-        newstats.players.forEach(function(player) {
-          var isNewPlayer = true;
-
-          // look for the oldPlayer with a matching steamid
-          // and add new values to the stat arrays
-          stats.players.forEach(function(oldPlayer) {
-            if (oldPlayer.steamid === player.steamid) {
-              isNewPlayer = false;
-              
-              oldPlayer.kills[round] = player.kills;
-              oldPlayer.assists[round] = player.assists;
-              oldPlayer.deaths[round] = player.deaths;
-              oldPlayer.damage[round] = player.damage;
-              oldPlayer.heals[round] = player.heals;
-              oldPlayer.medkills[round] = player.medkills;
-
-              return;
-            }
-          });
-
-
-          // If a matching oldPlayer can't be found, then we
-          // need to turn newPlayer's stats into arrays, and
-          // then push newPlayer into the existing document
-          if (isNewPlayer) {
-            
-            var newPlayer = {
-              steamid: player.steamid,
-              team: player.team,
-              name: player.name
-            };
-
-            newPlayer.kills = [];
-            newPlayer.kills[round] = player.kills;
-            newPlayer.assists = [];
-            newPlayer.assists[round] = player.assits;
-            newPlayer.deaths = [];
-            newPlayer.deaths[round] = player.deaths;
-            newPlayer.damage = [];
-            newPlayer.damage[round] = player.damage;
-            newPlayer.heals = [];
-            newPlayer.heals[round] = player.heals;
-            newPlayer.medkills = [];
-            newPlayer.medkills[round] = player.medkills;
-
-
-            stats.players.push(newPlayer);
-          }
-
-        });
-
-        // Update Stats document
-
-        Stats.update({_id:matchid},
-                     {$set: {
-                        bluscore: stats.bluscore,
-                        redscore: stats.redscore,
-                        round: round,
-                        players: stats.players}},
-                     function(err) {
+        stats.appendStats(req.body.stats, function(err) {
           if (err) {
             console.log(err);
             return res.json(false);
           }
           res.json(true);
         });
-
-      });
-    });
-
+      }); // end Stats.findById()
+    }); // end Session.findById()
   } // end else
-
 };

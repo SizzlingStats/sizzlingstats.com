@@ -9,6 +9,7 @@
       "express": "2.5.11"
     , "jade": "*"
     , "mongoose": ">= 3.0"
+    , "request": ">=2.x.x"
     , "socket.io": "0.9.x"
   }
 }
