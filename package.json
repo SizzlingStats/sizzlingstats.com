@@ -6,7 +6,8 @@
       "node" : "0.8.x"
     }
   , "dependencies": {
-      "express": "2.5.11"
+      "cron": ">= 1.0.0"
+    , "express": "2.5.11"
     , "jade": "*"
     , "mongoose": ">= 3.0"
     , "request": ">=2.x.x"

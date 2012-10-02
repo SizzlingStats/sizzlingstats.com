@@ -98,7 +98,7 @@ exports.addStats = function(req, res) {
         _id: sessionid,
         matchid: matchid,
         ip: ip,
-        timeout: cfg.statstimeout }).save(function(e) {
+        timeout: date + cfg.statsSessionTimeout }).save(function(e) {
         if (e) {
           console.log(e);
           return res.json(false);
