@@ -29,59 +29,59 @@
           td {{bluScore}}
           td {{totalDamage[3]}}
           td {{totalFrags[3]}}
-    table#stats-table.table.table-striped.table-condensed
-      thead
-        tr
-          th name
-          th: abbr(title='Points') P
-          th: abbr(title='Frags') F
-          th: abbr(title='Assists') A
-          th: abbr(title='Deaths') D
-          th: abbr(title='Damage') DMG
-          th: abbr(title='Medic Picks') MP
-          th: abbr(title='Capture Points Captured') CPC
-          th: abbr(title='Capture Points Blocked') CPB 
-          th: abbr(title='Suicides') S
-          th: abbr(title='Dominations') DOM
-          th: abbr(title='Revenges') REV
-          th: abbr(title='BuildingsBuilt') BB
-          th: abbr(title='BuildingsDestroyed') BD
-          th: abbr(title='Headshots') HS
-          th: abbr(title='Backstabs') BS
-          th: abbr(title='Crits') Crits?
-          th: abbr(title='Resupply Points') RP
-          th: abbr(title='Bonus Points') BP
-          th: abbr(title='Heals Received') HR
-          th: abbr(title='Heals Given') H
-          th: abbr(title='Ubers') U
-          th: abbr(title='Ubers Dropped') UD
-          th: abbr(title='Teleports') T
+  table#stats-table.table.table-striped.table-condensed
+    thead
+      tr
+        th name
+        th: abbr(title='Points') P
+        th: abbr(title='Frags') F
+        th: abbr(title='Assists') A
+        th: abbr(title='Deaths') D
+        th: abbr(title='Damage') DMG
+        th: abbr(title='Medic Picks') MP
+        th: abbr(title='Capture Points Captured') CPC
+        th: abbr(title='Capture Points Blocked') CPB 
+        th: abbr(title='Suicides') S
+        th: abbr(title='Dominations') DOM
+        th: abbr(title='Revenges') REV
+        th: abbr(title='BuildingsBuilt') BB
+        th: abbr(title='BuildingsDestroyed') BD
+        th: abbr(title='Headshots') HS
+        th: abbr(title='Backstabs') BS
+        th: abbr(title='Crits') Crits?
+        th: abbr(title='Resupply Points') RP
+        th: abbr(title='Bonus Points') BP
+        th: abbr(title='Heals Received') HR
+        th: abbr(title='Heals Given') H
+        th: abbr(title='Ubers') U
+        th: abbr(title='Ubers Dropped') UD
+        th: abbr(title='Teleports') T
 
-      tbody
-        tr(ng-repeat='player in stats.players', class='{{player.team}}')
-          td.name
-            img(ng-src='{{playerMetaData[player.steamid].avatar}}')
-            span {{player.name}}
-          td {{player.totalPoints}}
-          td {{player.totalKills}}
-          td {{player.totalAssists}}
-          td {{player.totalDeaths}}
-          td {{player.totalDamage}}
-          td {{player.totalMedPicks}}
-          td {{player.totalCaptures}}
-          td {{player.totalDefenses}}
-          td {{player.totalSuicides}}
-          td {{player.totalDominations}}
-          td {{player.totalRevenges}}
-          td {{player.totalBuildingsBuilt}}
-          td {{player.totalBuildingsDestroyed}}
-          td {{player.totalHeadshots}}
-          td {{player.totalBackstabs}}
-          td {{player.totalCrits}}
-          td {{player.totalResupplyPoints}}
-          td {{player.totalBonusPoints}}
-          td {{player.totalHealsReceived}}
-          td {{player.totalHeals}}
-          td {{player.totalUbers}}
-          td {{player.totalUbersDropped}}
-          td {{player.totalTeleports}}
+    tbody
+      tr(ng-repeat='player in stats.players', class='team{{player.team}}')
+        td.name
+          img(ng-src='{{playerMetaData[player.steamid].avatar}}')
+          span {{player.name}}
+        td {{player.totalPoints}}
+        td {{player.totalKills}}
+        td {{player.totalAssists}}
+        td {{player.totalDeaths}}
+        td {{player.totalDamage}}
+        td {{player.totalMedPicks}}
+        td {{player.totalCaptures}}
+        td {{player.totalDefenses}}
+        td {{player.totalSuicides}}
+        td {{player.totalDominations}}
+        td {{player.totalRevenges}}
+        td {{player.totalBuildingsBuilt}}
+        td {{player.totalBuildingsDestroyed}}
+        td {{player.totalHeadshots}}
+        td {{player.totalBackstabs}}
+        td {{player.totalCrits}}
+        td {{player.totalResupplyPoints}}
+        td {{player.totalBonusPoints}}
+        td {{player.totalHealsReceived}}
+        td {{player.totalHeals}}
+        td {{player.totalUbers}}
+        td {{player.totalUbersDropped}}
+        td {{player.totalTeleports}}
