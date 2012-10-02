@@ -47,31 +47,41 @@ function StatsCtrl($scope, $http, $routeParams) {
     });
     // Sum up individual players' stats from each round
     angular.forEach(stats.players, function(player) {
-      player.totalPoints = sumArray2(player.points);
-      player.totalKills = sumArray2(player.kills);
-      player.totalAssists = sumArray2(player.killassists);
-      player.totalDeaths = sumArray2(player.deaths);
-      player.totalDamage = sumArray2(player.damagedone);
-      player.totalMedPicks = sumArray2(player.medpicks);
-      player.totalCaptures = sumArray2(player.captures);
-      player.totalDefenses = sumArray2(player.defenses);
-      player.totalSuicides = sumArray2(player.suicides);
-      player.totalDominations = sumArray2(player.dominations);
-      player.totalRevenges = sumArray2(player.revenge);
-      player.totalBuildingsBuilt = sumArray2(player.buildingsbuilt);
-      player.totalBuildingsDestroyed = sumArray2(player.buildingsdestroyed);
-      player.totalHeadshots = sumArray2(player.headshots);
-      player.totalBackstabs = sumArray2(player.backstabs);
-      player.totalHeals = sumArray2(player.healpoints);
-      player.totalUbers = sumArray2(player.invulns);
-      player.totalTeleports = sumArray2(player.teleports);
-      player.totalCrits = sumArray2(player.crits);
-      player.totalResupplyPoints = sumArray2(player.resupplypoints);
-      player.totalBonusPoints = sumArray2(player.bonuspoints);
-      player.totalHealsReceived = sumArray2(player.healsreceived);
-      player.totalUbersDropped = sumArray2(player.ubersdropped);
+      player.sumPoints = sumArray2(player.points);
+      player.sumKills = sumArray2(player.kills);
+      player.sumAssists = sumArray2(player.killassists);
+      player.sumDeaths = sumArray2(player.deaths);
+      player.sumDamage = sumArray2(player.damagedone);
+      player.sumMedPicks = sumArray2(player.medpicks);
+      player.sumCaptures = sumArray2(player.captures);
+      player.sumDefenses = sumArray2(player.defenses);
+      player.sumSuicides = sumArray2(player.suicides);
+      player.sumDominations = sumArray2(player.dominations);
+      player.sumRevenges = sumArray2(player.revenge);
+      player.sumBuildingsBuilt = sumArray2(player.buildingsbuilt);
+      player.sumBuildingsDestroyed = sumArray2(player.buildingsdestroyed);
+      player.sumHeadshots = sumArray2(player.headshots);
+      player.sumBackstabs = sumArray2(player.backstabs);
+      player.sumHeals = sumArray2(player.healpoints);
+      player.sumUbers = sumArray2(player.invulns);
+      player.sumTeleports = sumArray2(player.teleports);
+      player.sumCrits = sumArray2(player.crits);
+      player.sumResupplyPoints = sumArray2(player.resupplypoints);
+      player.sumBonusPoints = sumArray2(player.bonuspoints);
+      player.sumHealsReceived = sumArray2(player.healsreceived);
+      player.sumUbersDropped = sumArray2(player.ubersdropped);
     });
+
   });
+
+  $scope.sort = 'name';
+  $scope.reverse = false;
+  $scope.sortClass = function(sortColumn) {
+    if ($scope.sort === sortColumn) {
+      return $scope.reverse ? 'sort-true' : 'sort-false';
+    }
+    return '';
+  };
 
   // Helper functions
   var sumArray = function(array) {
