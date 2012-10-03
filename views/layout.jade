@@ -4,16 +4,9 @@ html(lang="en", ng-app="myApp")
     meta(charset='utf8')
     base(href='/')
     title Sizzling Stats
-    link(rel='stylesheet', href='/css/bootstrap.css')
-    style(type='text/css')
-      body {
-        padding-top: 60px;
-        padding-bottom: 40px;
-      }
-      .sidebar-nav {
-        padding: 9px 0;
-      }
-    link(rel='stylesheet', href='/css/bootstrap-responsive.css')
-    link(rel='stylesheet', href='/css/sizzlingstats.css')
+    link( rel='stylesheet', href='/css/all-'+(assetManager.cacheHashes.css || '0')+'.css' )
   body
     block body
+
+  //- script( src='/socket.io/socket.io.js' )
+  script( src='/js/all-'+(assetManager.cacheHashes.js || '0')+'.js' )
