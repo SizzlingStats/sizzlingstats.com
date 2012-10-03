@@ -75,7 +75,7 @@ statsSchema.methods.appendStats = function(newStats, cb) {
         
         for (var field in player) {
           if (field !== "steamid" && field !== "team" && field !== "name") {
-            oldPlayer[field][round] = player[field];
+            if (oldPlayer[field]) oldPlayer[field][round] = player[field];
           }
         }
 
