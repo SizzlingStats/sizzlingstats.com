@@ -48,14 +48,14 @@
         th(ng-class="sortClass('sumBuildingsDestroyed')", ng-click='sort="sumBuildingsDestroyed"; reverse=!reverse'): abbr(title='BuildingsDestroyed') BD
         th(ng-class="sortClass('sumHeadshots')", ng-click='sort="sumHeadshots"; reverse=!reverse'): abbr(title='Headshots') HS
         th(ng-class="sortClass('sumBackstabs')", ng-click='sort="sumBackstabs"; reverse=!reverse'): abbr(title='Backstabs') BS
-        th(ng-class="sortClass('sumHeals')", ng-click='sort="sumHeals"; reverse=!reverse'): abbr(title='Crits') C
-        th(ng-class="sortClass('sumUbers')", ng-click='sort="sumUbers"; reverse=!reverse'): abbr(title='Resupply Points') RP
-        th(ng-class="sortClass('sumTeleports')", ng-click='sort="sumTeleports"; reverse=!reverse'): abbr(title='Bonus Points') BP
-        th(ng-class="sortClass('sumCrits')", ng-click='sort="sumCrits"; reverse=!reverse'): abbr(title='Heals Received') HR
-        th(ng-class="sortClass('sumResupplyPoints')", ng-click='sort="sumResupplyPoints"; reverse=!reverse'): abbr(title='Heals Given') H
-        th(ng-class="sortClass('sumBonusPoints')", ng-click='sort="sumBonusPoints"; reverse=!reverse'): abbr(title='Ubers') U
-        th(ng-class="sortClass('sumHealsReceived')", ng-click='sort="sumHealsReceived"; reverse=!reverse'): abbr(title='Ubers Dropped') UD
-        th(ng-class="sortClass('sumUbersDropped')", ng-click='sort="sumUbersDropped"; reverse=!reverse'): abbr(title='Teleports') T
+        th(ng-class="sortClass('sumCrits')", ng-click='sort="sumCrits"; reverse=!reverse'): abbr(title='Crits') C
+        th(ng-class="sortClass('sumResupplyPoints')", ng-click='sort="sumResupplyPoints"; reverse=!reverse'): abbr(title='Resupply Points') RP
+        th(ng-class="sortClass('sumBonusPoints')", ng-click='sort="sumBonusPoints"; reverse=!reverse'): abbr(title='Bonus Points') BP
+        th(ng-class="sortClass('sumHealsReceived')", ng-click='sort="sumHealsReceived"; reverse=!reverse'): abbr(title='Heals Received') HR
+        th(ng-class="sortClass('sumHeals')", ng-click='sort="sumHeals"; reverse=!reverse'): abbr(title='Heals Given') H
+        th(ng-class="sortClass('sumUbers')", ng-click='sort="sumUbers"; reverse=!reverse'): abbr(title='Ubers') U
+        th(ng-class="sortClass('sumUbersDropped')", ng-click='sort="sumUbersDropped"; reverse=!reverse'): abbr(title='Ubers Dropped') UD
+        th(ng-class="sortClass('sumTeleports')", ng-click='sort="sumTeleports"; reverse=!reverse'): abbr(title='Teleports') T
 
     tbody
       tr(ng-repeat='player in stats.players | orderBy:sort:reverse', class='team{{player.team}}')
