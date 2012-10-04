@@ -77,10 +77,12 @@ var numericIdToSteamId = function(profile) {
 
 playerSchema.statics.updateSteamInfo = function(steamids) {
 
+  var steamIdRegex = /STEAM_0\:(0|1)\:\d{1,15}$/;
   var convertedids = [];
+  
   steamids.forEach(function(steamid) {
-    // Need a better validator here.
-    if (typeof(steamid) === 'string' && steamid.substring(0,8) === 'STEAM_0:') {
+    // Validation should take place elsewhere.
+    if (steamIdRegex.test(steamid)) {
       convertedids.push(steamIdToNumericId(steamid));
     }
   });
