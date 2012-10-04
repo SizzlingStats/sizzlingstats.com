@@ -45,8 +45,6 @@ exports.matches = function(req, res) {
 // POST
 
 exports.addStats = function(req, res) {
-  // Change this later to reject requests that
-  // exceed a certain size
 
   // Control flow:
   // 1. Check header for api version

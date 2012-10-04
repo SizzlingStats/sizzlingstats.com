@@ -21,6 +21,7 @@ app.configure(function(){
   app.set('view options', {
     layout: false
   });
+  app.use(express.limit('200kb'));
   app.use(express.bodyParser());
   app.use(express.methodOverride());
 
