@@ -8,7 +8,10 @@ function NavBarCtrl($scope, $location) {
   };
 }
 
-function SideBarCtrl($scope, $http, $routeParams) {
+function SideBarCtrl($scope, $http, $routeParams, socket) {
+  socket.on('matches:new', function(data) {
+    $scope.matches.push(data);
+  });
   $http.get('/api/matches')
     .success(function(data, status, headers, config) {
       $scope.matches = data.matches;
@@ -18,9 +21,19 @@ function SideBarCtrl($scope, $http, $routeParams) {
   };
 }
 
-function StatsCtrl($scope, $http, $routeParams) {
+function StatsCtrl($scope, $http, $routeParams, socket) {
+
+  socket.emit('stats:subscribe', $routeParams.id);
+  socket.on('stats:send', function (data) {
+    calculateStats(data);
+  });
+
   $http.get('/api/stats/' + $routeParams.id)
   .success(function(data, status, headers, config) {
+    calculateStats(data);
+  });
+
+  var calculateStats = function(data) {
     var stats = $scope.stats = data.stats;
     $scope.playerMetaData = data.playerdata;
     var numRounds = stats.redscore.length;
@@ -71,8 +84,7 @@ function StatsCtrl($scope, $http, $routeParams) {
       player.sumHealsReceived = sumArray2(player.healsreceived);
       player.sumUbersDropped = sumArray2(player.ubersdropped);
     });
-
-  });
+  };
 
   $scope.sort = 'name';
   $scope.reverse = false;
@@ -83,7 +95,6 @@ function StatsCtrl($scope, $http, $routeParams) {
     return '';
   };
 
-  // Helper functions
   var sumArray = function(array) {
     var sum = 0;
     angular.forEach(array, function(value) {

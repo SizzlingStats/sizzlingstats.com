@@ -79,7 +79,10 @@ playerSchema.statics.updateSteamInfo = function(steamids) {
 
   var convertedids = [];
   steamids.forEach(function(steamid) {
-    convertedids.push(steamIdToNumericId(steamid));
+    // Need a better validator here.
+    if (typeof(steamid) === 'string' && steamid.substring(0,8) === 'STEAM_0:') {
+      convertedids.push(steamIdToNumericId(steamid));
+    }
   });
 
   var query = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=' +

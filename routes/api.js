@@ -1,7 +1,6 @@
 /*
  * Serve JSON to our AngularJS client
  */
-var mongoose = require('mongoose');
 var crypto = require('crypto');
 var cfg = require('../cfg/cfg');
 var secrets = require('../cfg/secrets');
@@ -10,6 +9,7 @@ var Match = require('../models/match');
 var Counter = require('../models/counter');
 var Session = require('../models/session');
 var Player = require('../models/player');
+var statsEmitter = require('../emitters').statsEmitter;
 
 // GET
 
@@ -21,28 +21,14 @@ exports.stats = function(req, res) {
       return res.json(false);
     }
 
-    // Build an array of steamids and retrieve those players
-    var steamids = [];
-    stats.players.forEach(function(player) {
-      steamids.push(player.steamid);
-    });
-
-    Player.find( { _id: { $in : steamids } }).exec(function(err, players) {
+    stats.getPlayerData(function(err, playerdata) {
       if (err) {
         console.log(err);
         return res.json(false);
       }
-
-      var playerdata = {};
-      players.forEach(function(player) {
-        playerdata[player._id] = {
-          avatar: player.avatar,
-          numericid: player.numericid,
-          country: player.country
-        };
-      });
       res.json({ stats: stats, playerdata: playerdata });
     });
+    
 
   });
 };
@@ -104,11 +90,13 @@ exports.addStats = function(req, res) {
           return res.json(false);
         }
 
-        new Match({
+        newMatch = {
           _id: matchid,
           hostname: req.body.stats.hostname,
           bluname: req.body.stats.bluname,
-          redname: req.body.stats.redname }).save(function(e) {
+          redname: req.body.stats.redname
+        };
+        new Match(newMatch).save(function(e) {
           if (e) {
             console.log(e);
             return res.json(false);
@@ -124,6 +112,7 @@ exports.addStats = function(req, res) {
               console.log(e);
               return res.json(false);
             }
+            statsEmitter.emit('newMatch', newMatch);
             return res.json(true);
           }); // End Stats.save()
         }); // End Match.save()
@@ -140,20 +129,14 @@ exports.addStats = function(req, res) {
 
       // The request is validated, now we have to append the new data to the old
       matchid = session.matchid;
-      Stats.findById(matchid, function(err, stats) {
-        if (err || !stats) {
+      Stats.appendStats(req.body.stats, matchid, function(err) {
+        if (err) {
           console.log(err);
           return res.json(false);
         }
-
-        stats.appendStats(req.body.stats, function(err) {
-          if (err) {
-            console.log(err);
-            return res.json(false);
-          }
-          res.json(true);
-        });
-      }); // end Stats.findById()
+        res.json(true);
+      });
+      
     }); // end Session.findById()
   } // end else
 };

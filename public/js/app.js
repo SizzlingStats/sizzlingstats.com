@@ -13,14 +13,14 @@ var app = angular.module('myApp', ['myApp.filters', 'myApp.services', 'myApp.dir
         templateUrl: 'partials/about'
         // controller: AboutCtrl
       })
-      .when('/view1', {
-        templateUrl: 'partials/partial1',
-        controller: MyCtrl1
-      })
-      .when('/view2', {
-        templateUrl: 'partials/partial2',
-        controller: MyCtrl2
-      })
+      // .when('/view1', {
+      //   templateUrl: 'partials/partial1',
+      //   controller: MyCtrl1
+      // })
+      // .when('/view2', {
+      //   templateUrl: 'partials/partial2',
+      //   controller: MyCtrl2
+      // })
       .otherwise({
         redirectTo: '/',
         templateUrl: 'partials/home'

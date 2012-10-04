@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var Player = require('../models/player');
+var statsEmitter = require('../emitters').statsEmitter;
 
 // Mongoose Bullshit
 var statsSchema = new mongoose.Schema({
@@ -44,76 +45,118 @@ var statsSchema = new mongoose.Schema({
 
 
 statsSchema.pre('save', function(next) {
-  next();
+  var stats = this;
 
   // Notify Players collection that new stats have come in
   steamids = [];
-  this.players.forEach(function(player) {
-    if (player.steamid !== 'BOT')
-      steamids.push(player.steamid);
+  stats.players.forEach(function(player) {
+    steamids.push(player.steamid);
+  });
+  Player.updateSteamInfo(steamids);
+
+  // Push the new stats to subscribed clients on websockets.
+  stats.getPlayerData(function(err, playerdata) {
+    statsEmitter.emit('newStats', { stats: stats, playerdata: playerdata }, stats._id);
   });
 
-  Player.updateSteamInfo(steamids);
+  next();
 
 });
 
 
-statsSchema.methods.appendStats = function(newStats, cb) {
-  var round = this.round + 1;
-  var stats = this;
+statsSchema.statics.appendStats = function(newStats, matchid, cb) {
+  Stats.findById(matchid, function(err, stats) {
+    if (err) return cb(err);
+    if (!stats) return cb(new Error('Stats not found'));
 
-  stats.bluscore[round] = newStats.bluscore;
-  stats.redscore[round] = newStats.redscore;
-  newStats.players.forEach(function(player) {
-    var isNewPlayer = true;
+    var round = stats.round += 1;
+    stats.bluscore.push(newStats.bluscore);
+    stats.redscore.push(newStats.redscore);
 
-    // look for the oldPlayer with a matching steamid
-    // and add new values to the stat arrays
-    stats.players.forEach(function(oldPlayer) {
-      if (oldPlayer.steamid === player.steamid) {
-        isNewPlayer = false;
+    newStats.players.forEach(function(player) {
+      var isNewPlayer = true;
+
+      // look for the oldPlayer with a matching steamid
+      // and add new values to the stat arrays
+      stats.players.forEach(function(oldPlayer) {
+        if (oldPlayer.steamid === player.steamid) {
+          isNewPlayer = false;
+          
+          for (var field in player) {
+            if (field !== "steamid" && field !== "team" && field !== "name") {
+              if (oldPlayer[field]) oldPlayer[field][round] = player[field];
+            }
+          }
+
+          return;
+        }
+      });
+
+      // If a matching oldPlayer can't be found, then
+      // push newPlayer into the existing document
+      if (isNewPlayer) {
         
+        var newPlayer = {
+          steamid: player.steamid,
+          team: player.team,
+          name: player.name
+        };
+
         for (var field in player) {
           if (field !== "steamid" && field !== "team" && field !== "name") {
-            if (oldPlayer[field]) oldPlayer[field][round] = player[field];
+            newPlayer[field] = [];
+            newPlayer[field][round] = player[field];
           }
         }
 
-        return;
+        stats.players.push(newPlayer);
       }
+
     });
 
-    // If a matching oldPlayer can't be found, then
-    // push newPlayer into the existing document
-    if (isNewPlayer) {
-      
-      var newPlayer = {
-        steamid: player.steamid,
-        team: player.team,
-        name: player.name
-      };
+    // Update Stats document
+    // Stats.update({_id:stats._id},
+    //              {$set: {
+    //                 bluscore: stats.bluscore,
+    //                 redscore: stats.redscore,
+    //                 round: round,
+    //                 players: stats.players}
+    //              },
+    //              cb);
 
-      for (var field in player) {
-        if (field !== "steamid" && field !== "team" && field !== "name") {
-          newPlayer[field] = [];
-          newPlayer[field][round] = player[field];
-        }
-      }
+    
+    // Need to set markModified if you don't use
+    //  Array.push() to set array elements
+    stats.markModified('players');
+    // Use Save instead of Update in order to run the
+    //  pre 'save' middleware.
+    stats.save(cb);
 
-      stats.players.push(newPlayer);
-    }
+  }); // end Stats.findById()
+};
 
+statsSchema.methods.getPlayerData = function(cb) {
+  var steamids = [];
+  this.players.forEach(function(player) {
+    steamids.push(player.steamid);
   });
 
-  // Update Stats document
-  Stats.update({_id:this._id},
-               {$set: {
-                  bluscore: stats.bluscore,
-                  redscore: stats.redscore,
-                  round: round,
-                  players: stats.players}
-               },
-               cb);
+  Player.find( { _id: { $in : steamids } }).exec(function(err, players) {
+    if (err) {
+      return cb(err, {});
+    }
+
+    var playerdata = {};
+    players.forEach(function(player) {
+      playerdata[player._id] = {
+        avatar: player.avatar,
+        numericid: player.numericid,
+        country: player.country
+      };
+    });
+
+    return cb(null, playerdata);
+  });
 };
 
 var Stats = mongoose.model('Stats', statsSchema);

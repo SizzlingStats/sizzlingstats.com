@@ -8,15 +8,10 @@ var mongoose = require('mongoose');
 // var db = mongoose.createConnection('localhost', 'sizzlingstats');
 mongoose.connect('mongodb://localhost/sizzlingstats');
 
-var routes = require('./routes'),
-  api = require('./routes/api');
-  // socket = require('./routes/socket.js');
-
 var app = module.exports = express.createServer();
 
-// Hook Socket.io into Express
-// Let's ignore this for now
-// var io = require('socket.io').listen(app);
+var routes = require('./routes'),
+    api = require('./routes/api');
 
 // Configuration
 
@@ -122,9 +117,20 @@ app.post('/api/stats', api.addStats);
 // redirect all others to the index (HTML5 history)
 app.get('*', routes.index);
 
-// Socket.io Communication
-// Let's ignore this for now
-// io.sockets.on('connection', socket);
+// Hook Socket.io into Express
+app.io = require('socket.io').listen(app);
+app.io.enable('browser client minification');
+app.io.enable('browser client etag');
+app.io.enable('browser client gzip');
+app.io.set('log level', 1);
+app.io.set('transports', [
+  'websocket',
+  'flashsocket',
+  'htmlfile',
+  'xhr-polling',
+  'jsonp-polling'
+]);
+var socket = require('./routes/socket')(app);
 
 // Start server
 

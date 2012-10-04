@@ -2,14 +2,31 @@
  * Serve content over a socket
  */
 
-module.exports = function (socket) {
-  socket.emit('send:name', {
-    name: 'Bob'
+var statsEmitter = require('../emitters').statsEmitter;
+
+module.exports = function(app) {
+  var io = app.io;
+
+  io.sockets.on('connection', function(socket) {
+
+    var currentroom;
+
+    socket.on('stats:subscribe', function (matchid) {
+      if (currentroom) {
+        socket.leave(currentroom);
+      }
+      socket.join(matchid);
+      currentroom = matchid;
+    });
+
   });
 
-  setInterval(function () {
-    socket.emit('send:time', {
-      time: (new Date()).toString()
-    });
-  }, 1000);
+  statsEmitter.on('newMatch', function (data) {
+    io.sockets.emit('matches:new', data);
+  });
+
+  statsEmitter.on('newStats', function (data, matchid) {
+    io.sockets.in(matchid).emit('stats:send', data);
+  });
+
 };
