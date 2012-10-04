@@ -5,7 +5,8 @@ html(lang="en", ng-app="myApp")
     base(href='/')
     title Sizzling Stats
     link( rel='stylesheet', href='/css/all-'+(assetManager.cacheHashes.css || '0')+'.css' )
+    script( src='/js/all-'+(assetManager.cacheHashes.js || '0')+'.js' )
   body
     block body
     script( src='/socket.io/socket.io.js' )
-    script( src='/js/all-'+(assetManager.cacheHashes.js || '0')+'.js' )
+    

@@ -7,7 +7,8 @@ var app = angular.module('myApp', ['myApp.filters', 'myApp.services', 'myApp.dir
     $routeProvider
       .when('/match/:id', {
         templateUrl: 'partials/stats',
-        controller: StatsCtrl
+        controller: StatsCtrl,
+        resolve: StatsCtrl.resolve
       })
       .when('/about', {
         templateUrl: 'partials/about'
