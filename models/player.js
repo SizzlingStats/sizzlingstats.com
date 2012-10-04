@@ -89,7 +89,11 @@ playerSchema.statics.updateSteamInfo = function(steamids) {
               secrets.steamapi + '&steamids=' + convertedids.join();
 
   request(query, function(err, res, body) {
-    if (err || res.statusCode !== 200) {
+    if (err) {
+      console.log(err);
+      return false;
+    }
+    if (res.statusCode !== 200) {
       // do more stuff here
       console.log('Steam API Error: ' + res.statusCode);
       return false;
