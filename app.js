@@ -54,14 +54,14 @@ app.configure(function(){
       //   ]
       // },
       files: [ // order matters here
-        'lib/jquery/jquery-1.8.2.min.js',
+        // 'lib/jquery/jquery-1.8.2.min.js',
         'lib/angular/angular.js',
-        'lib/bootstrap/bootstrap.min.js',
+        // 'lib/bootstrap/bootstrap.min.js',
         'app.js',
         'services.js',
         'controllers.js',
-        'filters.js',
-        'directives.js'
+        // 'filters.js',
+        // 'directives.js'
         // '*'
       ]
     },
