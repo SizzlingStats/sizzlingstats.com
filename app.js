@@ -4,6 +4,7 @@
  */
 
 var express = require('express');
+require('colors');
 var mongoose = require('mongoose');
 // var db = mongoose.createConnection('localhost', 'sizzlingstats');
 mongoose.connect('mongodb://localhost/sizzlingstats');
@@ -15,16 +16,22 @@ var routes = require('./routes'),
 
 // Configuration
 
+app.configure('development', function(){
+  app.use(express.profiler());
+  // app.use(express.logger({ format: 'dev' }));
+});
+
 app.configure(function(){
+  app.use(express.limit('200kb'));
+  app.use(express.favicon())
+  
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.set('view options', {
     layout: false
   });
-  app.use(express.limit('200kb'));
   app.use(express.bodyParser());
   app.use(express.methodOverride());
-
 
   var assetManager = require('connect-assetmanager')({
     js: {
@@ -90,8 +97,18 @@ app.configure(function(){
   });
   app.use(assetManager);
   app.helpers({ assetManager: assetManager });
+  app.use(express.staticCache());
+});
 
+app.configure('development', function(){
   app.use(express.static(__dirname + '/public'));
+});
+
+app.configure('production', function(){
+  app.use(express.static(__dirname + '/public', { maxAge: 5 * 60 * 1000 }));
+});
+
+app.configure(function() {
   app.use(app.router);
 });
 

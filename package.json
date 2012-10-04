@@ -6,7 +6,8 @@
       "node" : "0.8.x"
     }
   , "dependencies": {
-      "connect-assetmanager": "*"
+      "colors": "*"
+    , "connect-assetmanager": "*"
     , "cron": ">= 1.0.0"
     , "express": "2.5.11"
     , "jade": "*"
