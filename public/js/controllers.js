@@ -84,29 +84,32 @@ function StatsCtrl($scope, $routeParams, socket, resolvedData) {
     });
     // Sum up individual players' stats from each round
     angular.forEach(stats.players, function(player) {
-      player.sumPoints = sumArray2(player.points);
-      player.sumKills = sumArray2(player.kills);
-      player.sumAssists = sumArray2(player.killassists);
-      player.sumDeaths = sumArray2(player.deaths);
-      player.sumDamage = sumArray2(player.damagedone);
-      player.sumMedPicks = sumArray2(player.medpicks);
-      player.sumCaptures = sumArray2(player.captures);
-      player.sumDefenses = sumArray2(player.defenses);
-      player.sumSuicides = sumArray2(player.suicides);
-      player.sumDominations = sumArray2(player.dominations);
-      player.sumRevenges = sumArray2(player.revenge);
-      player.sumBuildingsBuilt = sumArray2(player.buildingsbuilt);
-      player.sumBuildingsDestroyed = sumArray2(player.buildingsdestroyed);
-      player.sumHeadshots = sumArray2(player.headshots);
-      player.sumBackstabs = sumArray2(player.backstabs);
-      player.sumHeals = sumArray2(player.healpoints);
-      player.sumUbers = sumArray2(player.invulns);
-      player.sumTeleports = sumArray2(player.teleports);
-      player.sumCrits = sumArray2(player.crits);
-      player.sumResupplyPoints = sumArray2(player.resupplypoints);
-      player.sumBonusPoints = sumArray2(player.bonuspoints);
-      player.sumHealsReceived = sumArray2(player.healsreceived);
-      player.sumUbersDropped = sumArray2(player.ubersdropped);
+      player.stats = [];
+      player.stats.push(sumArray2(player.points));
+      player.stats.push(sumArray2(player.kills));
+      player.stats.push(sumArray2(player.killassists));
+      player.stats.push(sumArray2(player.deaths));
+      player.stats.push(sumArray2(player.damagedone));
+      player.stats.push(sumArray2(player.medpicks));
+      player.stats.push(sumArray2(player.captures));
+      player.stats.push(sumArray2(player.defenses));
+      player.stats.push(sumArray2(player.suicides));
+      player.stats.push(sumArray2(player.dominations));
+      player.stats.push(sumArray2(player.revenge));
+      player.stats.push(sumArray2(player.buildingsbuilt));
+      player.stats.push(sumArray2(player.buildingsdestroyed));
+      player.stats.push(sumArray2(player.headshots));
+      player.stats.push(sumArray2(player.backstabs));
+      player.stats.push(sumArray2(player.healpoints));
+      player.stats.push(sumArray2(player.invulns));
+      player.stats.push(sumArray2(player.teleports));
+      player.stats.push(sumArray2(player.crits));
+      player.stats.push(sumArray2(player.resupplypoints));
+      player.stats.push(sumArray2(player.bonuspoints));
+      player.stats.push(sumArray2(player.healsreceived));
+      player.stats.push(sumArray2(player.ubersdropped));
+      player.tr = '<td class="name"><img src="' + $scope.playerMetaData[player.steamid].avatar +
+          '" /><span>' + player.name + '</span><td>' + player.stats.join('</td><td>') + '</td>';
     });
   });
 }
