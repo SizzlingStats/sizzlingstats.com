@@ -143,7 +143,7 @@ app.io.enable('browser client gzip');
 app.io.set('log level', 1);
 app.io.set('transports', [
   'websocket',
-  'flashsocket',
+  // 'flashsocket',
   'htmlfile',
   'xhr-polling',
   'jsonp-polling'
