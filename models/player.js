@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 var request = require('request');
-var secrets = require('../cfg/secrets');
+var steamapi = process.env.STEAM_API || require('../cfg/secrets').steamapi;
 
 var playerSchema = new mongoose.Schema({
   _id: { type: String, required: true }, // steamid

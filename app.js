@@ -6,9 +6,8 @@
 var express = require('express');
 require('colors');
 var mongoose = require('mongoose');
-var secrets = require('./cfg/secrets');
 // var db = mongoose.createConnection('localhost', 'sizzlingstats');
-mongoose.connect('mongodb://' + secrets.mongo);
+mongoose.connect(process.env.MONGO_URL || 'mongodb://localhost/sizzlingstats');
 
 var app = module.exports = express.createServer();
 

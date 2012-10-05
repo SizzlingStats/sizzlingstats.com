@@ -3,7 +3,7 @@
  */
 var crypto = require('crypto');
 var cfg = require('../cfg/cfg');
-var secrets = require('../cfg/secrets');
+var STATS_SECRET = process.env.STATS_SECRET || require('../cfg/secrets').stats_secret;
 var Stats = require('../models/stats');
 var Match = require('../models/match');
 var Counter = require('../models/counter');
@@ -61,7 +61,7 @@ exports.addStats = function(req, res) {
   if (!sessionid) {
     // We probably need some more/better information in the hmac
     var date = Date.now();
-    var hmac = crypto.createHmac('sha1',secrets.statssession);
+    var hmac = crypto.createHmac('sha1',STATS_SECRET);
     hmac.update(ip + date);
     sessionid = hmac.digest('hex');
 
