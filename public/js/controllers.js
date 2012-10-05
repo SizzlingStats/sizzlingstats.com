@@ -100,14 +100,14 @@ function StatsCtrl($scope, $routeParams, socket, resolvedData) {
       player.stats.push(sumArray2(player.buildingsdestroyed));
       player.stats.push(sumArray2(player.headshots));
       player.stats.push(sumArray2(player.backstabs));
-      player.stats.push(sumArray2(player.healpoints));
-      player.stats.push(sumArray2(player.invulns));
-      player.stats.push(sumArray2(player.teleports));
       player.stats.push(sumArray2(player.crits));
       player.stats.push(sumArray2(player.resupplypoints));
       player.stats.push(sumArray2(player.bonuspoints));
       player.stats.push(sumArray2(player.healsreceived));
+      player.stats.push(sumArray2(player.healpoints));
+      player.stats.push(sumArray2(player.invulns));
       player.stats.push(sumArray2(player.ubersdropped));
+      player.stats.push(sumArray2(player.teleports));
       player.tr = '<td class="name"><img src="' + $scope.playerMetaData[player.steamid].avatar +
           '" /><span>' + player.name + '</span><td>' + player.stats.join('</td><td>') + '</td>';
     });
