@@ -66,22 +66,36 @@ function StatsCtrl($scope, $routeParams, socket, resolvedData) {
     var redScore = $scope.redScore = stats.redscore[numRounds-1];
     var bluScore = $scope.bluScore = stats.bluscore[numRounds-1];
     $scope.scoreComparison = redScore > bluScore ? '>' : redScore < bluScore ? '<' : '==';
-    var redRoundScores = $scope.redRoundScores = [stats.redscore[0]];
-    var bluRoundScores = $scope.bluRoundScores = [stats.bluscore[0]];
-    for (var i=1; i<numRounds; i++) {
-      redRoundScores.push(stats.redscore[i] - stats.redscore[i-1]);
-      bluRoundScores.push(stats.bluscore[i] - stats.bluscore[i-1]);
-    }
+
     // Calculate total damage for each team
-    var totalDamage = $scope.totalDamage = [0,0,0,0];
+    var totalDamage = [0,0,0,0];
     angular.forEach(stats.players, function(player) {
       totalDamage[player.team] += sumArray(player.damagedone);
     });
     // Calculate total frags for each team
-    var totalFrags = $scope.totalFrags = [0,0,0,0];
+    var totalFrags = [0,0,0,0];
     angular.forEach(stats.players, function(player) {
       totalFrags[player.team] += sumArray(player.kills);
     });
+
+    // Assemble score overview table rows
+    var redRoundScores = [stats.redscore[0]];
+    var bluRoundScores = [stats.bluscore[0]];
+    for (var i=1; i<numRounds; i++) {
+      redRoundScores.push(stats.redscore[i] - stats.redscore[i-1]);
+      bluRoundScores.push(stats.bluscore[i] - stats.bluscore[i-1]);
+    }
+    redRoundScores.push(stats.redscore[numRounds-1]);
+    bluRoundScores.push(stats.bluscore[numRounds-1]);
+    redRoundScores.push(totalDamage[2]);
+    redRoundScores.push(totalFrags[2]);
+    bluRoundScores.push(totalDamage[3]);
+    bluRoundScores.push(totalFrags[3]);
+    $scope.redtr = '<td class="red">' + stats.redname + '</td><td>' +
+                    redRoundScores.join('</td><td>') + '</td>';
+    $scope.blutr = '<td class="blu">' + stats.bluname + '</td><td>' +
+                    bluRoundScores.join('</td><td>') + '</td>';
+
     // Sum up individual players' stats from each round
     angular.forEach(stats.players, function(player) {
       player.stats = [];

@@ -17,18 +17,8 @@
           th: abbr(title='Total Damage') DMG
           th: abbr(title='Total Frags') F
       tbody
-        tr
-          td.red {{stats.redname}}
-          td(ng-repeat='score in redRoundScores') {{score}}
-          td {{redScore}}
-          td {{totalDamage[2]}}
-          td {{totalFrags[2]}}
-        tr
-          td.blu {{stats.bluname}}
-          td(ng-repeat='score in bluRoundScores') {{score}}
-          td {{bluScore}}
-          td {{totalDamage[3]}}
-          td {{totalFrags[3]}}
+        tr(ng-bind-html-unsafe='redtr')
+        tr(ng-bind-html-unsafe='blutr')
   table#stats-table.table.table-striped.table-condensed
     thead
       tr
