@@ -88,7 +88,7 @@ playerSchema.statics.updateSteamInfo = function(steamids) {
   });
 
   var query = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=' +
-              secrets.steamapi + '&steamids=' + convertedids.join();
+              steamapi + '&steamids=' + convertedids.join();
 
   request(query, function(err, res, body) {
     if (err) {
