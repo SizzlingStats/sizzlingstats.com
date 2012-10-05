@@ -6,8 +6,9 @@
 var express = require('express');
 require('colors');
 var mongoose = require('mongoose');
+var secrets = require('./cfg/secrets');
 // var db = mongoose.createConnection('localhost', 'sizzlingstats');
-mongoose.connect('mongodb://localhost/sizzlingstats');
+mongoose.connect('mongodb://' + secrets.mongo);
 
 var app = module.exports = express.createServer();
 
@@ -24,7 +25,7 @@ app.configure('development', function(){
 app.configure(function(){
   app.use(express.limit('200kb'));
   app.use(express.favicon())
-  
+
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.set('view options', {
