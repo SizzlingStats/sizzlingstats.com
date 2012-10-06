@@ -49,7 +49,7 @@ exports.addStats = function(req, res) {
   // Control flow:
   // 1. Check header for api version
   if (!req.body.stats || req.headers.sizzlingstats !== 'v0.1') {
-    return res.json(false);
+    return res.end('false\n');
   }
   
   // 2. Check header for sessionid, generate session if needed.
@@ -71,7 +71,7 @@ exports.addStats = function(req, res) {
                              function(err, matchCounter) {
       if (err || !matchCounter) {
         console.log(err);
-        return res.json(false);
+        return res.end('false\n');
       }
       matchid = matchCounter.next;
       res.setHeader('matchurl', cfg.hosturl + 'match/' +matchid);
@@ -85,7 +85,7 @@ exports.addStats = function(req, res) {
         timeout: date + cfg.statsSessionTimeout }).save(function(e) {
         if (e) {
           console.log(e);
-          return res.json(false);
+          return res.end('false\n');
         }
 
         newMatch = {
@@ -97,7 +97,7 @@ exports.addStats = function(req, res) {
         new Match(newMatch).save(function(e) {
           if (e) {
             console.log(e);
-            return res.json(false);
+            return res.end('false\n');
           }
 
           var stats = req.body.stats;
@@ -108,10 +108,10 @@ exports.addStats = function(req, res) {
           new Stats(stats).save(function(e) {
             if (e) {
               console.log(e);
-              return res.json(false);
+              return res.end('false\n');
             }
             statsEmitter.emit('newMatch', newMatch);
-            return res.json(true);
+            return res.end('true\n');
           }); // End Stats.save()
         }); // End Match.save()
       }); // End Session.save()
@@ -121,18 +121,18 @@ exports.addStats = function(req, res) {
     Session.findById(sessionid, function(err, session) {
       if (err) {
         console.log(err);
-        return res.json(false);
+        return res.end('false\n');
       }
-      if (!session || ip !== session.ip) return res.json(false);
+      if (!session || ip !== session.ip) return res.end('false\n');
 
       // The request is validated, now we have to append the new data to the old
       matchid = session.matchid;
       Stats.appendStats(req.body.stats, matchid, function(err) {
         if (err) {
           console.log(err);
-          return res.json(false);
+          return res.end('false\n');
         }
-        res.json(true);
+        res.end('true\n');
       });
       
     }); // end Session.findById()
