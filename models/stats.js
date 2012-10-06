@@ -105,6 +105,10 @@ statsSchema.statics.appendStats = function(newStats, matchid, cb) {
         for (var field in player) {
           if (field !== "steamid" && field !== "team" && field !== "name") {
             newPlayer[field] = [];
+            // Mongoose doesn't like 'undefined' in number arrays, so push 'null'
+            for (var i=0; i<round; i++) {
+              newPlayer[field].push(null);
+            }
             newPlayer[field][round] = player[field];
           }
         }
