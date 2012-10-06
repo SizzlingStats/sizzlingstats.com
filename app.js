@@ -23,7 +23,7 @@ app.configure('development', function(){
 
 app.configure(function(){
   app.use(express.limit('200kb'));
-  app.use(express.favicon())
+  app.use(express.favicon());
 
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
@@ -59,7 +59,7 @@ app.configure(function(){
         // 'lib/bootstrap/bootstrap.min.js',
         'app.js',
         'services.js',
-        'controllers.js',
+        'controllers.js'
         // 'filters.js',
         // 'directives.js'
         // '*'
