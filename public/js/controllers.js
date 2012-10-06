@@ -122,7 +122,11 @@ function StatsCtrl($scope, $routeParams, socket, resolvedData) {
       player.stats.push(sumArray2(player.invulns));
       player.stats.push(sumArray2(player.ubersdropped));
       player.stats.push(sumArray2(player.teleports));
-      player.tr = '<td class="name"><img src="' + $scope.playerMetaData[player.steamid].avatar || '' +
+      var avatar = '';
+      if ($scope.playerMetaData[player.steamid]) {
+        avatar = $scope.playerMetaData[player.steamid].avatar;
+      }
+      player.tr = '<td class="name"><img src="' + avatar +
           '" /><span>' + player.name + '</span><td>' + player.stats.join('</td><td>') + '</td>';
     });
   });
