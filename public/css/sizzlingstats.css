@@ -3,6 +3,19 @@
 div.container-fluid {
   max-width: 1200px;
 }
+#loading {
+  position: fixed;
+  z-index: 9999;
+  width: 100%;
+  max-width: 1200px;
+}
+.alert {
+  position: relative;
+  display: inline;
+  padding: 8px 14px;
+  left: 63%;
+  margin-left: -25px;
+}
 
 .redname {
   color: #D06553;

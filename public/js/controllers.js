@@ -2,10 +2,17 @@
 
 /* Controllers */
 
-function NavBarCtrl($scope, $location) {
+function MainCtrl($scope, $location, $rootScope) {
   $scope.path = function() {
     return $location.path();
   };
+  $scope.loading = false;
+  $rootScope.$on('$routeChangeStart', function() {
+    $scope.loading = true;
+  });
+  $rootScope.$on('$routeChangeSuccess', function() {
+    $scope.loading = false;
+  });
 }
 
 function SideBarCtrl($scope, $http, $routeParams, socket) {

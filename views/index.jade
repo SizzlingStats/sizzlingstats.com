@@ -12,11 +12,14 @@ block body
         a.brand(href='/') SizzlingStats
         //- WE CAN PUT IN SEARCH LATER.
         .nav-collapse
-          ul.nav(ng-controller='NavBarCtrl')
+          ul.nav
             li(class='home', ng-class='{active:path()=="/"}')
               a(href='/') Home
             li(class='about', ng-class='{active:path()=="/about"}')
               a(href='/about') About
+  #loading(ng-cloak, ng-show='loading')
+    .alert
+      | Loading...
   //- Main Content
   .container-fluid
     .row-fluid
