@@ -84,8 +84,8 @@ exports.addStats = function(req, res) {
         return res.end('false\n');
       }
       matchid = matchCounter.next;
-      res.setHeader('matchurl', cfg.hosturl + 'match/' +matchid);
-      res.setHeader('sessionid', sessionid);
+      // res.setHeader('matchurl', cfg.hosturl + 'match/' +matchid);
+      // res.setHeader('sessionid', sessionid);
 
       // 3. Create new session, match, and stats documents
       new Session({
@@ -121,6 +121,9 @@ exports.addStats = function(req, res) {
               return res.end('false\n');
             }
             statsEmitter.emit('newMatch', newMatch);
+
+            res.setHeader('matchurl', cfg.hosturl + 'match/' +matchid);
+            res.setHeader('sessionid', sessionid);
             return res.end('true\n');
           }); // End Stats.save()
         }); // End Match.save()
@@ -142,6 +145,8 @@ exports.addStats = function(req, res) {
           console.log(err);
           return res.end('false\n');
         }
+        res.setHeader('matchurl', cfg.hosturl + 'match/' +matchid);
+        res.setHeader('sessionid', sessionid);
         res.end('true\n');
       });
       
