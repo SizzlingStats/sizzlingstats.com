@@ -16,8 +16,11 @@ var statsEmitter = require('../emitters').statsEmitter;
 exports.stats = function(req, res) {
   var id = req.params.id;
   Stats.findById(id, function(err, stats) {
-    if (err || !stats) {
+    if (err) {
       console.log(err);
+      return res.json(false);
+    }
+    if (!stats) {
       return res.json(false);
     }
 
@@ -35,7 +38,11 @@ exports.stats = function(req, res) {
 
 exports.matches = function(req, res) {
   Match.find({}).sort({_id:-1}).limit(10).exec(function(err, matches) {
-    if (err || !matches) {
+    if (err) {
+      console.log(err);
+      return res.json(false);
+    }
+    if (!matches) {
       return res.json(false);
     }
     res.json({ matches: matches });
@@ -69,8 +76,11 @@ exports.addStats = function(req, res) {
     Counter.findOneAndUpdate({ "counter" : "matches" },
                              { $inc: {next:1} },
                              function(err, matchCounter) {
-      if (err || !matchCounter) {
+      if (err) {
         console.log(err);
+        return res.end('false\n');
+      }
+      if (!matchCounter) {
         return res.end('false\n');
       }
       matchid = matchCounter.next;
