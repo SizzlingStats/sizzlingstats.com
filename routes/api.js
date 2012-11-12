@@ -11,9 +11,19 @@ var Session = require('../models/session');
 var Player = require('../models/player');
 var statsEmitter = require('../emitters').statsEmitter;
 
+
+module.exports = function(app) {
+  // JSON API
+  app.get('/api/stats/:id', stats);
+  app.get('/api/matches', matches);
+
+  app.post('/api/stats', addStats);
+};
+
+
 // GET
 
-exports.stats = function(req, res) {
+var stats = function(req, res) {
   var id = req.params.id;
   Stats.findById(id, function(err, stats) {
     if (err) {
@@ -36,7 +46,7 @@ exports.stats = function(req, res) {
   });
 };
 
-exports.matches = function(req, res) {
+var matches = function(req, res) {
   Match.find({}).sort({_id:-1}).limit(10).exec(function(err, matches) {
     if (err) {
       console.log(err);
@@ -51,7 +61,9 @@ exports.matches = function(req, res) {
 
 // POST
 
-exports.addStats = function(req, res) {
+var addStats = function(req, res) {
+  // For debugging
+  console.log(req.body);
 
   // Control flow:
   // 1. Check header for api version
