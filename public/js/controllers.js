@@ -48,21 +48,6 @@ function StatsCtrl($scope, $routeParams, socket, resolvedData) {
     }
     return '';
   };
-  var sumArray = function(array) {
-    var sum = 0;
-    angular.forEach(array, function(value) {
-      if (value) sum += value;
-    });
-    return sum;
-  };
-  var sumArray2 = function(array) {
-    if (!array.length) return '-'; // this is a hack
-    var sum = 0;
-    angular.forEach(array, function(value) {
-      if (value) sum += value;
-    });
-    return sum;
-  };
 
   // Watch $scope.stats, recalculate on change
   $scope.$watch("stats", function() {
@@ -105,30 +90,32 @@ function StatsCtrl($scope, $routeParams, socket, resolvedData) {
 
     // Sum up individual players' stats from each round
     angular.forEach(stats.players, function(player) {
-      player.stats = [];
-      player.stats.push(sumArray2(player.points));
-      player.stats.push(sumArray2(player.kills));
-      player.stats.push(sumArray2(player.killassists));
-      player.stats.push(sumArray2(player.deaths));
-      player.stats.push(sumArray2(player.damagedone));
-      player.stats.push(sumArray2(player.medpicks));
-      player.stats.push(sumArray2(player.captures));
-      player.stats.push(sumArray2(player.defenses));
-      player.stats.push(sumArray2(player.suicides));
-      player.stats.push(sumArray2(player.dominations));
-      player.stats.push(sumArray2(player.revenge));
-      player.stats.push(sumArray2(player.buildingsbuilt));
-      player.stats.push(sumArray2(player.buildingsdestroyed));
-      player.stats.push(sumArray2(player.headshots));
-      player.stats.push(sumArray2(player.backstabs));
-      player.stats.push(sumArray2(player.crits));
-      player.stats.push(sumArray2(player.resupplypoints));
-      player.stats.push(sumArray2(player.bonuspoints));
-      player.stats.push(sumArray2(player.healsreceived));
-      player.stats.push(sumArray2(player.healpoints));
-      player.stats.push(sumArray2(player.invulns));
-      player.stats.push(sumArray2(player.ubersdropped));
-      player.stats.push(sumArray2(player.teleports));
+      player.stats = [
+        sumArray2(player.points),
+        sumArray2(player.kills),
+        sumArray2(player.killassists),
+        sumArray2(player.deaths),
+        ratio(player.deaths, player.kills, player.killassists), // Frags + Assists / Deaths
+        sumArray2(player.damagedone),
+        sumArray2(player.medpicks),
+        sumArray2(player.captures),
+        sumArray2(player.defenses),
+        sumArray2(player.suicides),
+        sumArray2(player.dominations),
+        sumArray2(player.revenge),
+        sumArray2(player.buildingsbuilt),
+        sumArray2(player.buildingsdestroyed),
+        sumArray2(player.headshots),
+        sumArray2(player.backstabs),
+        sumArray2(player.healsreceived),
+        sumArray2(player.healpoints),
+        sumArray2(player.invulns),
+        sumArray2(player.ubersdropped)
+        // sumArray2(player.crits),
+        // sumArray2(player.teleports),
+        // sumArray2(player.resupplypoints),
+        // sumArray2(player.bonuspoints),
+      ];
       var avatar = '';
       if ($scope.playerMetaData[player.steamid]) {
         avatar = $scope.playerMetaData[player.steamid].avatar;
@@ -137,6 +124,36 @@ function StatsCtrl($scope, $routeParams, socket, resolvedData) {
           '" /><span>' + player.name + '</span><td>' + player.stats.join('</td><td>') + '</td>';
     });
   });
+
+  // Helpers
+  var sumArray = function(array) {
+    var sum = 0;
+    angular.forEach(array, function(value) {
+      if (value) sum += value;
+    });
+    return sum;
+  };
+  var sumArray2 = function(array) {
+    if (!array.length) return '-'; // this is a hack
+    var sum = 0;
+    angular.forEach(array, function(value) {
+      if (value) sum += value;
+    });
+    return sum;
+  };
+  var ratio = function(denArray, numArray1, numArray2) {
+    if (!numArray1.length || !numArray2.length) return '-'; // this is a hack
+    var numerator;
+    if (!numArray2) {
+      numerator = sumArray(numArray1);
+    } else {
+      numerator = sumArray(numArray1) + sumArray(numArray2);
+    }
+    if (numerator === 0) return 0;
+    var denominator = sumArray(denArray);
+    if (denominator === 0) return '&infin;';
+    return Math.round( (numerator/denominator)*100 )/100;
+  };
 }
 StatsCtrl.resolve = {
   resolvedData: function($q, $http, $route) {

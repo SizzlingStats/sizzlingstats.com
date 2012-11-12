@@ -28,24 +28,25 @@
         th(ng-class="sortClass('stats[1]')", ng-click='sort="stats[1]"; reverse=!reverse'): abbr(title='Frags') F
         th(ng-class="sortClass('stats[2]')", ng-click='sort="stats[2]"; reverse=!reverse'): abbr(title='Assists') A
         th(ng-class="sortClass('stats[3]')", ng-click='sort="stats[3]"; reverse=!reverse'): abbr(title='Deaths') D
-        th(ng-class="sortClass('stats[4]')", ng-click='sort="stats[4]"; reverse=!reverse'): abbr(title='Damage') DMG
-        th(ng-class="sortClass('stats[5]')", ng-click='sort="stats[5]"; reverse=!reverse'): abbr(title='Medic Picks') MP
-        th(ng-class="sortClass('stats[6]')", ng-click='sort="stats[6]"; reverse=!reverse'): abbr(title='Capture Points Captured') CPC
-        th(ng-class="sortClass('stats[7]')", ng-click='sort="stats[7]"; reverse=!reverse'): abbr(title='Capture Points Blocked') CPB
-        th(ng-class="sortClass('stats[8]')", ng-click='sort="stats[8]"; reverse=!reverse'): abbr(title='Suicides') S
-        th(ng-class="sortClass('stats[9]')", ng-click='sort="stats[9]"; reverse=!reverse'): abbr(title='Dominations') DOM
-        th(ng-class="sortClass('stats[10]')", ng-click='sort="stats[10]"; reverse=!reverse'): abbr(title='Revenges') REV
-        th(ng-class="sortClass('stats[11]')", ng-click='sort="stats[11]"; reverse=!reverse'): abbr(title='BuildingsBuilt') BB
-        th(ng-class="sortClass('stats[12]')", ng-click='sort="stats[12]"; reverse=!reverse'): abbr(title='BuildingsDestroyed') BD
-        th(ng-class="sortClass('stats[13]')", ng-click='sort="stats[13]"; reverse=!reverse'): abbr(title='Headshots') HS
-        th(ng-class="sortClass('stats[14]')", ng-click='sort="stats[14]"; reverse=!reverse'): abbr(title='Backstabs') BS
-        th(ng-class="sortClass('stats[15]')", ng-click='sort="stats[15]"; reverse=!reverse'): abbr(title='Crits') C
-        th(ng-class="sortClass('stats[16]')", ng-click='sort="stats[16]"; reverse=!reverse'): abbr(title='Resupply Points') RP
-        th(ng-class="sortClass('stats[17]')", ng-click='sort="stats[17]"; reverse=!reverse'): abbr(title='Bonus Points') BP
-        th(ng-class="sortClass('stats[18]')", ng-click='sort="stats[18]"; reverse=!reverse'): abbr(title='Heals Received') HR
-        th(ng-class="sortClass('stats[19]')", ng-click='sort="stats[19]"; reverse=!reverse'): abbr(title='Heals Given') H
-        th(ng-class="sortClass('stats[20]')", ng-click='sort="stats[20]"; reverse=!reverse'): abbr(title='Ubers') U
-        th(ng-class="sortClass('stats[21]')", ng-click='sort="stats[21]"; reverse=!reverse'): abbr(title='Ubers Dropped') UD
-        th(ng-class="sortClass('stats[22]')", ng-click='sort="stats[22]"; reverse=!reverse'): abbr(title='Teleports') T
+        th(ng-class="sortClass('stats[4]')", ng-click='sort="stats[4]"; reverse=!reverse'): abbr(title='Frags+Assists/Death') FAPD
+        th(ng-class="sortClass('stats[5]')", ng-click='sort="stats[5]"; reverse=!reverse'): abbr(title='Damage') DMG
+        th(ng-class="sortClass('stats[6]')", ng-click='sort="stats[6]"; reverse=!reverse'): abbr(title='Medic Picks') MP
+        th(ng-class="sortClass('stats[7]')", ng-click='sort="stats[7]"; reverse=!reverse'): abbr(title='Capture Points Captured') CPC
+        th(ng-class="sortClass('stats[8]')", ng-click='sort="stats[8]"; reverse=!reverse'): abbr(title='Capture Points Blocked') CPB
+        th(ng-class="sortClass('stats[9]')", ng-click='sort="stats[9]"; reverse=!reverse'): abbr(title='Suicides') S
+        th(ng-class="sortClass('stats[10]')", ng-click='sort="stats[10]"; reverse=!reverse'): abbr(title='Dominations') DOM
+        th(ng-class="sortClass('stats[11]')", ng-click='sort="stats[11]"; reverse=!reverse'): abbr(title='Revenges') REV
+        th(ng-class="sortClass('stats[12]')", ng-click='sort="stats[12]"; reverse=!reverse'): abbr(title='BuildingsBuilt') BB
+        th(ng-class="sortClass('stats[13]')", ng-click='sort="stats[13]"; reverse=!reverse'): abbr(title='BuildingsDestroyed') BD
+        th(ng-class="sortClass('stats[14]')", ng-click='sort="stats[14]"; reverse=!reverse'): abbr(title='Headshots') HS
+        th(ng-class="sortClass('stats[15]')", ng-click='sort="stats[15]"; reverse=!reverse'): abbr(title='Backstabs') BS
+        th(ng-class="sortClass('stats[16]')", ng-click='sort="stats[16]"; reverse=!reverse'): abbr(title='Heals Received') HR
+        th(ng-class="sortClass('stats[17]')", ng-click='sort="stats[17]"; reverse=!reverse'): abbr(title='Heals Given') H
+        th(ng-class="sortClass('stats[18]')", ng-click='sort="stats[18]"; reverse=!reverse'): abbr(title='Ubers') U
+        th(ng-class="sortClass('stats[19]')", ng-click='sort="stats[19]"; reverse=!reverse'): abbr(title='Ubers Dropped') UD
+        //- th(ng-class="sortClass('stats[15]')", ng-click='sort="stats[15]"; reverse=!reverse'): abbr(title='Crits') C
+        //- th(ng-class="sortClass('stats[20]')", ng-click='sort="stats[20]"; reverse=!reverse'): abbr(title='Teleports') T
+        //- th(ng-class="sortClass('stats[16]')", ng-click='sort="stats[21]"; reverse=!reverse'): abbr(title='Resupply Points') RP
+        //- th(ng-class="sortClass('stats[17]')", ng-click='sort="stats[22]"; reverse=!reverse'): abbr(title='Bonus Points') BP
     tbody
       tr(ng-repeat='player in stats.players | orderBy:sort:reverse', class='team{{player.team}}', ng-bind-html-unsafe='player.tr')
