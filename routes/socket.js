@@ -11,12 +11,12 @@ module.exports = function(app) {
 
     var currentroom;
 
-    socket.on('stats:subscribe', function (matchid) {
+    socket.on('stats:subscribe', function (matchId) {
       if (currentroom) {
         socket.leave(currentroom);
       }
-      socket.join(matchid);
-      currentroom = matchid;
+      socket.join(matchId);
+      currentroom = matchId;
     });
 
   });
@@ -25,8 +25,8 @@ module.exports = function(app) {
     io.sockets.emit('matches:new', data);
   });
 
-  statsEmitter.on('newStats', function (data, matchid) {
-    io.sockets.in(matchid).emit('stats:send', data);
+  statsEmitter.on('newStats', function (data, matchId) {
+    io.sockets.in(matchId).emit('stats:send', data);
   });
 
 };

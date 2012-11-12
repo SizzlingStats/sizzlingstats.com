@@ -1,15 +1,17 @@
 var mongoose = require('mongoose');
-var Player = require('../models/player');
+var Player = require('./player');
 var statsEmitter = require('../emitters').statsEmitter;
 
 // Mongoose Bullshit
 var statsSchema = new mongoose.Schema({
-  _id: { type: Number, required: true }, // matchid
+  _id: { type: Number, required: true }, // matchId
   bluname: String,
   redname: String,
   bluscore: { type: [Number], required: true },
   redscore: { type: [Number], required: true },
   hostname: String,
+  // Duration of match, in seconds. Only exists after gameover event is sent
+  matchDuration: Number,
   map: { type: String, required: true },
   round: { type: Number, min: 0, required: true },
   players: [{
@@ -40,7 +42,8 @@ var statsSchema = new mongoose.Schema({
     ubersdropped: [Number],
     medpicks: [Number]
   }],
-  created: { type: Date }
+  created: { type: Date },
+  isLive: { type: Boolean, default: false }
 });
 
 
@@ -64,8 +67,8 @@ statsSchema.pre('save', function(next) {
 });
 
 
-statsSchema.statics.appendStats = function(newStats, matchid, cb) {
-  Stats.findById(matchid, function(err, stats) {
+statsSchema.statics.appendStats = function(newStats, matchId, cb) {
+  Stats.findById(matchId, function(err, stats) {
     if (err) return cb(err);
     if (!stats) return cb(new Error('Stats not found'));
 
@@ -160,6 +163,22 @@ statsSchema.methods.getPlayerData = function(cb) {
     });
 
     return cb(null, playerdata);
+  });
+};
+
+statsSchema.statics.setGameOver = function(matchId, matchDuration, cb) {
+  Stats.findById(matchId, function(err, stats) {
+    if (err) {
+      return cb(err);
+    }
+    if (!stats) {
+      return cb(new Error('setGameOver() - Stats not found'));
+    }
+
+    if (matchDuration) { stats.matchDuration = matchDuration; }
+    stats.isLive = false;
+    stats.save(cb);
+
   });
 };
 

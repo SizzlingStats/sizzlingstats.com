@@ -8,6 +8,7 @@
     .servername Server: {{stats.hostname}}
     .mapname Map: {{stats.map}}
     .date Date: {{stats.created | date:'medium'}}
+    .match-duration(ng-show='stats.matchDuration') Match Duration: {{stats.matchDuration}} seconds
     table#score-table.table-bordered
       thead
         tr
