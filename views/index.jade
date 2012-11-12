@@ -23,14 +23,16 @@ block body
   //- Main Content
   .container-fluid
     .row-fluid
-      .span3
-        //- listmatches
-        .well.sidebar-nav(ng-controller='SideBarCtrl')
-          ul.nav.nav-list
-            li.nav-header Recent Matches
-            li(ng-cloak, ng-repeat='match in matches | orderBy:"-_id"', ng-class='{active: isActive()}')
-              a(href='/match/{{match._id}}') {{match.hostname}}: {{match.redname}} vs {{match.bluname}}&nbsp;
-                span.label.label-success(ng-show='match.isLive') Live
+      - if (typeof(ingame) == 'undefined')
+        .span3
+          //- listmatches
+          .well.sidebar-nav(ng-controller='SideBarCtrl')
+            ul.nav.nav-list
+              li.nav-header Recent Matches
+              li(ng-cloak, ng-repeat='match in matches | orderBy:"-_id"', ng-class='{active: isActive()}')
+                a(href='/match/{{match._id}}') {{match.hostname}}: {{match.redname}} vs {{match.bluname}}&nbsp;
+                  span.label.label-success(ng-show='match.isLive') Live
+      - else
       .span9(ng-view)
         //- content
     hr
