@@ -19,10 +19,21 @@ function SideBarCtrl($scope, $http, $routeParams, socket) {
   socket.on('matches:new', function(data) {
     $scope.matches.push(data);
   });
+
+  socket.on('matches:update', function(data) {
+    angular.forEach($scope.matches, function(match, index) {
+      if (match._id == data._id) {
+        match = data;
+        return;
+      }
+    });
+  });
+
   $http.get('/api/matches')
     .success(function(data, status, headers, config) {
       $scope.matches = data.matches;
     });
+  
   $scope.isActive = function() {
     return this.match._id === parseInt($routeParams.id,10);
   };

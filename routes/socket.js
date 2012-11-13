@@ -25,6 +25,10 @@ module.exports = function(app) {
     io.sockets.emit('matches:new', data);
   });
 
+  statsEmitter.on('updateMatch', function (data) {
+    io.sockets.emit('matches:update', data);
+  });
+
   statsEmitter.on('newStats', function (data, matchId) {
     io.sockets.in(matchId).emit('stats:send', data);
   });

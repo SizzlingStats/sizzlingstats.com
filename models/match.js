@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var statsEmitter = require('../emitters').statsEmitter;
 
 // Mongoose Bullshit
 var matchSchema = new mongoose.Schema({
@@ -9,6 +10,14 @@ var matchSchema = new mongoose.Schema({
   isLive: { type: Boolean, default: false }
 });
 
+matchSchema.pre('save', function(next) {
+
+  // Push the new match to subscribed clients on websockets.
+  statsEmitter.emit('updateMatch', this);
+
+  next();
+
+});
 
 matchSchema.statics.setGameOver = function(matchId, cb) {
   Match.findById(matchId, function(err, match) {
