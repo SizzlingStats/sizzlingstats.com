@@ -11,7 +11,7 @@ var matchSchema = new mongoose.Schema({
 
 
 matchSchema.statics.setGameOver = function(matchId, cb) {
-  Stats.findById(matchId, function(err, match) {
+  Match.findById(matchId, function(err, match) {
     if (err) {
       return cb(err);
     }
