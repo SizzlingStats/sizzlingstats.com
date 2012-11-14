@@ -4,7 +4,7 @@ var steamapi = process.env.STEAM_API || require('../cfg/secrets').steamapi;
 
 var playerSchema = new mongoose.Schema({
   _id: { type: String, required: true }, // steamid
-  numericid: { type: Number, required: true }, // numeric 64-bit steamid
+  numericid: { type: String, required: true }, // numeric 64-bit steamid
   name: String,
   avatar: { type: String, default: '/img/steam-default-32.jpg' },
   updated: { type: Date, default: Date.now },
