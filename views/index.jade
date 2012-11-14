@@ -1,29 +1,28 @@
 extends layout
 
 block body
-  //- Navbar, maybe should go in layout.jade?
-  .navbar.navbar-fixed-top
-    .navbar-inner
-      .container-fluid
-        a.btn.btn-navbar(data-toggle='collapse', data-target='.nav-collapse')
-          span.icon-bar
-          span.icon-bar
-          span.icon-bar
-        a.brand(href='/') SizzlingStats
-        //- WE CAN PUT IN SEARCH LATER.
-        .nav-collapse
-          ul.nav
-            li(class='home', ng-class='{active:path()=="/"}')
-              a(href='/') Home
-            li(class='about', ng-class='{active:path()=="/about"}')
-              a(href='/about') About
-  #loading(ng-cloak, ng-show='loading')
-    .alert
-      | Loading...
-  //- Main Content
-  .container-fluid
-    .row-fluid
-      - if (typeof(ingame) == 'undefined')
+  if (typeof(ingame) == 'undefined')
+    .navbar.navbar-fixed-top
+      .navbar-inner
+        .container-fluid
+          a.btn.btn-navbar(data-toggle='collapse', data-target='.nav-collapse')
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+          a.brand(href='/') SizzlingStats
+          //- WE CAN PUT IN SEARCH LATER.
+          .nav-collapse
+            ul.nav
+              li(class='home', ng-class='{active:path()=="/"}')
+                a(href='/') Home
+              li(class='about', ng-class='{active:path()=="/about"}')
+                a(href='/about') About
+    #loading(ng-cloak, ng-show='loading')
+      .alert
+        | Loading...
+    //- Main Content
+    .container-fluid
+      .row-fluid
         .span3
           //- listmatches
           .well.sidebar-nav(ng-controller='SideBarCtrl')
@@ -32,9 +31,10 @@ block body
               li(ng-cloak, ng-repeat='match in matches | orderBy:"-_id"', ng-class='{active: isActive()}')
                 a(href='/match/{{match._id}}') {{match.hostname}}: {{match.redname}} vs {{match.bluname}}&nbsp;
                   span.label.label-success(ng-show='match.isLive') Live
-      - else
-      .span9(ng-view)
-        //- content
-    hr
-    footer
-      p &copy; 2012 Chris "techno" Kim &amp; Jordan "SizzlingCalamari" Cristiano
+        .span9(ng-view)
+          //- content
+      hr
+      footer
+        p &copy; 2012 Chris "techno" Kim &amp; Jordan "SizzlingCalamari" Cristiano
+  else
+    .ingame(ng-view)

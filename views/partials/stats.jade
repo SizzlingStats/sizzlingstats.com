@@ -8,7 +8,7 @@
     .servername Server: {{stats.hostname}}
     .mapname Map: {{stats.map}}
     .date Date: {{stats.created | date:'medium'}}
-    .match-duration(ng-show='stats.matchDuration') Match Duration: {{stats.matchDuration}} seconds
+    .match-duration(ng-show='stats.matchDuration') Match Duration: {{secondsToHMS(stats.matchDuration)}}
     table#score-table.table-bordered
       thead
         tr
@@ -20,7 +20,7 @@
       tbody
         tr(ng-bind-html-unsafe='redtr')
         tr(ng-bind-html-unsafe='blutr')
-  table#stats-table.table.table-striped.table-condensed
+  table#stats-table.table.table-striped.table-bordered
     thead
       tr
         th(ng-class="sortClass('name')", ng-click='sort="name"; reverse=!reverse') Name

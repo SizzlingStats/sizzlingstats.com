@@ -21,12 +21,12 @@ function SideBarCtrl($scope, $http, $routeParams, socket) {
   });
 
   socket.on('matches:update', function(data) {
-    angular.forEach($scope.matches, function(match, index) {
-      if (match._id == data._id) {
-        match = data;
+    for (var i=0, len=$scope.matches.length; i<len; i++) {
+      if ($scope.matches[i]._id == data._id) {
+        $scope.matches[i] = data;
         return;
       }
-    });
+    }
   });
 
   $http.get('/api/matches')
@@ -164,6 +164,12 @@ function StatsCtrl($scope, $routeParams, socket, resolvedData) {
     var denominator = sumArray(denArray);
     if (denominator === 0) return '&infin;';
     return Math.round( (numerator/denominator)*100 )/100;
+  };
+  $scope.secondsToHMS = function(seconds) {
+    var h = parseInt(seconds/3600);
+    var m = parseInt((seconds-h*3600)/60);
+    var s = seconds-h*3600-m*60;
+    return h+':'+('0'+m).slice(-2)+':'+('0'+s).slice(-2);
   };
 }
 StatsCtrl.resolve = {
