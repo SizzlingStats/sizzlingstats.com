@@ -2,6 +2,7 @@
  * Serve JSON to our AngularJS client
  */
 var crypto = require('crypto');
+var util = require('util');
 var cfg = require('../cfg/cfg');
 var STATS_SECRET = process.env.STATS_SECRET || require('../cfg/secrets').stats_secret;
 var Stats = require('../models/stats');
@@ -64,7 +65,8 @@ var matches = function(req, res) {
 
 var addStats = function(req, res) {
   // For debugging
-  console.log(req.body);
+  console.log('addStats headers:', req.headers);
+  console.log(util.inspect(req.body, false, null, true));
 
   // Control flow:
   // 1. Check header for api version
@@ -191,7 +193,6 @@ var gameOver = function(req, res) {
 
     // The request is validated, now set game over
     var matchId = session.matchId;
-    console.log('matchId:', matchId);
 
     Stats.setGameOver(matchId, matchDuration, function(err) {
       if (err) {
