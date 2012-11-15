@@ -50,3 +50,8 @@
         //- th(ng-class="sortClass('stats[17]')", ng-click='sort="stats[22]"; reverse=!reverse'): abbr(title='Bonus Points') BP
     tbody
       tr(ng-repeat='player in stats.players | orderBy:sort:reverse', class='team{{player.team}}', ng-bind-html-unsafe='player.tr')
+  ul#chat-log
+    li(ng-repeat='chat in stats.chats')
+      span {{chat.time}}&nbsp;
+      span(ng-class='{true:"team-message"}[chat.isTeam]') {{refactorThisIdiot(chat.steamid)}}
+      span : {{chat.message}}

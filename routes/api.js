@@ -66,7 +66,7 @@ var matches = function(req, res) {
 var addStats = function(req, res) {
   // For debugging
   console.log('addStats headers:', req.headers);
-  console.log(util.inspect(req.body, false, null, true));
+  console.log('addStats body:', util.inspect(req.body, false, null, true));
 
   // Control flow:
   // 1. Check header for api version
@@ -99,8 +99,6 @@ var addStats = function(req, res) {
         return res.end('false\n');
       }
       matchId = matchCounter.next;
-      // res.setHeader('matchurl', cfg.hosturl + 'match/' +matchId);
-      // res.setHeader('sessionid', sessionid);
 
       // 3. Create new session, match, and stats documents
       new Session({
@@ -130,6 +128,12 @@ var addStats = function(req, res) {
           stats.round = 0;
           stats._id = matchId;
           stats.isLive = true;
+          // Strip the beginning/end quotations from new chat messages
+          if (stats.chats && stats.chats.length !== 0) {
+            stats.chats.forEach(function(chat) {
+              chat.message = chat.message.slice(1,-1);
+            });
+          }
           stats.created = new Date();
 
           new Stats(stats).save(function(e) {
@@ -162,8 +166,6 @@ var addStats = function(req, res) {
           console.log(err);
           return res.end('false\n');
         }
-        res.setHeader('matchurl', cfg.hosturl + 'match/' +matchId);
-        res.setHeader('sessionid', sessionid);
         res.end('true\n');
       });
       
@@ -174,6 +176,7 @@ var addStats = function(req, res) {
 var gameOver = function(req, res) {
   // For debugging
   console.log('gameOver headers:', req.headers);
+  console.log('gameOver body:', util.inspect(req.body, false, null, true));
 
   if (!req.headers.matchduration || req.headers.sizzlingstats !== 'v0.1') {
     return res.end('false\n');

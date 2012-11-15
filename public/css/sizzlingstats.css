@@ -87,6 +87,13 @@ td:first-child, th:first-child {
   padding: 0px 4px;
 }
 
+#chat-log {
+  list-style: none;
+}
+.team-message:after {
+  content: " (team)";
+}
+
 .sort-true {
   color: white;
   /*background-color: #9fbfdf;*/
@@ -112,7 +119,18 @@ td:first-child, th:first-child {
   padding-right: 18px !important;
 }
 
+/* Bootstrap hacks for in-game browser */
 .ingame {
   margin: -60px auto 0;
   width: 900px;
+}
+@media (max-width: 979px) {
+  .ingame {
+    margin-top: 0px;
+  }
+}
+@media (max-width: 767px) {
+  .ingame {
+    margin: 0 -20px;
+  }
 }

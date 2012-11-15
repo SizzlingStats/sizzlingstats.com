@@ -50,16 +50,6 @@ function StatsCtrl($scope, $routeParams, socket, resolvedData) {
     $scope.playerMetaData = data.playerdata;
   });
 
-  // Helpers
-  $scope.sort = 'name';
-  $scope.reverse = false;
-  $scope.sortClass = function(sortColumn) {
-    if ($scope.sort === sortColumn) {
-      return $scope.reverse ? 'sort-true' : 'sort-false';
-    }
-    return '';
-  };
-
   // Watch $scope.stats, recalculate on change
   $scope.$watch("stats", function() {
     var stats = $scope.stats;
@@ -137,6 +127,23 @@ function StatsCtrl($scope, $routeParams, socket, resolvedData) {
   });
 
   // Helpers
+
+  $scope.sort = 'name';
+  $scope.reverse = false;
+  $scope.sortClass = function(sortColumn) {
+    if ($scope.sort === sortColumn) {
+      return $scope.reverse ? 'sort-true' : 'sort-false';
+    }
+    return '';
+  };
+  $scope.refactorThisIdiot = function(steamid) {
+    for (var i=0,len=$scope.stats.players.length; i<len; i++) {
+      if ($scope.stats.players[i].steamid === steamid) {
+        return $scope.stats.players[i].name;
+      }
+    }
+    return 'name not found';
+  };
   var sumArray = function(array) {
     var sum = 0;
     angular.forEach(array, function(value) {

@@ -42,6 +42,12 @@ var statsSchema = new mongoose.Schema({
     ubersdropped: [Number],
     medpicks: [Number]
   }],
+  chats: [{
+    steamid: { type: String, required: true },
+    isTeam: Boolean,
+    time: { type: Number, required: true },
+    message: String
+  }],
   created: { type: Date },
   isLive: { type: Boolean, default: false }
 });
@@ -120,6 +126,15 @@ statsSchema.statics.appendStats = function(newStats, matchId, cb) {
       }
 
     });
+
+    // Strip the beginning/end quotations from new chat messages
+    if (newStats.chats && newStats.chats.length !== 0) {
+      newStats.chats.forEach(function(chat) {
+        chat.message = chat.message.slice(1,-1);
+      });
+      // Append the new chats
+      stats.chats = stats.chats.concat(newStats.chats);
+    }
 
     // Update Stats document
     // Stats.update({_id:stats._id},
