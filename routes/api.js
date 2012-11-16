@@ -105,7 +105,7 @@ var addStats = function(req, res) {
         _id: sessionid,
         matchId: matchId,
         ip: ip,
-        timeout: date + cfg.statsSessionTimeout }).save(function(e) {
+        timeout: date + cfg.stats_session_timeout }).save(function(e) {
         if (e) {
           console.log(e);
           return res.end('false\n');
@@ -135,6 +135,7 @@ var addStats = function(req, res) {
             });
           }
           stats.created = new Date();
+          stats.updated = stats.created;
 
           new Stats(stats).save(function(e) {
             if (e) {
@@ -151,8 +152,8 @@ var addStats = function(req, res) {
       }); // End Session.save()
     }); // End Counter.findOneAndUpdate()
   } else {
-    // Validate sessionid
-    Session.findById(sessionid, function(err, session) {
+    // Validate sessionid and update the timeout
+    Session.findByIdAndUpdate(sessionid, {$set:{timeout: Date.now()+cfg.stats_session_timeout}}, function(err, session) {
       if (err) {
         console.log(err);
         return res.end('false\n');

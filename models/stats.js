@@ -53,6 +53,7 @@ var statsSchema = new mongoose.Schema({
     message: String
   }],
   created: { type: Date },
+  updated: { type: Date },
   isLive: { type: Boolean, default: false }
 });
 
@@ -140,21 +141,13 @@ statsSchema.statics.appendStats = function(newStats, matchId, cb) {
       // Append the new chats
       stats.chats = stats.chats.concat(newStats.chats);
     }
-
-    // Update Stats document
-    // Stats.update({_id:stats._id},
-    //              {$set: {
-    //                 bluscore: stats.bluscore,
-    //                 redscore: stats.redscore,
-    //                 round: round,
-    //                 players: stats.players}
-    //              },
-    //              cb);
-
     
     // Need to set markModified if you don't use
     //  Array.push() to set array elements
     stats.markModified('players');
+
+    stats.updated = new Date();
+    
     // Use Save instead of Update in order to run the
     //  pre 'save' middleware.
     stats.save(cb);

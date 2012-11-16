@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var cfg = require('../cfg/cfg');
 var cronJob = require('cron').CronJob;
 var Stats = require('./stats');
 var Match = require('./match');
@@ -9,7 +10,7 @@ var sessionSchema = new mongoose.Schema({
   _id: String, // sessionid
   ip: String, // Not sure if this is actually a string
   matchId: Number, // Change this to mongoose.Schema.Types.ObjectId?
-  timeout: Number // Numeric date of creation + cfg.statsSessionTimeout
+  timeout: Number // Numeric date of last update + cfg.statsSessionTimeout
 });
 
 sessionSchema.methods.expireSessionKey = function(cb) {
@@ -22,12 +23,15 @@ var Session = mongoose.model('Session', sessionSchema);
 
 module.exports = Session;
 
-// Cron job to expire old session keys every 15 minutes
-var expireSessionKeyJob = new cronJob('0 */15 * * * *', function() {
+// Cron job to expire old session keys every n minutes
+var expireSessionKeyJob = new cronJob('0 */' + cfg.session_expiry_interval + ' * * * *', function() {
 
-  Session.find({ "timeout": { $let: Date.now() } }, function(err, sessions) {
-    if (err || !sessions) {
-      return;
+  Session.find({ "timeout": { $lte: Date.now() } }, function(err, sessions) {
+    if (err) {
+      return console.log(err);
+    }
+    if (!sessions) {
+      return console.log('No sessions found???');
     }
     sessions.forEach(function(session) {
 
@@ -35,7 +39,7 @@ var expireSessionKeyJob = new cronJob('0 */15 * * * *', function() {
         if (err) { console.log(err); }
       });
 
-      Match.setGameOver(session.matchId, null, function(err) {
+      Match.setGameOver(session.matchId, function(err) {
         if (err) { console.log(err); }
       });
 
