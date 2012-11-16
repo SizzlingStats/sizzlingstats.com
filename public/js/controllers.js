@@ -129,7 +129,7 @@ function StatsCtrl($scope, $routeParams, socket, resolvedData) {
       if ($scope.playerMetaData[player.steamid]) {
         avatar = $scope.playerMetaData[player.steamid].avatar;
       }
-      player.tr = '<td class="name"><img src="' + avatar +
+      player.tr = '<td class="name"><img class="team' + player.team + '-avatar" src="' + avatar +
           '" /><span>' + player.name + '</span><td>' + player.stats.join('</td><td>') + '</td>';
     });
   });
@@ -152,13 +152,20 @@ function StatsCtrl($scope, $routeParams, socket, resolvedData) {
     }
     return '';
   };
-  $scope.refactorThisIdiot = function(steamid) {
+  $scope.findChatName = function(steamid) {
     for (var i=0,len=$scope.stats.players.length; i<len; i++) {
       if ($scope.stats.players[i].steamid === steamid) {
         return $scope.stats.players[i].name;
       }
     }
     return 'name not found';
+  };
+  $scope.findChatTeam = function(steamid) {
+    for (var i=0,len=$scope.stats.players.length; i<len; i++) {
+      if ($scope.stats.players[i].steamid === steamid) {
+        return $scope.stats.players[i].team;
+      }
+    }
   };
   var mostPlayedClass = function(mpcArray) {
     // Determine what class was played the most by summing the rounddurations

@@ -182,6 +182,9 @@ var gameOver = function(req, res) {
   if (!req.headers.matchduration || req.headers.sizzlingstats !== 'v0.1') {
     return res.end('false\n');
   }
+
+  var newChats = [];
+  if (req.body.chats) { newChats = req.body.chats; }
   
   var sessionId = req.headers.sessionid;
   var matchDuration = parseInt(req.headers.matchduration, 10);
@@ -198,7 +201,7 @@ var gameOver = function(req, res) {
     // The request is validated, now set game over
     var matchId = session.matchId;
 
-    Stats.setGameOver(matchId, matchDuration, function(err) {
+    Stats.setGameOver(matchId, matchDuration, newChats, function(err) {
       if (err) {
         console.log(err);
         return res.end('false\n');

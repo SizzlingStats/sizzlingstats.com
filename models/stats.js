@@ -133,19 +133,11 @@ statsSchema.statics.appendStats = function(newStats, matchId, cb) {
 
     });
 
-    // Strip the beginning/end quotations from new chat messages
-    if (newStats.chats && newStats.chats.length !== 0) {
-      newStats.chats.forEach(function(chat) {
-        chat.message = chat.message.slice(1,-1);
-      });
-      // Append the new chats
-      stats.chats = stats.chats.concat(newStats.chats);
-    }
-    
-    // Need to set markModified if you don't use
+        // Need to set markModified if you don't use
     //  Array.push() to set array elements
     stats.markModified('players');
 
+    stats.chats = appendChats(newStats.chats, stats.chats);
     stats.updated = new Date();
     
     // Use Save instead of Update in order to run the
@@ -179,7 +171,7 @@ statsSchema.methods.getPlayerData = function(cb) {
   });
 };
 
-statsSchema.statics.setGameOver = function(matchId, matchDuration, cb) {
+statsSchema.statics.setGameOver = function(matchId, matchDuration, newChats, cb) {
   Stats.findById(matchId, function(err, stats) {
     if (err) {
       return cb(err);
@@ -190,9 +182,23 @@ statsSchema.statics.setGameOver = function(matchId, matchDuration, cb) {
 
     if (matchDuration) { stats.matchDuration = matchDuration; }
     stats.isLive = false;
+    stats.chats = appendChats(newChats, stats.chats);
     stats.save(cb);
 
   });
+};
+
+// Helpers
+var appendChats = function(newChats, oldChats) {
+  // Strip the beginning/end quotations from new chat messages
+  if (newChats && newChats.length) {
+    newChats.forEach(function(chat) {
+      chat.message = chat.message.slice(1,-1);
+    });
+    // Append the new chats
+    return oldChats.concat(newChats);
+  }
+  return oldChats;
 };
 
 var Stats = mongoose.model('Stats', statsSchema);
