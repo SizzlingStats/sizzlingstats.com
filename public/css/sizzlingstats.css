@@ -52,14 +52,13 @@ td:first-child, th:first-child {
   line-height: 14px;
 }
 
-.team2 img {
+.team2 td:first-child img {
   border: 3px solid #D06553;
 }
-.team3 img {
+.team3 td:first-child img {
   border: 3px solid #79B3D2;
 }
-
-#stats-table img {
+#stats-table td:first-child img {
   float: left;
   width: 16px;
   height: 16px;
@@ -67,6 +66,10 @@ td:first-child, th:first-child {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
+}
+.class-icon {
+  width: 22px;
+  height: 22px;
 }
 #stats-table th {
   /* black double arrow */

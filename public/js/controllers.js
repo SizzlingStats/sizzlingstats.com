@@ -53,7 +53,7 @@ function StatsCtrl($scope, $routeParams, socket, resolvedData) {
   // Watch $scope.stats, recalculate on change
   $scope.$watch("stats", function() {
     var stats = $scope.stats;
-    var numRounds = stats.redscore.length;
+    var numRounds = $scope.numRounds = stats.redscore.length;
     // Ask sizzling to send only individual round scores instead of cumulative
     // It will make things a lot easier.
     var redScore = $scope.redScore = stats.redscore[numRounds-1];
@@ -95,13 +95,17 @@ function StatsCtrl($scope, $routeParams, socket, resolvedData) {
     // Sum up individual players' stats from each round
     angular.forEach(stats.players, function(player) {
       player.stats = [
+        // Most-played-class icon. ughhhhhhhhh fix this ughhhhh
+        '<img class="class-icon" src="/img/classicons/'+mostPlayedClass(player.mostplayedclass)+'.png"></img>',
         sumArray2(player.points),
-        ratio(player.deaths, true, player.kills, player.killassists), // Frags + Assists / Deaths
+        // Frags + Assists / Deaths
+        ratio(player.deaths, true, player.kills, player.killassists),
         sumArray2(player.kills),
         sumArray2(player.killassists),
         sumArray2(player.deaths),
         sumArray2(player.suicides),
-        ratio(playableTime/60, false, player.damagedone), // Damage Per Minute
+        // Damage Per Minute
+        ratio(playableTime/60, false, player.damagedone),
         sumArray2(player.damagedone),
         sumArray2(player.medpicks),
         sumArray2(player.captures),
@@ -134,6 +138,14 @@ function StatsCtrl($scope, $routeParams, socket, resolvedData) {
 
   $scope.sort = 'name';
   $scope.reverse = false;
+  $scope.sortBy = function(col) {
+    // If previously sorting by 'name', and clicking a different column, then
+    //  set reverse to true.
+    if (col === $scope.sort || ($scope.sort === 'name' && !$scope.reverse) ) {
+      $scope.reverse = !$scope.reverse;
+    }
+    $scope.sort = col;
+  };
   $scope.sortClass = function(sortColumn) {
     if ($scope.sort === sortColumn) {
       return $scope.reverse ? 'sort-true' : 'sort-false';
@@ -147,6 +159,26 @@ function StatsCtrl($scope, $routeParams, socket, resolvedData) {
       }
     }
     return 'name not found';
+  };
+  var mostPlayedClass = function(mpcArray) {
+    // Determine what class was played the most by summing the rounddurations
+    //  for the according tf2class in the "mostplayedclass" array.
+    var totals = [0,0,0,0,0,0,0,0,0,0];
+    for (var i=0; i<$scope.numRounds; i++) {
+      // mpcArray[i] is the index (1-9) of the tf2class that the player played
+      //  the most in the ith round. The index of the max value in totals[] is
+      //  the id of the tf2class that the player played the most in the match.
+      totals[ mpcArray[i] ] += $scope.stats.roundduration[i];
+    }
+    // Find the index of the max value in totals[].
+    var theClass=0, theMax=0;
+    for (var j=0; j<9 ;j++) {
+      if (totals[j] > theMax) {
+        theMax = totals[j];
+        theClass = j;
+      }
+    }
+    return theClass;
   };
   var sumArray = function(array) {
     var sum = 0;
