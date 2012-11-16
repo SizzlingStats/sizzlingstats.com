@@ -60,6 +60,9 @@ function StatsCtrl($scope, $routeParams, socket, resolvedData) {
     var bluScore = $scope.bluScore = stats.bluscore[numRounds-1];
     $scope.scoreComparison = redScore > bluScore ? '>' : redScore < bluScore ? '<' : '==';
 
+    // Total playable time
+    var playableTime = $scope.playableTime = sumArray(stats.roundduration);
+
     // Calculate total damage for each team
     var totalDamage = [0,0,0,0];
     angular.forEach(stats.players, function(player) {
@@ -93,25 +96,26 @@ function StatsCtrl($scope, $routeParams, socket, resolvedData) {
     angular.forEach(stats.players, function(player) {
       player.stats = [
         sumArray2(player.points),
+        ratio(player.deaths, true, player.kills, player.killassists), // Frags + Assists / Deaths
         sumArray2(player.kills),
         sumArray2(player.killassists),
         sumArray2(player.deaths),
-        ratio(player.deaths, player.kills, player.killassists), // Frags + Assists / Deaths
+        sumArray2(player.suicides),
+        ratio(playableTime/60, false, player.damagedone), // Damage Per Minute
         sumArray2(player.damagedone),
         sumArray2(player.medpicks),
         sumArray2(player.captures),
         sumArray2(player.defenses),
-        sumArray2(player.suicides),
         sumArray2(player.dominations),
         sumArray2(player.revenge),
-        sumArray2(player.buildingsbuilt),
-        sumArray2(player.buildingsdestroyed),
         sumArray2(player.headshots),
         sumArray2(player.backstabs),
         sumArray2(player.healsreceived),
         sumArray2(player.healpoints),
         sumArray2(player.invulns),
         sumArray2(player.ubersdropped)
+        // sumArray2(player.buildingsbuilt),
+        // sumArray2(player.buildingsdestroyed),
         // sumArray2(player.crits),
         // sumArray2(player.teleports),
         // sumArray2(player.resupplypoints),
@@ -159,16 +163,20 @@ function StatsCtrl($scope, $routeParams, socket, resolvedData) {
     });
     return sum;
   };
-  var ratio = function(denArray, numArray1, numArray2) {
-    if (!numArray1.length || !numArray2.length) return '-'; // this is a hack
-    var numerator;
-    if (!numArray2) {
+  var ratio = function(den, denIsArray, numArray1, numArray2) {
+    if (!numArray1.length) return '-'; // this is a hack
+    var numerator, denominator;
+    if (!numArray2 || !numArray2.length) {
       numerator = sumArray(numArray1);
     } else {
       numerator = sumArray(numArray1) + sumArray(numArray2);
     }
     if (numerator === 0) return 0;
-    var denominator = sumArray(denArray);
+    if (denIsArray) {
+      denominator = sumArray(den);
+    } else {
+      denominator = den;
+    }
     if (denominator === 0) return '&infin;';
     return Math.round( (numerator/denominator)*100 )/100;
   };
@@ -176,6 +184,7 @@ function StatsCtrl($scope, $routeParams, socket, resolvedData) {
     var h = parseInt(seconds/3600);
     var m = parseInt((seconds-h*3600)/60);
     var s = seconds-h*3600-m*60;
+    if (h === 0) { return ('0'+m).slice(-2)+':'+('0'+s).slice(-2); }
     return h+':'+('0'+m).slice(-2)+':'+('0'+s).slice(-2);
   };
 }

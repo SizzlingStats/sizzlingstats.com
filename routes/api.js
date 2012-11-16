@@ -49,7 +49,7 @@ var stats = function(req, res) {
 };
 
 var matches = function(req, res) {
-  Match.find({}).sort({_id:-1}).limit(10).exec(function(err, matches) {
+  Match.find({}).sort({_id:-1}).limit(15).exec(function(err, matches) {
     if (err) {
       console.log(err);
       return res.json(false);

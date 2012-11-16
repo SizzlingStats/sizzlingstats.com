@@ -10,6 +10,8 @@ var statsSchema = new mongoose.Schema({
   bluscore: { type: [Number], required: true },
   redscore: { type: [Number], required: true },
   hostname: String,
+  // Duration of round, in seconds. Playable time only (humiliation time doesn't count)
+  roundduration: { type: [Number], required: true },
   // Duration of match, in seconds. Only exists after gameover event is sent
   matchDuration: Number,
   map: { type: String, required: true },
@@ -18,6 +20,8 @@ var statsSchema = new mongoose.Schema({
     steamid: { type: String, required: true },
     team: { type: Number, required: true },
     name: String,
+    mostplayedclass: [Number],
+    playedclasses: [Number],
     kills: [Number],
     killassists: [Number],
     deaths: [Number],
@@ -81,6 +85,7 @@ statsSchema.statics.appendStats = function(newStats, matchId, cb) {
     var round = stats.round += 1;
     stats.bluscore.push(newStats.bluscore);
     stats.redscore.push(newStats.redscore);
+    stats.roundduration.push(newStats.roundduration);
 
     newStats.players.forEach(function(player) {
       var isNewPlayer = true;
