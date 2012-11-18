@@ -35,7 +35,7 @@ var expireSessionKeyJob = new cronJob('0 */' + cfg.session_expiry_interval + ' *
     }
     sessions.forEach(function(session) {
 
-      Stats.setGameOver(session.matchId, null, function(err) {
+      Stats.setGameOver(session.matchId, null, null, function(err) {
         if (err) { console.log(err); }
       });
 
