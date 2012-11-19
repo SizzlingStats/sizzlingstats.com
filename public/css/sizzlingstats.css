@@ -1,4 +1,5 @@
 /* sizzlingstats css stylesheet */
+[ng-cloak],.ng-cloak{display:none}
 
 div.container-fluid {
   max-width: 1200px;
@@ -13,7 +14,7 @@ div.container-fluid {
   position: relative;
   display: inline;
   padding: 8px 14px;
-  left: 63%;
+  left: 29%;
   margin-left: -25px;
 }
 .center {

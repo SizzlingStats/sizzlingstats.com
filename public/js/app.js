@@ -1,32 +1,24 @@
 'use strict';
 
-
 // Declare app level module which depends on filters, and services
 // var app = angular.module('myApp', ['myApp.filters', 'myApp.services', 'myApp.directives']).
 var app = angular.module('myApp', ['myApp.services']).
   config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
     $routeProvider
-      .when('/match/:id', {
+      .when('/stats', {
         templateUrl: 'partials/stats',
         controller: StatsCtrl,
-        resolve: StatsCtrl.resolve
+        resolve: StatsCtrl.resolve,
+        reloadOnSearch: false
       })
       .when('/about', {
-        templateUrl: 'partials/about'
-        // controller: AboutCtrl
+        templateUrl: 'partials/about',
+        reloadOnSearch: true
       })
-      // .when('/view1', {
-      //   templateUrl: 'partials/partial1',
-      //   controller: MyCtrl1
-      // })
-      // .when('/view2', {
-      //   templateUrl: 'partials/partial2',
-      //   controller: MyCtrl2
-      // })
       .otherwise({
         redirectTo: '/',
-        templateUrl: 'partials/home'
-        // controller: HomeCtrl
+        templateUrl: 'partials/home',
+        reloadOnSearch: true
       });
     $locationProvider.html5Mode(true);
   }]);

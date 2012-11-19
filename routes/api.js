@@ -144,7 +144,7 @@ var addStats = function(req, res) {
             }
             statsEmitter.emit('newMatch', newMatch);
 
-            res.setHeader('matchurl', cfg.hosturl + 'match/' + matchId + '?ingame');
+            res.setHeader('matchurl', cfg.hosturl + 'stats?id=' + matchId + '&ingame');
             res.setHeader('sessionid', sessionid);
             return res.end('true\n');
           }); // End Stats.save()

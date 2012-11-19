@@ -6,12 +6,12 @@ function MainCtrl($scope, $location, $rootScope) {
   $scope.path = function() {
     return $location.path();
   };
-  $scope.loading = false;
+  $rootScope.loading = false;
   $rootScope.$on('$routeChangeStart', function() {
-    $scope.loading = true;
+    $rootScope.loading = true;
   });
   $rootScope.$on('$routeChangeSuccess', function() {
-    $scope.loading = false;
+    $rootScope.loading = false;
   });
 }
 
@@ -39,20 +39,52 @@ function SideBarCtrl($scope, $http, $routeParams, socket) {
   };
 }
 
-function StatsCtrl($scope, $routeParams, socket, resolvedData) {
-  $scope.stats = resolvedData.stats;
-  $scope.playerMetaData = resolvedData.playerdata;
+function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
+  var firstLoad = true;
 
-  // Socket.io
-  socket.emit('stats:subscribe', $routeParams.id);
-  socket.on('stats:send', function (data) {
-    $scope.stats = data.stats;
-    $scope.playerMetaData = data.playerdata;
+  $scope.location = $location;
+  $scope.$watch("location.search().id", function (val, old) {
+    if (!val) { return; }
+    // We don't want to request the data again if the controller just loaded.
+    //  If we click away from the original stats, then set firstLoad to false.
+    //  Otherwise if firstLoad == true, exit.
+    if (old && val !== old) {
+      firstLoad = false;
+    }
+    if (firstLoad) { return; }
+
+    $rootScope.loading = true;
+
+    $http({
+      method: 'GET',
+      url: '/api/stats/' + val
+    }).success(function(data) {
+      $rootScope.loading = false;
+      calculateStats(data);
+    });
+
+    socket.emit('stats:subscribe', val);
   });
 
-  // Watch $scope.stats, recalculate on change
-  $scope.$watch("stats", function() {
-    var stats = $scope.stats;
+  socket.on('stats:send', function (data) {
+    calculateStats(data);
+  });
+
+  var calculateStats = function(data) {
+    // Stupid placeholder object for when things go wrong
+    if (data === 'false') {
+      data = { stats: {
+        redname: 'RED',
+        bluname: 'BLU',
+        redscore: [0],
+        bluscore: [0],
+        players: []
+      }};
+    }
+    var stats = $scope.stats = data.stats;
+    $scope.playerMetaData = data.playerdata;
+    fillOutPlayerMetaData();
+
     var numRounds = $scope.numRounds = stats.redscore.length;
     // Ask sizzling to send only individual round scores instead of cumulative
     // It will make things a lot easier.
@@ -125,14 +157,10 @@ function StatsCtrl($scope, $routeParams, socket, resolvedData) {
         // sumArray2(player.resupplypoints),
         // sumArray2(player.bonuspoints),
       ];
-      var avatar = '';
-      if ($scope.playerMetaData[player.steamid]) {
-        avatar = $scope.playerMetaData[player.steamid].avatar;
-      }
-      player.tr = '<td class="name"><img class="team' + player.team + '-avatar" src="' + avatar +
+      player.tr = '<td class="name"><img class="team' + player.team + '-avatar" src="' + (player.avatar || '') +
           '" /><span>' + player.name + '</span><td>' + player.stats.join('</td><td>') + '</td>';
     });
-  });
+  };
 
   // Helpers
 
@@ -152,18 +180,14 @@ function StatsCtrl($scope, $routeParams, socket, resolvedData) {
     }
     return '';
   };
-  $scope.findChatName = function(steamid) {
-    for (var i=0,len=$scope.stats.players.length; i<len; i++) {
-      if ($scope.stats.players[i].steamid === steamid) {
-        return $scope.stats.players[i].name;
-      }
-    }
-    return 'name not found';
-  };
-  $scope.findChatTeam = function(steamid) {
-    for (var i=0,len=$scope.stats.players.length; i<len; i++) {
-      if ($scope.stats.players[i].steamid === steamid) {
-        return $scope.stats.players[i].team;
+  var fillOutPlayerMetaData = function() {
+    for (var i=0,player; player=$scope.stats.players[i]; i++) {
+      var steamid = player.steamid;
+
+      if ($scope.playerMetaData[steamid]) {
+        $scope.playerMetaData[steamid].name = player.name;
+        $scope.playerMetaData[steamid].team = player.team;
+        player.avatar = $scope.playerMetaData[steamid].avatar;
       }
     }
   };
@@ -226,11 +250,15 @@ function StatsCtrl($scope, $routeParams, socket, resolvedData) {
     if (h === 0) { return ('0'+m).slice(-2)+':'+('0'+s).slice(-2); }
     return h+':'+('0'+m).slice(-2)+':'+('0'+s).slice(-2);
   };
+
+  // The very first time you load the controller, use the resolvedData.
+  calculateStats(resolvedData);
 }
+// This is for the first time you load the controller
+//  -- so that you don't see all the empty divs and tables.
 StatsCtrl.resolve = {
   resolvedData: function($q, $http, $route) {
     var deferred = $q.defer();
-
     $http({
       method: 'GET',
       url: '/api/stats/' + $route.current.params.id

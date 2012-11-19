@@ -58,6 +58,6 @@
   ul#chat-log
     li(ng-repeat='chat in stats.chats')
       span.chat-time {{secondsToHMS(chat.time)}}&nbsp;
-      span.chat-name(ng-class='{true:"team-message"}[chat.isTeam]', class='team{{findChatTeam(chat.steamid)}}')
-        b {{findChatName(chat.steamid)}}
+      span.chat-name(ng-class='{true:"team-message"}[chat.isTeam]', class='team{{playerMetaData[chat.steamid].team}}')
+        b {{playerMetaData[chat.steamid].name}}
       span.chat-message : {{chat.message}}
