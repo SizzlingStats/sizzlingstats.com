@@ -78,15 +78,17 @@ statsSchema.pre('save', function(next) {
 });
 
 
-statsSchema.statics.appendStats = function(newStats, matchId, cb) {
+statsSchema.statics.appendStats = function(newStats, matchId, isEndOfRound, cb) {
   Stats.findById(matchId, function(err, stats) {
     if (err) return cb(err);
     if (!stats) return cb(new Error('Stats not found'));
 
-    var round = stats.round += 1;
-    stats.bluscore.push(newStats.bluscore);
-    stats.redscore.push(newStats.redscore);
-    stats.roundduration.push(newStats.roundduration);
+    var round = stats.round;
+
+    // if (isEndOfRound) {
+      stats.bluscore[round] = newStats.bluscore;
+      stats.redscore[round] = newStats.redscore;
+    // }
 
     newStats.players.forEach(function(player) {
       var isNewPlayer = true;
@@ -98,8 +100,18 @@ statsSchema.statics.appendStats = function(newStats, matchId, cb) {
           isNewPlayer = false;
           
           for (var field in player) {
-            if (field !== "steamid" && field !== "team" && field !== "name") {
-              if (oldPlayer[field]) oldPlayer[field][round] = player[field];
+            if (field === "mostplayedclass" || field === "playedclasses") {
+              if (oldPlayer[field]) {
+                oldPlayer[field][round] = player[field];
+              }
+            } else if (field !== "steamid" && field !== "team" && field !== "name") {
+              if (oldPlayer[field]) {
+                if (oldPlayer[field][round]) {
+                  oldPlayer[field][round] += player[field];
+                } else {
+                  oldPlayer[field][round] = player[field];
+                }
+              }
             }
           }
 
@@ -133,11 +145,18 @@ statsSchema.statics.appendStats = function(newStats, matchId, cb) {
 
     });
 
-        // Need to set markModified if you don't use
+    // Need to set markModified if you don't use
     //  Array.push() to set array elements
     stats.markModified('players');
 
+    stats.roundduration[round] = newStats.roundduration;
+    stats.markModified('roundduration');
+    stats.markModified('redscore');
+    stats.markModified('bluscore');
+
     stats.chats = appendChats(newStats.chats, stats.chats);
+    if (isEndOfRound) { stats.round += 1; }
+
     stats.updated = new Date();
     
     // Use Save instead of Update in order to run the
@@ -191,9 +210,11 @@ statsSchema.statics.setGameOver = function(matchId, matchDuration, newChats, cb)
 // Helpers
 var appendChats = function(newChats, oldChats) {
   // Strip the beginning/end quotations from new chat messages
-  if (newChats && newChats.length) {
+  if (Array.isArray(newChats)) {
     newChats.forEach(function(chat) {
-      chat.message = chat.message.slice(1,-1);
+      if (chat.message && chat.message[0] === '"' && chat.message[chat.message.length-1] === '"') {
+        chat.message = chat.message.slice(1,-1);
+      }
     });
     // Append the new chats
     return oldChats.concat(newChats);

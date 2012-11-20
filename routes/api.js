@@ -18,7 +18,8 @@ module.exports = function(app) {
   app.get('/api/stats/:id', stats);
   app.get('/api/matches', matches);
 
-  app.post('/api/stats', addStats);
+  app.post('/api/stats/new', createStats);
+  app.post('/api/stats/update', updateStats);
   app.post('/api/stats/gameover', gameOver);
 };
 
@@ -63,115 +64,127 @@ var matches = function(req, res) {
 
 // POST
 
-var addStats = function(req, res) {
+var createStats = function(req, res) {
   // For debugging
-  console.log('addStats headers:', req.headers);
-  console.log('addStats body:', util.inspect(req.body, false, null, true));
+  console.log('createStats headers:', req.headers);
+  console.log('createStats body:', util.inspect(req.body, false, null, true));
 
-  // Control flow:
   // 1. Check header for api version
   if (!req.body.stats || req.headers.sizzlingstats !== 'v0.1') {
     return res.end('false\n');
   }
   
-  // 2. Check header for sessionid, generate session if needed.
-  // If sessionid is supplied, validate it.
-  // 3. Then insert stats into database.
-  var sessionid = req.headers.sessionid;
+  // 2. Generate sessionid.
+  var sessionId, matchId;
   var ip = req.connection.remoteAddress;
-  var matchId;
-  if (!sessionid) {
-    // We probably need some more/better information in the hmac
-    var date = Date.now();
-    var hmac = crypto.createHmac('sha1',STATS_SECRET);
-    hmac.update(ip + date);
-    sessionid = hmac.digest('hex');
 
-    // Get matchId
-    Counter.findOneAndUpdate({ "counter" : "matches" },
-                             { $inc: {next:1} },
-                             function(err, matchCounter) {
-      if (err) {
-        console.log(err);
+  // We probably need some more/better information in the hmac
+  var date = Date.now();
+  var hmac = crypto.createHmac('sha1',STATS_SECRET);
+  hmac.update(ip + date);
+  sessionId = hmac.digest('hex');
+
+  // 3. Then insert stats into database.
+  // Get matchId
+  Counter.findOneAndUpdate({ "counter" : "matches" },
+                           { $inc: {next:1} },
+                           function(err, matchCounter) {
+    if (err) {
+      console.log(err);
+      return res.end('false\n');
+    }
+    if (!matchCounter) {
+      return res.end('false\n');
+    }
+    matchId = matchCounter.next;
+
+    // 3. Create new session, match, and stats documents
+    new Session({
+      _id: sessionId,
+      matchId: matchId,
+      ip: ip,
+      timeout: date + cfg.stats_session_timeout }).save(function(e) {
+      if (e) {
+        console.log(e);
         return res.end('false\n');
       }
-      if (!matchCounter) {
-        return res.end('false\n');
-      }
-      matchId = matchCounter.next;
 
-      // 3. Create new session, match, and stats documents
-      new Session({
-        _id: sessionid,
-        matchId: matchId,
-        ip: ip,
-        timeout: date + cfg.stats_session_timeout }).save(function(e) {
+      newMatch = {
+        _id: matchId,
+        hostname: req.body.stats.hostname,
+        bluname: req.body.stats.bluname,
+        redname: req.body.stats.redname,
+        isLive: true
+      };
+      new Match(newMatch).save(function(e) {
         if (e) {
           console.log(e);
           return res.end('false\n');
         }
 
-        newMatch = {
-          _id: matchId,
-          hostname: req.body.stats.hostname,
-          bluname: req.body.stats.bluname,
-          redname: req.body.stats.redname,
-          isLive: true
-        };
-        new Match(newMatch).save(function(e) {
+        var stats = req.body.stats;
+        stats.round = 0;
+        stats.redscore = 0;
+        stats.bluscore = 0;
+        stats.roundduration = 0;
+        stats._id = matchId;
+        stats.isLive = true;
+        stats.created = new Date();
+        stats.updated = stats.created;
+
+        new Stats(stats).save(function(e) {
           if (e) {
             console.log(e);
             return res.end('false\n');
           }
+          statsEmitter.emit('newMatch', newMatch);
 
-          var stats = req.body.stats;
-          stats.round = 0;
-          stats._id = matchId;
-          stats.isLive = true;
-          // Strip the beginning/end quotations from new chat messages
-          if (stats.chats && stats.chats.length !== 0) {
-            stats.chats.forEach(function(chat) {
-              chat.message = chat.message.slice(1,-1);
-            });
-          }
-          stats.created = new Date();
-          stats.updated = stats.created;
+          res.setHeader('matchurl', cfg.hosturl + 'stats?id=' + matchId + '&ingame');
+          res.setHeader('sessionid', sessionId);
+          return res.end('true\n');
+        }); // End Stats.save()
+      }); // End Match.save()
+    }); // End Session.save()
+  }); // End Counter.findOneAndUpdate()
+};
 
-          new Stats(stats).save(function(e) {
-            if (e) {
-              console.log(e);
-              return res.end('false\n');
-            }
-            statsEmitter.emit('newMatch', newMatch);
+var updateStats = function(req, res) {
+  // For debugging
+  console.log('updateStats headers:', req.headers);
+  console.log('updateStats body:', util.inspect(req.body, false, null, true));
 
-            res.setHeader('matchurl', cfg.hosturl + 'stats?id=' + matchId + '&ingame');
-            res.setHeader('sessionid', sessionid);
-            return res.end('true\n');
-          }); // End Stats.save()
-        }); // End Match.save()
-      }); // End Session.save()
-    }); // End Counter.findOneAndUpdate()
-  } else {
-    // Validate sessionid and update the timeout
-    Session.findByIdAndUpdate(sessionid, {$set:{timeout: Date.now()+cfg.stats_session_timeout}}, function(err, session) {
+  if (!req.body.stats || req.headers.sizzlingstats !== 'v0.1') {
+    return res.end('false\n');
+  }
+
+  var sessionId = req.headers.sessionid;
+  if (!sessionId) {
+    return res.end('false\n');
+  }
+
+  var isEndOfRound = (req.headers.endofround === 'true');
+  var ip = req.connection.remoteAddress;
+  var matchId;
+
+  // Validate sessionid and update the timeout
+  Session.findByIdAndUpdate(sessionId, {$set:{timeout: Date.now()+cfg.stats_session_timeout}}, function(err, session) {
+    if (err) {
+      console.log(err);
+      return res.end('false\n');
+    }
+    if (!session || ip !== session.ip) return res.end('false\n');
+
+    // The request is validated, now we have to append the new data to the old
+    matchId = session.matchId;
+    Stats.appendStats(req.body.stats, matchId, isEndOfRound, function(err) {
       if (err) {
         console.log(err);
         return res.end('false\n');
       }
-      if (!session || ip !== session.ip) return res.end('false\n');
-
-      // The request is validated, now we have to append the new data to the old
-      matchId = session.matchId;
-      Stats.appendStats(req.body.stats, matchId, function(err) {
-        if (err) {
-          console.log(err);
-          return res.end('false\n');
-        }
-        res.end('true\n');
-      });
-      
-    }); // end Session.findById()
-  } // end else
+      res.end('true\n');
+    });
+    
+  }); // end Session.findById()
 };
 
 var gameOver = function(req, res) {
