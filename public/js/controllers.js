@@ -124,11 +124,10 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
     $scope.blutr = '<td class="blu">' + stats.bluname + '</td><td>' +
                     bluRoundScores.join('</td><td>') + '</td>';
 
-    // Sum up individual players' stats from each round
+    // Calculate individual players' stats from the select range of rounds
     angular.forEach(stats.players, function(player) {
+      player.mostPlayedClass = mostPlayedClass(player.mostplayedclass);
       player.stats = [
-        // Most-played-class icon. ughhhhhhhhh fix this ughhhhh
-        '<img class="class-icon" src="/img/classicons/'+mostPlayedClass(player.mostplayedclass)+'.png"></img>',
         sumArray2(player.points),
         // Frags + Assists / Deaths
         ratio(player.deaths, true, player.kills, player.killassists),
@@ -146,10 +145,7 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
         sumArray2(player.revenge),
         sumArray2(player.headshots),
         sumArray2(player.backstabs),
-        sumArray2(player.healsreceived),
-        sumArray2(player.healpoints),
-        sumArray2(player.invulns),
-        sumArray2(player.ubersdropped)
+        sumArray2(player.healsreceived)
         // sumArray2(player.buildingsbuilt),
         // sumArray2(player.buildingsdestroyed),
         // sumArray2(player.crits),
@@ -158,25 +154,43 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
         // sumArray2(player.bonuspoints),
       ];
       player.tr = '<td class="name"><img class="team' + player.team + '-avatar" src="' + (player.avatar || '') +
-          '" /><span>' + player.name + '</span><td>' + player.stats.join('</td><td>') + '</td>';
+          '" /><span>' + player.name + '</span><td><img class="class-icon" src="/img/classicons/' +
+          player.mostPlayedClass + '.png"></img><td>' + player.stats.join('</td><td>') + '</td>';
+      // Additional medic-specific stats
+      if (player.mostPlayedClass == 5) {
+        player.medicStats = [
+          sumArray2(player.healpoints),
+          sumArray2(player.invulns),
+          sumArray2(player.ubersdropped)
+        ];
+        player.medictr = '<td class="name"><img class="team' + player.team + '-avatar" src="' + (player.avatar || '') +
+            '" /><span>' + player.name + '</span><td><img class="class-icon" src="/img/classicons/' +
+          player.mostPlayedClass + '.png"></img><td>' + player.medicStats.join('</td><td>') + '</td>';
+      }
     });
   };
 
   // Helpers
 
-  $scope.sort = 'name';
-  $scope.reverse = false;
-  $scope.sortBy = function(col) {
+  $scope.overallSort = 'name';
+  $scope.overallReverse = false;
+  $scope.medicSort = 'name';
+  $scope.medicReverse = false;
+  $scope.sortBy = function(col, tableName) {
     // If previously sorting by 'name', and clicking a different column, then
     //  set reverse to true.
-    if (col === $scope.sort || ($scope.sort === 'name' && !$scope.reverse) ) {
-      $scope.reverse = !$scope.reverse;
+    var sort = tableName+'Sort';
+    var rev = tableName+'Reverse';
+    if (col === $scope[sort] || ($scope[sort] === 'name' && !$scope[rev]) ) {
+      $scope[rev] = !$scope[rev];
     }
-    $scope.sort = col;
+    $scope[sort] = col;
   };
-  $scope.sortClass = function(sortColumn) {
-    if ($scope.sort === sortColumn) {
-      return $scope.reverse ? 'sort-true' : 'sort-false';
+  $scope.sortClass = function(col, tableName) {
+    var sort = tableName+'Sort';
+    var rev = tableName+'Reverse';
+    if ($scope[sort] === col) {
+      return $scope[rev] ? 'sort-true' : 'sort-false';
     }
     return '';
   };

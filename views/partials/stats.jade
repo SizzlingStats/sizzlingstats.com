@@ -23,30 +23,27 @@
       tbody
         tr(ng-bind-html-unsafe='redtr')
         tr(ng-bind-html-unsafe='blutr')
-  table#stats-table.table.table-striped.table-bordered
+  table.stats-table.table.table-striped.table-bordered
     thead
       tr
-        th(ng-class="sortClass('name')", ng-click='sortBy("name")') Name
-        th(ng-class="sortClass('stats[0]')", ng-click='sortBy("stats[0]")'): abbr(title='Most Played Class') C
-        th(ng-class="sortClass('stats[1]')", ng-click='sortBy("stats[1]")'): abbr(title='Points') P
-        th(ng-class="sortClass('stats[2]')", ng-click='sortBy("stats[2]")'): abbr(title='Frags+Assists Per Death') FA/D
-        th(ng-class="sortClass('stats[3]')", ng-click='sortBy("stats[3]")'): abbr(title='Frags') F
-        th(ng-class="sortClass('stats[4]')", ng-click='sortBy("stats[4]")'): abbr(title='Assists') A
-        th(ng-class="sortClass('stats[5]')", ng-click='sortBy("stats[5]")'): abbr(title='Deaths') D
-        th(ng-class="sortClass('stats[6]')", ng-click='sortBy("stats[6]")'): abbr(title='Suicides') S
-        th(ng-class="sortClass('stats[7]')", ng-click='sortBy("stats[7]")'): abbr(title='Damage Per Minute') DPM
-        th(ng-class="sortClass('stats[8]')", ng-click='sortBy("stats[8]")'): abbr(title='Damage') DMG
-        th(ng-class="sortClass('stats[9]')", ng-click='sortBy("stats[9]")'): abbr(title='Medic Picks') MP
-        th(ng-class="sortClass('stats[10]')", ng-click='sortBy("stats[10]")'): abbr(title='Capture Points Captured') CPC
-        th(ng-class="sortClass('stats[11]')", ng-click='sortBy("stats[11]")'): abbr(title='Capture Points Blocked') CPB
-        th(ng-class="sortClass('stats[12]')", ng-click='sortBy("stats[12]")'): abbr(title='Dominations') DOM
-        th(ng-class="sortClass('stats[13]')", ng-click='sortBy("stats[13]")'): abbr(title='Revenges') REV
-        th(ng-class="sortClass('stats[14]')", ng-click='sortBy("stats[14]")'): abbr(title='Headshots') HS
-        th(ng-class="sortClass('stats[15]')", ng-click='sortBy("stats[15]")'): abbr(title='Backstabs') BS
-        th(ng-class="sortClass('stats[16]')", ng-click='sortBy("stats[16]")'): abbr(title='Heals Received') HR
-        th(ng-class="sortClass('stats[17]')", ng-click='sortBy("stats[17]")'): abbr(title='Heals Given') H
-        th(ng-class="sortClass('stats[18]')", ng-click='sortBy("stats[18]")'): abbr(title='Ubers') U
-        th(ng-class="sortClass('stats[19]')", ng-click='sortBy("stats[19]")'): abbr(title='Ubers Dropped') UD
+        th(ng-class="sortClass('name','overall')", ng-click="sortBy('name','overall')") Name
+        th(ng-class="sortClass('mostPlayedClass','overall')", ng-click="sortBy('mostPlayedClass','overall')"): abbr(title='Most Played Class') C
+        th(ng-class="sortClass('stats[0]','overall')", ng-click="sortBy('stats[0]','overall')"): abbr(title='Points') P
+        th(ng-class="sortClass('stats[1]','overall')", ng-click="sortBy('stats[1]','overall')"): abbr(title='Frags+Assists Per Death') FA/D
+        th(ng-class="sortClass('stats[2]','overall')", ng-click="sortBy('stats[2]','overall')"): abbr(title='Frags') F
+        th(ng-class="sortClass('stats[3]','overall')", ng-click="sortBy('stats[3]','overall')"): abbr(title='Assists') A
+        th(ng-class="sortClass('stats[4]','overall')", ng-click="sortBy('stats[4]','overall')"): abbr(title='Deaths') D
+        th(ng-class="sortClass('stats[5]','overall')", ng-click="sortBy('stats[5]','overall')"): abbr(title='Suicides') S
+        th(ng-class="sortClass('stats[6]','overall')", ng-click="sortBy('stats[6]','overall')"): abbr(title='Damage Per Minute') DPM
+        th(ng-class="sortClass('stats[7]','overall')", ng-click="sortBy('stats[7]','overall')"): abbr(title='Damage') DMG
+        th(ng-class="sortClass('stats[8]','overall')", ng-click="sortBy('stats[8]','overall')"): abbr(title='Medic Picks') MP
+        th(ng-class="sortClass('stats[9]','overall')", ng-click="sortBy('stats[9]','overall')"): abbr(title='Capture Points Captured') CPC
+        th(ng-class="sortClass('stats[10]','overall')", ng-click="sortBy('stats[10]','overall')"): abbr(title='Capture Points Blocked') CPB
+        th(ng-class="sortClass('stats[11]','overall')", ng-click="sortBy('stats[11]','overall')"): abbr(title='Dominations') DOM
+        th(ng-class="sortClass('stats[12]','overall')", ng-click="sortBy('stats[12]','overall')"): abbr(title='Revenges') REV
+        th(ng-class="sortClass('stats[13]','overall')", ng-click="sortBy('stats[13]','overall')"): abbr(title='Headshots') HS
+        th(ng-class="sortClass('stats[14]','overall')", ng-click="sortBy('stats[14]','overall')"): abbr(title='Backstabs') BS
+        th(ng-class="sortClass('stats[15]','overall')", ng-click="sortBy('stats[15]','overall')"): abbr(title='Heals Received') HR
         //- th(ng-class="sortClass('stats[13]')", ng-click='sortBy("stats[13]")'): abbr(title='BuildingsBuilt') BB
         //- th(ng-class="sortClass('stats[14]')", ng-click='sortBy("stats[14]")'): abbr(title='BuildingsDestroyed') BD
         //- th(ng-class="sortClass('stats[15]')", ng-click='sortBy("stats[15]")'): abbr(title='Crits') C
@@ -54,7 +51,18 @@
         //- th(ng-class="sortClass('stats[16]')", ng-click='sortBy("stats[21]")'): abbr(title='Resupply Points') RP
         //- th(ng-class="sortClass('stats[17]')", ng-click='sortBy("stats[22]")'): abbr(title='Bonus Points') BP
     tbody
-      tr(ng-repeat='player in stats.players | orderBy:sort:reverse', ng-bind-html-unsafe='player.tr')
+      tr(ng-repeat='player in stats.players | orderBy:overallSort:overallReverse', ng-bind-html-unsafe='player.tr')
+  .asdfdsa
+    table.stats-table.table.table-striped.table-bordered
+      thead
+        tr
+          th(ng-class="sortClass('name','medic')", ng-click="sortBy('name','medic')") Name
+          th(ng-class="sortClass('mostPlayedClass','medic')", ng-click="sortBy('mostPlayedClass','medic')"): abbr(title='Most Played Class') C
+          th(ng-class="sortClass('stats[0]','medic')", ng-click="sortBy('stats[0]','medic')"): abbr(title='Heals Given') H
+          th(ng-class="sortClass('stats[1]','medic')", ng-click="sortBy('stats[1]','medic')"): abbr(title='Ubers') U
+          th(ng-class="sortClass('stats[2]','medic')", ng-click="sortBy('stats[2]','medic')"): abbr(title='Ubers Dropped') UD
+      tbody
+        tr(ng-repeat='player in stats.players | orderBy:medicSort:medicReverse', ng-bind-html-unsafe='player.medictr')
   ul#chat-log
     li(ng-repeat='chat in stats.chats')
       span.chat-time {{secondsToHMS(chat.time)}}&nbsp;
