@@ -139,13 +139,13 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
         ratio(playableTime/60, false, player.damagedone),
         sumArray2(player.damagedone),
         sumArray2(player.medpicks),
+        sumArray2(player.healsreceived),
         sumArray2(player.captures),
         sumArray2(player.defenses),
         sumArray2(player.dominations),
         sumArray2(player.revenge),
         sumArray2(player.headshots),
-        sumArray2(player.backstabs),
-        sumArray2(player.healsreceived)
+        sumArray2(player.backstabs)
         // sumArray2(player.buildingsbuilt),
         // sumArray2(player.buildingsdestroyed),
         // sumArray2(player.crits),
@@ -164,8 +164,7 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
           sumArray2(player.ubersdropped)
         ];
         player.medictr = '<td class="name"><img class="team' + player.team + '-avatar" src="' + (player.avatar || '') +
-            '" /><span>' + player.name + '</span><td><img class="class-icon" src="/img/classicons/' +
-          player.mostPlayedClass + '.png"></img><td>' + player.medicStats.join('</td><td>') + '</td>';
+            '" /><span>' + player.name + '</span><td>' + player.medicStats.join('</td><td>') + '</td>';
       }
     });
   };
@@ -193,6 +192,10 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
       return $scope[rev] ? 'sort-true' : 'sort-false';
     }
     return '';
+  };
+  $scope.separateTeams = false;
+  $scope.separateTeamsPredicate = function() {
+    return $scope.separateTeams ? ( ($scope.overallReverse ? '-' : '+') + 'team' ) : '';
   };
   var fillOutPlayerMetaData = function() {
     for (var i=0,player; player=$scope.stats.players[i]; i++) {

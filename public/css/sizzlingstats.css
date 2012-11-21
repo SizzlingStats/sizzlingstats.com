@@ -71,6 +71,9 @@ td:first-child, th:first-child {
   border-top-color: #DDD;
   line-height: 14px;
 }
+.overall-stats-nav a {
+  min-width: 0 !important;
+}
 .team2 {
   color: #D06553;
 }
