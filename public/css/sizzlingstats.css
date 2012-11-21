@@ -48,6 +48,11 @@ td:first-child, th:first-child {
   text-align: left !important;
 }
 
+.flag {
+  vertical-align: text-top;
+  margin-right: 0.1em;
+}
+
 .big-score {
   margin-bottom: -6px;
 }
@@ -96,7 +101,7 @@ td:first-child, th:first-child {
   border-radius: 4px;
 }
 #overall-stats td:nth-child(2) {
-  padding: 0;
+  padding: 1px;
 }
 .class-icon {
   width: 20px;

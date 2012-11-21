@@ -5,10 +5,12 @@ var statsEmitter = require('../emitters').statsEmitter;
 // Mongoose Bullshit
 var statsSchema = new mongoose.Schema({
   _id: { type: Number, required: true }, // matchId
-  bluname: String,
   redname: String,
-  bluscore: { type: [Number], required: true },
+  bluname: String,
   redscore: { type: [Number], required: true },
+  bluscore: { type: [Number], required: true },
+  redCountry: String,
+  bluCountry: String,
   hostname: String,
   // Duration of round, in seconds. Playable time only (humiliation time doesn't count)
   roundduration: { type: [Number], required: true },

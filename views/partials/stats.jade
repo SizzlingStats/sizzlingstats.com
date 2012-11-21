@@ -1,11 +1,14 @@
 #stats
   .center
     h2.big-score
+      img.flag(ng-show="stats.redCountry", ng-src="/img/flags/32/{{stats.redCountry}}.png")
       span.redname {{stats.redname}}
       |  {{scoreComparison}} 
+      img.flag(ng-show="stats.bluCountry", ng-src="/img/flags/32/{{stats.bluCountry}}.png")
       span.bluname {{stats.bluname}}
       |  {{redScore}} - {{bluScore}}
-    .sfjd {{stats.created | date:'M/d/yy h:mma' | lowercase}} // {{secondsToHMS(playableTime)}} // {{stats.map}}
+    .sfjd {{stats.created | date:'M/d/yy h:mma' | lowercase}} // {{secondsToHMS(playableTime)}} // {{stats.map}} 
+      span.label.label-success.label-medium(ng-show='stats.isLive') Live
     //- .asdf {{stats.hostname}}
     //- .servername Server: {{stats.hostname}}
     //- .mapname Map: {{stats.map}}
@@ -29,7 +32,7 @@
         a(href="javascript:", ng-click="separateTeams=false") All
       li(ng-class='{active:separateTeams}')
         a(href="javascript:", ng-click="separateTeams=true") Teams
-  table.stats-table.table.table-striped.table-bordered
+  table#overall-stats.stats-table.table.table-striped.table-bordered
     thead
       tr
         th(ng-class="sortClass('name','overall')", ng-click="sortBy('name','overall')") Name

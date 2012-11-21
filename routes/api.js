@@ -109,39 +109,50 @@ var createStats = function(req, res) {
         return res.end('false\n');
       }
 
-      newMatch = {
+      matchData = {
         _id: matchId,
         hostname: req.body.stats.hostname,
         bluname: req.body.stats.bluname,
         redname: req.body.stats.redname,
         isLive: true
       };
-      new Match(newMatch).save(function(e) {
+      var match = new Match(matchData);
+      match.save(function(e) {
         if (e) {
           console.log(e);
           return res.end('false\n');
         }
 
-        var stats = req.body.stats;
-        stats.round = 0;
-        stats.redscore = 0;
-        stats.bluscore = 0;
-        stats.roundduration = 0;
-        stats._id = matchId;
-        stats.isLive = true;
-        stats.created = new Date();
-        stats.updated = stats.created;
+        var statsData = req.body.stats;
+        statsData.round = 0;
+        statsData.redscore = 0;
+        statsData.bluscore = 0;
+        statsData.roundduration = 0;
+        statsData._id = matchId;
+        statsData.isLive = true;
+        statsData.created = new Date();
+        statsData.updated = statsData.created;
 
-        new Stats(stats).save(function(e) {
+        var stats = new Stats(statsData);
+        stats.save(function(e) {
           if (e) {
             console.log(e);
             return res.end('false\n');
           }
-          statsEmitter.emit('newMatch', newMatch);
+          statsEmitter.emit('newMatch', match);
 
           res.setHeader('matchurl', cfg.hosturl + 'stats?id=' + matchId + '&ingame');
           res.setHeader('sessionid', sessionId);
-          return res.end('true\n');
+          res.end('true\n');
+
+          // See if you can update the match with the countrycode info etc.
+          match.updateWithPlayerData(stats, function(err) {
+            if (err) {
+              console.log(err);
+              // do something
+            }
+          });
+
         }); // End Stats.save()
       }); // End Match.save()
     }); // End Session.save()

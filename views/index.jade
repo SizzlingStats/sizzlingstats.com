@@ -29,7 +29,12 @@ block body
             ul.nav.nav-list
               li.nav-header Recent Matches
               li(ng-cloak, ng-repeat='match in matches | orderBy:"-_id"', ng-class='{active: isActive()}')
-                a(href='/stats?id={{match._id}}') {{match.hostname}}: {{match.redname}} vs {{match.bluname}}&nbsp;
+                a(href='/stats?id={{match._id}}')
+                  | {{match.hostname}}: 
+                  img.flag(ng-show="match.redCountry", ng-src="/img/flags/16/{{match.redCountry}}.png")
+                  | {{match.redname}} vs 
+                  img.flag(ng-show="match.bluCountry", ng-src="/img/flags/16/{{match.bluCountry}}.png")
+                  | {{match.bluname}} 
                   span.label.label-success(ng-show='match.isLive') Live
         .span9(ng-view)
           //- content
