@@ -3,13 +3,107 @@
  * Module dependencies.
  */
 
-var express = require('express');
+var express = require('express'),
+  mongoose = require('mongoose'),
+  everyauth = require('everyauth'),
+  cfg = require('./cfg/cfg'),
+  secrets = require('./cfg/secrets'),
+  Player = require('./models/player');
 require('colors');
-var mongoose = require('mongoose');
 // var db = mongoose.createConnection('localhost', 'sizzlingstats');
-mongoose.connect(process.env.MONGO_URL || 'mongodb://localhost/sizzlingstats');
+mongoose.connect(cfg.mongo_url);
 
 var app = module.exports = express.createServer();
+
+
+
+/**
+ * Everyauth Configuration
+ */
+
+everyauth.everymodule.moduleTimeout(8000); // Wait 8 seconds per step before timing out (default is 10)
+everyauth.everymodule.findUserById( function (req, userId, callback) {
+  Player.findById(userId, callback);
+  // callback has the signature, function (err, user) {...}
+});
+everyauth.everymodule.handleLogout( function (req, res) {
+  delete req.session.auth; // This is what req.logout() does
+  this.redirect(res, this.logoutRedirectPath());
+});
+everyauth.steam
+  .myHostname( cfg.hostname )
+  .findOrCreateUser( function (session, openIdUserAttributes) {
+    var promise = this.Promise();
+    var steamId, numericId;
+    try {
+      numericId = openIdUserAttributes.claimedIdentifier.split('/').slice(-1)[0];
+      if (!numericId) throw new Error('No steamid64???');
+    } catch (e) {
+      promise.fail(e);
+      return promise;
+    }
+    steamId = Player.numericIdToSteamId(numericId);
+    Player.findById(steamId, function(err, player) {
+      if (err) {
+        console.log('Err looking up player '+steamId, err);
+        return promise.fail(err);
+      }
+      if (player) {
+        // Update the player's info on login
+        // Instead of just retrieving old info
+
+        Player.getSteamApiInfo(numericId, function(err, steamInfo) {
+          if (err) return promise.fail(err);
+
+          player.name = steamInfo.personaname;
+          player.avatar = steamInfo.avatar;
+          player.updated = new Date();
+          if (steamInfo.loccountrycode) {
+            player.country = steamInfo.loccountrycode;
+          }
+
+          player.save(function(err) {
+            if (err) {
+              console.log('Err saving player', err);
+              return promise.fail(err);
+            }
+            promise.fulfill(player);
+          });
+        });
+      } else {
+        Player.getSteamApiInfo(numericId, function(err, steamInfo) {
+          if (err) return promise.fail(err);
+
+          var newPlayer = new Player({
+            _id: steamId,
+            numericid: numericId,
+            name: steamInfo.personaname,
+            avatar: steamInfo.avatar,
+            updated: new Date()
+          });
+          if (steamInfo.loccountrycode) {
+            newPlayer.country = steamInfo.loccountrycode;
+          }
+
+          newPlayer.save(function(err) {
+            if (err) {
+              console.log('Error saving new player', err);
+              return promise.fail(err);
+            }
+            promise.fulfill(newPlayer);
+          });
+        });
+      }
+      // session.save();
+    });
+    return promise;
+  })
+  .moduleErrback( function (err) {
+    console.log( 'EVERYAUTH ERROR:', err);
+  })
+  .redirectPath('/');
+everyauth.debug = false;
+
 
 // Configuration
 
@@ -29,6 +123,14 @@ app.configure(function(){
   });
   app.use(express.bodyParser());
   app.use(express.methodOverride());
+
+  app.store = new express.session.MemoryStore;
+  app.use(express.cookieParser());
+  app.use(express.session({
+    secret: secrets.session,
+    store: app.store
+  }));
+  app.use(everyauth.middleware());
 
   var assetManager = require('connect-assetmanager')({
     js: {
@@ -137,6 +239,6 @@ var socket = require('./routes/socket')(app);
 
 // Start server
 
-app.listen(process.env.PORT || 8001, function() {
+app.listen( cfg.port, function() {
   console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 });

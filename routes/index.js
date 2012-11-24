@@ -13,7 +13,11 @@ module.exports = function(app) {
 };
 
 var index = function(req, res) {
-  res.render('index', req.query);
+  res.render('index', {
+    query: req.query,
+    loggedIn: req.loggedIn,
+    user: req.user
+  });
 };
 
 var partials = function (req, res) {

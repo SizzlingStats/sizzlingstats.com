@@ -9,6 +9,7 @@
     "colors": "*",
     "connect-assetmanager": "*",
     "cron": ">= 1.0.0",
+    "everyauth": "git://github.com/christopherjkim/everyauth.git#steam",
     "express": "2.5.11",
     "jade": "*",
     "mongoose": ">= 3.0",

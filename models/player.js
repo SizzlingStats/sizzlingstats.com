@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var request = require('request');
-var steamapi = process.env.STEAM_API || require('../cfg/secrets').steamapi;
+var secrets = require('../cfg/secrets');
+var steamapi = process.env.STEAM_API || secrets.steamapi;
 
 var playerSchema = new mongoose.Schema({
   _id: { type: String, required: true }, // steamid
@@ -47,7 +48,7 @@ var steamIdToNumericId = function(steamid) {
   return converted;
 };
 
-var numericIdToSteamId = function(profile) {
+playerSchema.statics.numericIdToSteamId = function(profile) {
   var base = "7960265728";
   var profile = profile.substr(7);
   
@@ -73,6 +74,32 @@ var numericIdToSteamId = function(profile) {
   }
   
   return "STEAM_0:" + (subtract%2) + ":" + Math.floor(subtract/2);
+};
+
+// This takes in an already validated numericId
+playerSchema.statics.getSteamApiInfo = function(numericId, callback) {
+
+  var options = {
+    uri: 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/',
+    qs: { key: secrets.steamapi, steamids: numericId },
+    json: true,
+    timeout: 7000
+  };
+
+  request(options, function(err, res, body) {
+    if (err) {
+      console.log('Steam API Request Error', err);
+      return callback(err);
+    }
+    if (res.statusCode !== 200) {
+      return callback(new Error('Steam API Status Code: ' + res.statusCode));
+    }
+    if (body.response.players.length === 0) {
+      console.log('Steam Api Player Not Found: ' + numericId);
+      return callback(new Error('Steam API Player Not Found: ' + numericId));
+    }
+    return callback(null, body.response.players[0]);
+  }); // End request
 };
 
 playerSchema.statics.updateSteamInfo = function(steamids) {
@@ -110,7 +137,7 @@ playerSchema.statics.updateSteamInfo = function(steamids) {
     steamInfo.response.players.forEach(function(player) {
       // Player.update()
 
-      var steamid = numericIdToSteamId(player.steamid);
+      var steamid = Player.numericIdToSteamId(player.steamid);
       var newPlayer = {
                         numericid: player.steamid,
                         name: player.personaname,

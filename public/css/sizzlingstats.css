@@ -20,7 +20,9 @@ div.container-fluid {
 .center {
   text-align: center;
 }
-
+.navbar-right-section {
+  margin-top: 3px !important;
+}
 .nav-list, #stats {
   font-size: 13px;
 }
