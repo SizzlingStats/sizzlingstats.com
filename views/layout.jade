@@ -4,9 +4,13 @@ html(lang="en", ng-app="myApp")
     meta(charset='utf8')
     base(href='/')
     title Sizzling Stats
+    link( rel='stylesheet', href='//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap.min.css' )
     link( rel='stylesheet', href='/css/all-'+(assetManager.cacheHashes.css || '0')+'.css' )
   body(ng-controller='MainCtrl')
     block body
+    script( src='//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js' )
+    script( src='//ajax.googleapis.com/ajax/libs/angularjs/1.0.2/angular.min.js' )
+    script( src='//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js' )
     script( src='/js/all-'+(assetManager.cacheHashes.js || '0')+'.js' )
     script( src='/socket.io/socket.io.js' )
     

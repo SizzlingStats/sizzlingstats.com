@@ -154,13 +154,13 @@ app.configure(function(){
       // },
       files: [ // order matters here
         // 'lib/jquery/jquery-1.8.2.min.js',
-        'lib/angular/angular.js',
+        // 'lib/angular/angular.js',
         // 'lib/bootstrap/bootstrap.min.js',
         'app.js',
         'services.js',
-        'controllers.js'
+        'controllers.js',
         // 'filters.js',
-        // 'directives.js'
+        'directives.js'
         // '*'
       ]
     },
@@ -187,7 +187,7 @@ app.configure(function(){
       //   ]
       // },
       files: [ // order matters here
-        'bootstrap.css',
+        // 'bootstrap.css',
         'bootstrap-fix.css',
         'bootstrap-responsive.css',
         'sizzlingstats.css'

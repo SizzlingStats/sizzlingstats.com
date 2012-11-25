@@ -17,25 +17,25 @@ block body
                 a(href='/') Home
               li(class='about', ng-class='{active:path()=="/about"}')
                 a(href='/about') About
-          if (loggedIn)
-            .btn-group.pull-right.navbar-right-section
-              a#profile-dropdown.btn.dropdown-toggle(data-toggle='dropdown', href='#')
-                span#profilename(ng-cloak)
-                  img(src='#{user.avatar}', width='24', height='24')
-                  | &nbsp;#{user.name}
-                span.caret
-              ul.dropdown-menu
-                li
-                  a(href='#')
-                    del Profile
-                li.divider
-                li
-                  a(href='/logout/', target='_self') Sign Out
-          else
-            .btn-group.pull-right
-              .navbar-right-section
-                a(href='/auth/steam', target='_self')
-                  img(src='/img/sits_small.png')
+            if (loggedIn)
+              .btn-group.pull-right.navbar-right-section
+                a#profile-dropdown.btn.dropdown-toggle(data-toggle='dropdown', href='#')
+                  span#profilename(ng-cloak)
+                    img(src='#{user.avatar}', width='24', height='24')
+                    | &nbsp;#{user.name}
+                  span.caret
+                ul.dropdown-menu
+                  li
+                    a(href='#')
+                      del Profile
+                  li.divider
+                  li
+                    a(href='/logout/', target='_self') Sign Out
+            else
+              .btn-group.pull-right
+                .navbar-right-section
+                  a(href='/auth/steam', target='_self')
+                    img(src='/img/sits_small.png')
     #loading(ng-cloak, ng-show='loading')
       .alert
         | Loading...

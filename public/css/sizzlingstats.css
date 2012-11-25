@@ -78,8 +78,17 @@ td:first-child, th:first-child {
   border-top-color: #DDD;
   line-height: 14px;
 }
+.overall-stats {
+  white-space: nowrap;
+}
+.overall-stats-nav {
+  display: inline-block;
+}
 .overall-stats-nav a {
   min-width: 0 !important;
+}
+.overall-stats-table {
+  margin-right: 0 !important;
 }
 .team2 {
   color: #D06553;
@@ -102,7 +111,7 @@ td:first-child, th:first-child {
   -webkit-border-radius: 4px;
   border-radius: 4px;
 }
-#overall-stats td:nth-child(2) {
+.overall-stats-table td:nth-child(2) {
   padding: 1px;
 }
 .class-icon {
@@ -112,6 +121,7 @@ td:first-child, th:first-child {
 .stats-table {
   width: auto;
   display: inline-table;
+  vertical-align: top;
   margin-right: 20px;
 }
 .stats-table th {
