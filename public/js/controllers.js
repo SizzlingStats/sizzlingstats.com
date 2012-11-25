@@ -60,17 +60,17 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
       url: '/api/stats/' + val
     }).success(function(data) {
       $rootScope.loading = false;
-      calculateStats(data);
+      calculateStats(data, true);
     });
 
     socket.emit('stats:subscribe', val);
   });
 
   socket.on('stats:send', function (data) {
-    calculateStats(data);
+    calculateStats(data, false);
   });
 
-  var calculateStats = function(data) {
+  var calculateStats = function(data, reinitializeSelectedRounds) {
     // Stupid placeholder object for when things go wrong
     if (data === 'false') {
       data = { stats: {
@@ -86,6 +86,9 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
     fillOutPlayerMetaData();
 
     var numRounds = $scope.numRounds = stats.redscore.length;
+
+    if (reinitializeSelectedRounds) { $scope.initializeSelectedRoundsArray(); };
+
     // Ask sizzling to send only individual round scores instead of cumulative
     // It will make things a lot easier.
     var redScore = $scope.redScore = stats.redscore[numRounds-1];
@@ -171,6 +174,34 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
 
   // Helpers
 
+  $scope.selectedRounds = [];
+  $scope.initializeSelectedRoundsArray = function() {
+    $scope.selectedRounds = [];
+    for (var i=0; i<$scope.numRounds; i++) {
+      $scope.selectedRounds[i] = i;
+    }
+  };
+  $scope.clickRoundHeader = function(round) {
+    var e = window.event, ctrl;
+    if (e.ctrlKey) { ctrl = true; }
+
+    if ($scope.selectedRounds.length === 0) {
+      $scope.selectedRounds.push(round);
+    } else if ($scope.selectedRounds.length === 1 && $scope.selectedRounds[0] === round && !ctrl) {
+      $scope.initializeSelectedRoundsArray();
+    } else if (ctrl) {
+      if ($scope.selectedRounds.indexOf(round) > -1) {
+        $scope.selectedRounds.splice($scope.selectedRounds.indexOf(round),1);
+      } else {
+        $scope.selectedRounds.push(round);
+      }
+    } else {
+      $scope.selectedRounds = [round];
+    }
+    $scope.selectedRounds.sort(function(a,b){return a-b});
+    calculateStats({stats: $scope.stats, playerdata: $scope.playerMetaData}, false);
+  };
+
   $scope.overallSort = 'name';
   $scope.overallReverse = false;
   $scope.medicSort = 'name';
@@ -232,18 +263,24 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
     return theClass;
   };
   var sumArray = function(array) {
-    var sum = 0;
-    angular.forEach(array, function(value) {
-      if (value) sum += value;
-    });
+    var sum = 0, filteredArray = [];
+    for (var i=0, ilen=$scope.selectedRounds.length; i<ilen; i++) {
+      filteredArray.push(array[$scope.selectedRounds[i]]);
+    }
+    for (var j=0, jlen=filteredArray.length; j<jlen; j++) {
+      if (filteredArray[j]) sum += filteredArray[j];
+    }
     return sum;
   };
   var sumArray2 = function(array) {
     if (!array.length) return '-'; // this is a hack
-    var sum = 0;
-    angular.forEach(array, function(value) {
-      if (value) sum += value;
-    });
+    var sum = 0, filteredArray = [];
+    for (var i=0, len=$scope.selectedRounds.length; i<len; i++) {
+      filteredArray.push(array[$scope.selectedRounds[i]]);
+    }
+    for (var j=0, jlen=filteredArray.length; j<jlen; j++) {
+      if (filteredArray[j]) sum += filteredArray[j];
+    }
     return sum;
   };
   var ratio = function(den, denIsArray, numArray1, numArray2) {
@@ -272,7 +309,7 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
   };
 
   // The very first time you load the controller, use the resolvedData.
-  calculateStats(resolvedData);
+  calculateStats(resolvedData, true);
 }
 // This is for the first time you load the controller
 //  -- so that you don't see all the empty divs and tables.

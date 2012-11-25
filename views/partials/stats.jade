@@ -19,7 +19,7 @@
       thead
         tr
           th
-          th(ng-repeat='n in stats.redscore') R{{$index + 1}}
+          th.score-table-round-header(ng-repeat='n in stats.redscore', ng-click='clickRoundHeader($index)', ng-class='{"deselected-round":selectedRounds.indexOf($index)==-1}') R{{$index + 1}}
           th: abbr(tooltip='Total Score') T
           th: abbr(tooltip='Total Damage') DMG
           th: abbr(tooltip='Total Frags') F

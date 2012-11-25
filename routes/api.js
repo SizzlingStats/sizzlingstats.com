@@ -141,7 +141,7 @@ var createStats = function(req, res) {
           }
           statsEmitter.emit('newMatch', match);
 
-          res.setHeader('matchurl', cfg.hosturl + 'stats?id=' + matchId + '&ingame');
+          res.setHeader('matchurl', cfg.hostname + 'stats?id=' + matchId + '&ingame');
           res.setHeader('sessionid', sessionId);
           res.end('true\n');
 
