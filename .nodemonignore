@@ -4,3 +4,4 @@
 /public/*     # static files
 ./README.md   # a specific file
 *.css         # ignore any CSS files too
+*.log

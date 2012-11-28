@@ -70,11 +70,13 @@ var createStats = function(req, res) {
   console.log('createStats body:', util.inspect(req.body, false, null, true));
 
   // 1. Check header for api version
-  if (!req.body.stats || req.headers.sizzlingstats !== 'v0.1') {
-    return res.end('false\n');
-  }
+  if (!req.body.stats || req.headers.sizzlingstats !== 'v0.1') { return res.end('false\n'); }
+
+  // 2. Check if POST body contains the necessary info
+  if (Object.keys(req.body).length === 0) { return res.end('false\n'); }
+  if (!req.body.stats || !req.body.stats.players || req.body.stats.players.length === 0) { return res.end('false\n'); }
   
-  // 2. Generate sessionid.
+  // 3. Generate sessionid.
   var sessionId, matchId;
   var ip = req.connection.remoteAddress;
 
@@ -84,7 +86,7 @@ var createStats = function(req, res) {
   hmac.update(ip + date);
   sessionId = hmac.digest('hex');
 
-  // 3. Then insert stats into database.
+  // 4. Then insert stats into database.
   // Get matchId
   Counter.findOneAndUpdate({ "counter" : "matches" },
                            { $inc: {next:1} },

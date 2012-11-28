@@ -67,6 +67,7 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
   });
 
   socket.on('stats:send', function (data) {
+    console.log('Stat update received!');
     calculateStats(data, false);
   });
 
@@ -85,9 +86,15 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
     $scope.playerMetaData = data.playerdata;
     fillOutPlayerMetaData();
 
+    // If redscore.length is greater than the current number of rounds, then that
+    //  means a new round just started -- add it to $scope.selectedRounds.
+    if (stats.redscore.length > $scope.numRounds) {
+      $scope.selectedRounds.push(stats.redscore.length-1);
+    }
+
     var numRounds = $scope.numRounds = stats.redscore.length;
 
-    if (reinitializeSelectedRounds) { $scope.initializeSelectedRoundsArray(); };
+    if (reinitializeSelectedRounds) { $scope.initializeSelectedRoundsArray(); }
 
     // Ask sizzling to send only individual round scores instead of cumulative
     // It will make things a lot easier.
@@ -181,15 +188,20 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
       $scope.selectedRounds[i] = i;
     }
   };
+  $scope.ctrl = false;
+  window.onkeydown = function(e) {
+    if (e.ctrlKey) { $scope.ctrl = true; }
+  };
+  window.onkeyup = function(e) {
+    if (e.ctrlKey) { $scope.ctrl = true; }
+    else { $scope.ctrl = false; }
+  };
   $scope.clickRoundHeader = function(round) {
-    var e = window.event, ctrl;
-    if (e.ctrlKey) { ctrl = true; }
-
     if ($scope.selectedRounds.length === 0) {
       $scope.selectedRounds.push(round);
-    } else if ($scope.selectedRounds.length === 1 && $scope.selectedRounds[0] === round && !ctrl) {
+    } else if ($scope.selectedRounds.length === 1 && $scope.selectedRounds[0] === round && !$scope.ctrl) {
       $scope.initializeSelectedRoundsArray();
-    } else if (ctrl) {
+    } else if ($scope.ctrl) {
       if ($scope.selectedRounds.indexOf(round) > -1) {
         $scope.selectedRounds.splice($scope.selectedRounds.indexOf(round),1);
       } else {

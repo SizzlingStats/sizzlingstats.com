@@ -19,14 +19,14 @@ block body
                 a(href='/about') About
             if (loggedIn)
               .btn-group.pull-right.navbar-right-section
-                a#profile-dropdown.btn.dropdown-toggle(data-toggle='dropdown', href='#')
+                a#profile-dropdown.btn.dropdown-toggle(data-toggle='dropdown', href='javascript:')
                   span#profilename(ng-cloak)
                     img(src='#{user.avatar}', width='24', height='24')
                     | &nbsp;#{user.name}
                   span.caret
                 ul.dropdown-menu
                   li
-                    a(href='#')
+                    a(href='javascript:')
                       del Profile
                   li.divider
                   li

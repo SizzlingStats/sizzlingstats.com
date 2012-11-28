@@ -16,7 +16,7 @@ var statsSchema = new mongoose.Schema({
   roundduration: { type: [Number], required: true },
   // Duration of match, in seconds. Only exists after gameover event is sent
   matchDuration: Number,
-  map: { type: String, required: true },
+  map: { type: String, lowercase: true, required: true },
   round: { type: Number, min: 0, required: true },
   players: [{
     steamid: { type: String, required: true },

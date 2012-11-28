@@ -1,5 +1,5 @@
 var cfg = {
-  hostname: 'http://sizzlingstats.com/',
+  hostname: (process.env.HOSTNAME || 'http://sizzlingstats.com/'),
   port: parseInt(process.env.PORT, 10) || 8001,
   mongo_url: process.env.MONGO_URL || process.env.MONGOHQ_URL || 'mongodb://localhost/sizzlingstats',
   // Stats Sessions are valid for only 30 minutes since last update
@@ -7,8 +7,5 @@ var cfg = {
   // Check for sessions to expire every 15 minutes
   session_expiry_interval: 15
 };
-if (process.env.NODE_ENV === 'development') {
-  cfg.hostname = (process.env.HOSTNAME || 'http://localhost') + ':' + cfg.port;
-}
 
 module.exports = cfg;
