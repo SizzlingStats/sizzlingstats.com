@@ -1,5 +1,5 @@
 var cfg = {
-  hostname: (process.env.HOSTNAME || 'http://sizzlingstats.com/'),
+  hostname: (process.env.HOSTNAME || 'http://sizzlingstats.com'),
   port: parseInt(process.env.PORT, 10) || 8001,
   mongo_url: process.env.MONGO_URL || process.env.MONGOHQ_URL || 'mongodb://localhost/sizzlingstats',
   // Stats Sessions are valid for only 30 minutes since last update
