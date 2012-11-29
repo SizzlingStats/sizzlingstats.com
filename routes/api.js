@@ -75,8 +75,16 @@ var createStats = function(req, res) {
   // 2. Check if POST body contains the necessary info
   if (Object.keys(req.body).length === 0) { return res.end('false\n'); }
   if (!req.body.stats || !req.body.stats.players || req.body.stats.players.length === 0) { return res.end('false\n'); }
+
+  // 3. Massage the POST body data
+  // Remove spectators from players array
+  for (var i=req.body.stats.players.length-1; i>=0; i--) {
+    if (req.body.stats.players[i].team < 2) {
+      req.body.stats.players.splice(i,1);
+    }
+  }
   
-  // 3. Generate sessionid.
+  // 4. Generate sessionid.
   var sessionId, matchId;
   var ip = req.connection.remoteAddress;
 
@@ -86,7 +94,7 @@ var createStats = function(req, res) {
   hmac.update(ip + date);
   sessionId = hmac.digest('hex');
 
-  // 4. Then insert stats into database.
+  // 5. Then insert stats into database.
   // Get matchId
   Counter.findOneAndUpdate({ "counter" : "matches" },
                            { $inc: {next:1} },

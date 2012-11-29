@@ -9,7 +9,7 @@ var playerSchema = new mongoose.Schema({
   name: String,
   avatar: { type: String, default: '/img/steam-default-32.jpg' },
   updated: { type: Date, default: Date.now },
-  country: { type: String, default: 'i dunno' } // Some players don't have this
+  country: { type: String } // Some players don't have this
 });
 
 playerSchema.pre('validate', function(next) {
