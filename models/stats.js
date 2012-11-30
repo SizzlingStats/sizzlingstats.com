@@ -122,7 +122,7 @@ statsSchema.statics.appendStats = function(newStats, matchId, isEndOfRound, cb) 
       });
 
       // If a matching oldPlayer can't be found, then
-      // push newPlayer into the existing document
+      //  add newPlayer to the players array
       if (isNewPlayer) {
         
         var newPlayer = {
@@ -142,7 +142,12 @@ statsSchema.statics.appendStats = function(newStats, matchId, isEndOfRound, cb) 
           }
         }
 
-        stats.players.push(newPlayer);
+        // This is a ridiculous hack to add the newPlayer to the stats.players
+        //  array in such a way that Mongoose does a $set on the entire array
+        //  instead of a $push of just the newPlayer. Ridiculous.
+        var players = stats.players.toObject();
+        players[players.length] = newPlayer;
+        stats.players = players;
       }
 
     });
