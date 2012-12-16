@@ -1,48 +1,54 @@
 extends layout
 
 block body
-  //- if (typeof(query.ingame) == 'undefined')
-  nav.top-bar.attached
-    ul
-      li.name
-        h1
-          a(href='/') SizzlingStats Beta
-      li.toggle-topbar
-        a(href='javascript:')
-    section
-      //- Left Nav Section
-      ul.left
-        li.divider
-        li(class='home', ng-class='{active:path()=="/"}')
-          a(href='/') Home
-        li.divider
-        li(class='about', ng-class='{active:path()=="/about"}')
-          a(href='/about') About
-        li.divider
-      //- Right Nav Section
-      ul.right
-        li.search
-          form.collapse
-            input(type='search')
-        li.divider.show-for-medium-and-up
-        if (loggedIn)
-          li
-            a#profile-dropdown.btn.dropdown-toggle(data-toggle='dropdown', href='javascript:')
-              span#profilename(ng-cloak)
-                img(src='#{user.avatar}', width='24', height='24')
-                | &nbsp;#{user.name}
-              span.caret
-            ul.dropdown-menu
-              li
-                a(href='javascript:')
-                  del Profile
-              li.divider
-              li
-                a(href='/logout/', target='_self') Sign Out
-        else
-          li
-            a(href='/auth/steam', target='_self')
-              img.sits(src='/img/sits_small.png')
+  if (typeof(query.ingame) == 'undefined')
+    nav.top-bar.attached
+      ul
+        li.name
+          h1
+            a(href='/') SizzlingStats Beta
+        li.toggle-topbar
+          a(href='javascript:')
+      section
+        //- Left Nav Section
+        ul.left
+          li.divider
+          li(class='home', ng-class='{active:path()=="/"}')
+            a(href='/') Home
+          li.divider
+          li(class='about', ng-class='{active:path()=="/about"}')
+            a(href='/about') About
+          li.divider
+        //- Right Nav Section
+        ul.right
+          li.search
+            form.collapse
+              input(type='search')
+          li.divider.show-for-medium-and-up
+          if (loggedIn)
+            li
+              a#profile-dropdown.btn.dropdown-toggle(data-toggle='dropdown', href='javascript:')
+                span#profilename(ng-cloak)
+                  img(src='#{user.avatar}', width='24', height='24')
+                  | &nbsp;#{user.name}
+                span.caret
+              ul.dropdown-menu
+                li
+                  a(href='javascript:')
+                    del Profile
+                li.divider
+                li
+                  a(href='/logout/', target='_self') Sign Out
+          else
+            li
+              a(href='/auth/steam', target='_self')
+                img.sits(src='/img/sits_small.png')
+  else
+    nav.top-bar.attached
+      ul
+        li.name
+          h1
+            a(href='javascript:') SizzlingStats.com
   #loading(ng-cloak, ng-show='loading')
     .alert-box.loading
       | Loading...
@@ -64,8 +70,11 @@ block body
                 | {{match.redname}} vs 
                 img.flag(ng-show="match.bluCountry", ng-src="/img/flags/16/{{match.bluCountry}}.png")
                 | {{match.bluname}}
-    .nine.columns(ng-view)
-      //- content
+      .nine.columns(ng-view)
+        //- content
+    else
+      .ingame(ng-view)
+        //- content
     hr
     footer
       p &copy; 2012 Chris "techno" Kim &amp; Jordan "SizzlingCalamari" Cristiano

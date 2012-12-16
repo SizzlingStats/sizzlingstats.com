@@ -1,5 +1,5 @@
 /* sizzlingstats css stylesheet */
-[ng-cloak],.ng-cloak{display:none}
+[ng\:cloak],[ng-cloak],.ng-cloak{display:none !important;}
 
 #loading {
   position: fixed;
@@ -242,9 +242,19 @@ footer {
   padding-right: 18px !important;
 }
 
-/* Bootstrap hacks for in-game browser */
-/*.ingame {
-  margin: -60px auto 0;
-  width: 900px;
+/* Hacks for in-game browser */
+.ingame {
+  margin: -15px auto 0;
+  text-align: center;
 }
-*/
+.ingame .asdfdsa, .ingame #chat-log {
+  text-align: left;
+}
+.ingame #stats {
+  display: inline-block;
+}
+@media (max-width: 767px) {
+  .ingame {
+    margin: 15px auto 0;
+  }
+}
