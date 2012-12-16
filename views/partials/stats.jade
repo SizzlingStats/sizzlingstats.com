@@ -1,14 +1,14 @@
 #stats
   .center
-    h2.big-score
+    h3.no-marg
       img.flag(ng-show="stats.redCountry", ng-src="/img/flags/32/{{stats.redCountry}}.png")
       span.redname {{stats.redname}}
       |  {{scoreComparison}} 
       img.flag(ng-show="stats.bluCountry", ng-src="/img/flags/32/{{stats.bluCountry}}.png")
       span.bluname {{stats.bluname}}
       |  {{redScore}} - {{bluScore}}
-    .sfjd {{stats.created | date:'M/d/yy h:mma' | lowercase}} // {{secondsToHMS(playableTime)}} // {{stats.map}} 
-      span.label.label-success.label-medium(ng-show='stats.isLive') Live
+    .stats-description {{stats.created | date:'M/d/yy h:mma' | lowercase}} // {{secondsToHMS(playableTime)}} // {{stats.map}} 
+      span.label(ng-show='stats.isLive') Live
     //- .asdf {{stats.hostname}}
     //- .servername Server: {{stats.hostname}}
     //- .mapname Map: {{stats.map}}
@@ -19,57 +19,57 @@
       thead
         tr
           th
-          th.score-table-round-header(ng-repeat='n in stats.redscore', ng-click='clickRoundHeader($index)', ng-class='{"deselected-round":selectedRounds.indexOf($index)==-1}') R{{$index + 1}}
-          th: abbr(tooltip='Total Score') T
-          th: abbr(tooltip='Total Damage') DMG
-          th: abbr(tooltip='Total Frags') F
+          th.score-table-round-header(ng-repeat='n in stats.redscore', ng-click='clickRoundHeader($index)', ng-class='{"deselected-round":selectedRounds.indexOf($index)==-1}')
+            abbr R{{$index + 1}}
+          th: abbr.has-tip.tip-top(title='Total Score') T
+          th: abbr.has-tip.tip-top(title='Total Damage') DMG
+          th: abbr.has-tip.tip-top(title='Total Frags') F
       tbody
         tr(ng-bind-html-unsafe='redtr')
         tr(ng-bind-html-unsafe='blutr')
   .overall-stats
-    .tabs-left.overall-stats-nav
-      ul.nav.nav-tabs
-        li(ng-class='{active:!separateTeams}')
-          a(href="javascript:", ng-click="separateTeams=false") All
-        li(ng-class='{active:separateTeams}')
-          a(href="javascript:", ng-click="separateTeams=true") Teams
-    table.overall-stats-table.stats-table.table.table-striped.table-bordered
+    table.overall-stats-table.stats-table
       thead
         tr
-          th(ng-class="sortClass('name','overall')", ng-click="sortBy('name','overall')") Name
-          th(ng-class="sortClass('mostPlayedClass','overall')", ng-click="sortBy('mostPlayedClass','overall')"): abbr(tooltip='Most Played Class') C
-          th(ng-class="sortClass('stats[0]','overall')", ng-click="sortBy('stats[0]','overall')"): abbr(tooltip='Points') P
-          th(ng-class="sortClass('stats[1]','overall')", ng-click="sortBy('stats[1]','overall')"): abbr(tooltip='Frags+Assists Per Death') FA/D
-          th(ng-class="sortClass('stats[2]','overall')", ng-click="sortBy('stats[2]','overall')"): abbr(tooltip='Frags') F
-          th(ng-class="sortClass('stats[3]','overall')", ng-click="sortBy('stats[3]','overall')"): abbr(tooltip='Assists') A
-          th(ng-class="sortClass('stats[4]','overall')", ng-click="sortBy('stats[4]','overall')"): abbr(tooltip='Deaths') D
-          th(ng-class="sortClass('stats[5]','overall')", ng-click="sortBy('stats[5]','overall')"): abbr(tooltip='Suicides') S
-          th(ng-class="sortClass('stats[6]','overall')", ng-click="sortBy('stats[6]','overall')"): abbr(tooltip='Damage Per Minute') DPM
-          th(ng-class="sortClass('stats[7]','overall')", ng-click="sortBy('stats[7]','overall')"): abbr(tooltip='Damage') DMG
-          th(ng-class="sortClass('stats[8]','overall')", ng-click="sortBy('stats[8]','overall')"): abbr(tooltip='Medic Picks') MP
-          th(ng-class="sortClass('stats[9]','overall')", ng-click="sortBy('stats[9]','overall')"): abbr(tooltip='Heals Received') HR
-          th(ng-class="sortClass('stats[10]','overall')", ng-click="sortBy('stats[10]','overall')"): abbr(tooltip='Capture Points Captured') CPC
-          th(ng-class="sortClass('stats[11]','overall')", ng-click="sortBy('stats[11]','overall')"): abbr(tooltip='Capture Points Blocked') CPB
-          th(ng-class="sortClass('stats[12]','overall')", ng-click="sortBy('stats[12]','overall')"): abbr(tooltip='Dominations') DOM
-          th(ng-class="sortClass('stats[13]','overall')", ng-click="sortBy('stats[13]','overall')"): abbr(tooltip='Revenges') REV
-          th(ng-class="sortClass('stats[14]','overall')", ng-click="sortBy('stats[14]','overall')"): abbr(tooltip='Headshots') HS
-          th(ng-class="sortClass('stats[15]','overall')", ng-click="sortBy('stats[15]','overall')"): abbr(tooltip='Backstabs') BS
-          //- th(ng-class="sortClass('stats[13]')", ng-click='sortBy("stats[13]")'): abbr(tooltip='BuildingsBuilt') BB
-          //- th(ng-class="sortClass('stats[14]')", ng-click='sortBy("stats[14]")'): abbr(tooltip='BuildingsDestroyed') BD
-          //- th(ng-class="sortClass('stats[15]')", ng-click='sortBy("stats[15]")'): abbr(tooltip='Crits') C
-          //- th(ng-class="sortClass('stats[20]')", ng-click='sortBy("stats[20]")'): abbr(tooltip='Teleports') T
-          //- th(ng-class="sortClass('stats[16]')", ng-click='sortBy("stats[21]")'): abbr(tooltip='Resupply Points') RP
-          //- th(ng-class="sortClass('stats[17]')", ng-click='sortBy("stats[22]")'): abbr(tooltip='Bonus Points') BP
+          th(ng-class="sortClass('name','overall')", ng-click="sortBy('name','overall')"): abbr Name
+          th(ng-class="sortClass('mostPlayedClass','overall')", ng-click="sortBy('mostPlayedClass','overall')"): abbr.has-tip.tip-top(title='Most Played Class') C
+          th(ng-class="sortClass('stats[0]','overall')", ng-click="sortBy('stats[0]','overall')"): abbr.has-tip.tip-top(title='Points') P
+          th(ng-class="sortClass('stats[1]','overall')", ng-click="sortBy('stats[1]','overall')"): abbr.has-tip.tip-top(title='Frags+Assists Per Death') FA/D
+          th(ng-class="sortClass('stats[2]','overall')", ng-click="sortBy('stats[2]','overall')"): abbr.has-tip.tip-top(title='Frags') F
+          th(ng-class="sortClass('stats[3]','overall')", ng-click="sortBy('stats[3]','overall')"): abbr.has-tip.tip-top(title='Assists') A
+          th(ng-class="sortClass('stats[4]','overall')", ng-click="sortBy('stats[4]','overall')"): abbr.has-tip.tip-top(title='Deaths') D
+          th(ng-class="sortClass('stats[5]','overall')", ng-click="sortBy('stats[5]','overall')"): abbr.has-tip.tip-top(title='Suicides') S
+          th(ng-class="sortClass('stats[6]','overall')", ng-click="sortBy('stats[6]','overall')"): abbr.has-tip.tip-top(title='Damage Per Minute') DPM
+          th(ng-class="sortClass('stats[7]','overall')", ng-click="sortBy('stats[7]','overall')"): abbr.has-tip.tip-top(title='Damage') DMG
+          th(ng-class="sortClass('stats[8]','overall')", ng-click="sortBy('stats[8]','overall')"): abbr.has-tip.tip-top(title='Medic Picks') MP
+          th(ng-class="sortClass('stats[9]','overall')", ng-click="sortBy('stats[9]','overall')"): abbr.has-tip.tip-top(title='Heals Received') HR
+          th(ng-class="sortClass('stats[10]','overall')", ng-click="sortBy('stats[10]','overall')"): abbr.has-tip.tip-top(title='Capture Points Captured') CPC
+          th(ng-class="sortClass('stats[11]','overall')", ng-click="sortBy('stats[11]','overall')"): abbr.has-tip.tip-top(title='Capture Points Blocked') CPB
+          th(ng-class="sortClass('stats[12]','overall')", ng-click="sortBy('stats[12]','overall')"): abbr.has-tip.tip-top(title='Dominations') DOM
+          th(ng-class="sortClass('stats[13]','overall')", ng-click="sortBy('stats[13]','overall')"): abbr.has-tip.tip-top(title='Revenges') REV
+          th(ng-class="sortClass('stats[14]','overall')", ng-click="sortBy('stats[14]','overall')"): abbr.has-tip.tip-top(title='Headshots') HS
+          th(ng-class="sortClass('stats[15]','overall')", ng-click="sortBy('stats[15]','overall')"): abbr.has-tip.tip-top(title='Backstabs') BS
+          //- th(ng-class="sortClass('stats[13]')", ng-click='sortBy("stats[13]")'): abbr.has-tip.tip-top(title='BuildingsBuilt') BB
+          //- th(ng-class="sortClass('stats[14]')", ng-click='sortBy("stats[14]")'): abbr.has-tip.tip-top(title='BuildingsDestroyed') BD
+          //- th(ng-class="sortClass('stats[15]')", ng-click='sortBy("stats[15]")'): abbr.has-tip.tip-top(title='Crits') C
+          //- th(ng-class="sortClass('stats[20]')", ng-click='sortBy("stats[20]")'): abbr.has-tip.tip-top(title='Teleports') T
+          //- th(ng-class="sortClass('stats[16]')", ng-click='sortBy("stats[21]")'): abbr.has-tip.tip-top(title='Resupply Points') RP
+          //- th(ng-class="sortClass('stats[17]')", ng-click='sortBy("stats[22]")'): abbr.has-tip.tip-top(title='Bonus Points') BP
       tbody
         tr(ng-repeat='player in stats.players | orderBy:[separateTeamsPredicate(),overallSort]:overallReverse ', ng-bind-html-unsafe='player.tr')
+    dl.sub-nav.no-marg
+      dd(ng-class='{active:!separateTeams}')
+        a(href="javascript:", ng-click="separateTeams=false") All
+      dd(ng-class='{active:separateTeams}')
+        a(href="javascript:", ng-click="separateTeams=true") Teams
   .asdfdsa
     table.stats-table.table.table-striped.table-bordered
       thead
         tr
-          th(ng-class="sortClass('name','medic')", ng-click="sortBy('name','medic')") Medics
-          th(ng-class="sortClass('stats[0]','medic')", ng-click="sortBy('stats[0]','medic')"): abbr(tooltip='Heals Given') H
-          th(ng-class="sortClass('stats[1]','medic')", ng-click="sortBy('stats[1]','medic')"): abbr(tooltip='Ubers') U
-          th(ng-class="sortClass('stats[2]','medic')", ng-click="sortBy('stats[2]','medic')"): abbr(tooltip='Ubers Dropped') UD
+          th(ng-class="sortClass('name','medic')", ng-click="sortBy('name','medic')"): abbr Medics
+          th(ng-class="sortClass('stats[0]','medic')", ng-click="sortBy('stats[0]','medic')"): abbr.has-tip.tip-top(title='Heals Given') H
+          th(ng-class="sortClass('stats[1]','medic')", ng-click="sortBy('stats[1]','medic')"): abbr.has-tip.tip-top(title='Ubers') U
+          th(ng-class="sortClass('stats[2]','medic')", ng-click="sortBy('stats[2]','medic')"): abbr.has-tip.tip-top(title='Ubers Dropped') UD
       tbody
         tr(ng-repeat='player in stats.players | orderBy:medicSort:medicReverse', ng-bind-html-unsafe='player.medictr')
   ul#chat-log

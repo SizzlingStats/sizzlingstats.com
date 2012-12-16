@@ -155,7 +155,11 @@ app.configure(function(){
       files: [ // order matters here
         // 'lib/jquery/jquery-1.8.2.min.js',
         // 'lib/angular/angular.js',
-        // 'lib/bootstrap/bootstrap.min.js',
+        'lib/foundation/foundation.min.js',
+        // 'lib/foundation/jquery.foundation.navigation.js',
+        // 'lib/foundation/jquery.foundation.tooltips.js',
+        // 'lib/foundation/jquery.foundation.topbar.js',
+        'lib/foundation/app.js',
         'app.js',
         'services.js',
         'controllers.js',
@@ -187,9 +191,7 @@ app.configure(function(){
       //   ]
       // },
       files: [ // order matters here
-        // 'bootstrap.css',
-        'bootstrap-fix.css',
-        'bootstrap-responsive.css',
+        'foundation.css',
         'sizzlingstats.css'
       ]
     }

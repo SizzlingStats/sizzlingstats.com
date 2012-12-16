@@ -1,39 +1,52 @@
 /* sizzlingstats css stylesheet */
 [ng-cloak],.ng-cloak{display:none}
 
-div.container-fluid {
-  max-width: 1200px;
-}
 #loading {
   position: fixed;
   z-index: 9999;
-  width: 100%;
-  max-width: 1200px;
+  left: 30%;
+  top: 32px;
+  margin-left: -25px;
 }
-.alert {
+.loading {
   position: relative;
   display: inline;
   padding: 8px 14px;
-  left: 29%;
-  margin-left: -25px;
 }
 .center {
   text-align: center;
 }
-.navbar-right-section {
-  margin-top: 3px !important;
+.no-marg {
+  margin: 0 !important;
 }
-.nav-list, #stats {
-  font-size: 13px;
+.no-marg-top {
+  margin-top: 0;
 }
-.nav-list a {
-  padding: 2px 8px !important;
+.no-marg-bottom {
+  margin-bottom: 0;
 }
-.sidebar-nav {
-  padding: 0;
+.sits {
+  margin-top: 10px;
+}
+#stats {
+  font-size: 13px !important;
+}
+
+.sidebar-nav a {
+  padding: 8px 6px 8px 10px !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sidebar-nav li:not(.active) a:hover {
+  background: #ebebeb !important;
+}
+.live-match:not(.active) {
+  border-left: 3px solid #2ba6cb !important;
 }
 .nav-header {
-  padding: 5px 15px 1px;
+  border-left: none !important;
+  /*padding: 5px 15px 1px;*/
 }
 
 .redname {
@@ -43,29 +56,60 @@ div.container-fluid {
   color: #79B3D2;
 }
 
+table {
+  border-spacing: 0;
+}
 td, th {
   text-align: center !important;
+  border-left: 1px solid #ddd;
+  border-top: 1px solid #ddd;
+}
+th {
+  border-top: none;
+}
+th:first-child {
+  -webkit-border-radius: 3px 0 0 0 ;
+  -moz-border-radius: 3px 0 0 0;
+  -ms-border-radius: 3px 0 0 0;
+  -o-border-radius: 3px 0 0 0;
+  border-radius: 3px 0 0 0;
+}
+th:last-child {
+  -webkit-border-radius: 0 3px 0 0 ;
+  -moz-border-radius: 0 3px 0 0;
+  -ms-border-radius: 0 3px 0 0;
+  -o-border-radius: 0 3px 0 0;
+  border-radius: 0 3px 0 0;
+}
+tr:last-child td:last-child {
+  -webkit-border-radius: 0 0 3px 0 ;
+  -moz-border-radius: 0 0 3px 0;
+  -ms-border-radius: 0 0 3px 0;
+  -o-border-radius: 0 0 3px 0;
+  border-radius: 0 0 3px 0;
+}
+tr:last-child td:first-child {
+  -webkit-border-radius: 0 0 0 3px ;
+  -moz-border-radius: 0 0 0 3px;
+  -ms-border-radius: 0 0 0 3px;
+  -o-border-radius: 0 0 0 3px;
+  border-radius: 0 0 0 3px;
 }
 td:first-child, th:first-child {
+  border-left: none;
   text-align: left !important;
 }
 
 .flag {
-  vertical-align: text-top;
+  vertical-align: text-bottom;
   margin-right: 0.1em;
 }
 
-.big-score {
-  margin-bottom: -6px;
-}
-#stats-description {
-  float: left;
-  text-align: left;
-  margin-top: -15px;
+.stats-description {
+  /*margin-top: 5px;*/
 }
 
 #score-table {
-  /*width: 0*;*/
   margin: 15px auto 15px;
 }
 .score-table-round-header {
@@ -95,15 +139,10 @@ td:first-child, th:first-child {
 .overall-stats {
   white-space: nowrap;
 }
-.overall-stats-nav {
-  display: inline-block;
-}
-.overall-stats-nav a {
-  min-width: 0 !important;
-}
 .overall-stats-table {
   margin-right: 0 !important;
 }
+
 .team2 {
   color: #D06553;
 }
@@ -118,17 +157,15 @@ td:first-child, th:first-child {
 }
 .team2-avatar, .team3-avatar {
   float: left;
-  width: 16px;
-  height: 16px;
-  margin-right: 4px;
+  width: 20px;
+  height: 20px;
+  margin: 0px 4px 0px 0;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
 }
-.overall-stats-table td:nth-child(2) {
-  padding: 1px;
-}
 .class-icon {
+  margin-bottom: -2px;
   width: 20px;
   height: 20px;
 }
@@ -154,10 +191,15 @@ td:first-child, th:first-child {
   padding: 3px 5px 4px;
 }
 .stats-table td {
-  padding: 0px 4px;
+  padding: 0px 3px;
+}
+.stats-table td:first-child {
+  line-height: 1.5;
 }
 
+
 #chat-log {
+  margin-top: 12px;
   list-style: none;
   font-size: 13px;
 }
@@ -176,7 +218,8 @@ footer {
 .sort-true {
   color: white;
   /*background-color: #9fbfdf;*/
-  background-color: #0088cc;
+  /*background-color: #0088cc;*/
+  background-color: #2ba6cb;
   /* black asc arrow */
   /* background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjB+gC+jP2ptn0WskLQA7); */
   /* white asc arrow */
@@ -188,7 +231,8 @@ footer {
 .sort-false {
   color: white;
   /*background-color: #8cb3d9;*/
-  background-color: #0088cc;
+  /*background-color: #0088cc;*/
+  background-color: #2ba6cb;
   /* black desc arrow */
   /*background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjI8Bya2wnINUMopZAQA7); */
   /* white desc arrow */
@@ -199,17 +243,8 @@ footer {
 }
 
 /* Bootstrap hacks for in-game browser */
-.ingame {
+/*.ingame {
   margin: -60px auto 0;
   width: 900px;
 }
-@media (max-width: 979px) {
-  .ingame {
-    margin-top: 0px;
-  }
-}
-@media (max-width: 767px) {
-  .ingame {
-    margin: 0 -20px;
-  }
-}
+*/
