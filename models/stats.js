@@ -51,6 +51,7 @@ var statsSchema = new mongoose.Schema({
   chats: [{
     steamid: { type: String, required: true },
     isTeam: Boolean,
+    isBind: Boolean,
     time: { type: Number, required: true },
     message: String
   }],
@@ -221,6 +222,8 @@ var appendChats = function(newChats, oldChats) {
     newChats.forEach(function(chat) {
       if (chat.message && chat.message[0] === '"' && chat.message[chat.message.length-1] === '"') {
         chat.message = chat.message.slice(1,-1);
+      } else {
+        chat.isBind = true;
       }
     });
     // Append the new chats

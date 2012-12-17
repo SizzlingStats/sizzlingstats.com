@@ -251,6 +251,10 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
       }
     }
   };
+  $scope.filterBinds = true;
+  $scope.bindFilter = function(chat) {
+    return (!$scope.filterBinds || !chat.isBind);
+  };
   var mostPlayedClass = function(mpcArray) {
     if ($scope.numRounds === 1) {
       return mpcArray[0];

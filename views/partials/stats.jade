@@ -72,9 +72,15 @@
           th(ng-class="sortClass('stats[2]','medic')", ng-click="sortBy('stats[2]','medic')", class="has-tip tip-top", title='Ubers Dropped'): abbr UD
       tbody
         tr(ng-repeat='player in stats.players | orderBy:medicSort:medicReverse', ng-bind-html-unsafe='player.medictr')
-  ul.chat-log
-    li(ng-repeat='chat in stats.chats')
-      span.chat-time {{secondsToHMS(chat.time)}}&nbsp;
-      span.chat-name(ng-class='{true:"team-message"}[chat.isTeam]', class='team{{playerMetaData[chat.steamid].team}}')
-        b {{playerMetaData[chat.steamid].name || "spectator"}}
-      span.chat-message : {{chat.message}}
+  .chat-log
+    ul
+      li(ng-repeat='chat in stats.chats | filter:bindFilter')
+        span.chat-time {{secondsToHMS(chat.time)}}&nbsp;
+        span.chat-name(ng-class='{true:"team-message"}[chat.isTeam]', class='team{{playerMetaData[chat.steamid].team}}')
+          b {{playerMetaData[chat.steamid].name || "spectator"}}
+        span.chat-message : {{chat.message}}
+    dl.sub-nav.no-marg
+      dd(ng-class='{active:!filterBinds}')
+        a(href="javascript:", ng-click="filterBinds=false") All
+      dd(ng-class='{active:filterBinds}')
+        a(href="javascript:", ng-click="filterBinds=true") No Binds
