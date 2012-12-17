@@ -6,14 +6,15 @@
     "node": "0.8.x"
   },
   "dependencies": {
+    "async": "0.1.x",
     "colors": "*",
     "connect-assetmanager": "*",
-    "cron": ">= 1.0.0",
+    "cron": "1.x.x",
     "everyauth": "git://github.com/christopherjkim/everyauth.git#steam",
     "express": "2.5.11",
     "jade": "*",
-    "mongoose": ">= 3.0",
-    "request": ">=2.x.x",
+    "mongoose": "3.x.x",
+    "request": "2.x.x",
     "socket.io": "0.9.x"
   },
   "subdomain": "sizzlingstats",

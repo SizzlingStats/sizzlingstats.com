@@ -73,12 +73,12 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
 
   var calculateStats = function(data, reinitializeSelectedRounds) {
     // Stupid placeholder object for when things go wrong
-    if (data === 'false') {
+    if (!data  || typeof data !== 'object') {
       data = { stats: {
         redname: 'RED',
         bluname: 'BLU',
-        redscore: [0],
-        bluscore: [0],
+        redscore: [],
+        bluscore: [],
         players: []
       }};
     }
