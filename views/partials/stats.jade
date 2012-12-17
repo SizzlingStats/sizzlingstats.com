@@ -1,4 +1,4 @@
-#stats
+.stats
   .center
     h3.no-marg
       img.flag(ng-show="stats.redCountry", ng-src="/img/flags/32/{{stats.redCountry}}.png")
@@ -15,7 +15,7 @@
     //- .date Date: {{stats.created | date:'medium'}}
     //- .match-duration(ng-show='stats.matchDuration') Match Duration: {{secondsToHMS(stats.matchDuration)}}
     //- .playable-time Playable Time: {{secondsToHMS(playableTime)}}
-    table#score-table.table-bordered
+    table.score-table
       thead
         tr
           th
@@ -62,8 +62,8 @@
         a(href="javascript:", ng-click="separateTeams=false") All
       dd(ng-class='{active:separateTeams}')
         a(href="javascript:", ng-click="separateTeams=true") Teams
-  .asdfdsa
-    table.stats-table.table.table-striped.table-bordered
+  .class-stats
+    table.stats-table
       thead
         tr
           th(ng-class="sortClass('name','medic')", ng-click="sortBy('name','medic')"): abbr Medics
@@ -72,7 +72,7 @@
           th(ng-class="sortClass('stats[2]','medic')", ng-click="sortBy('stats[2]','medic')"): abbr.has-tip.tip-top(title='Ubers Dropped') UD
       tbody
         tr(ng-repeat='player in stats.players | orderBy:medicSort:medicReverse', ng-bind-html-unsafe='player.medictr')
-  ul#chat-log
+  ul.chat-log
     li(ng-repeat='chat in stats.chats')
       span.chat-time {{secondsToHMS(chat.time)}}&nbsp;
       span.chat-name(ng-class='{true:"team-message"}[chat.isTeam]', class='team{{playerMetaData[chat.steamid].team}}')

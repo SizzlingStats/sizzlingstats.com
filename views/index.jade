@@ -41,8 +41,8 @@ block body
                   a(href='/logout/', target='_self') Sign Out
           else
             li
-              a(href='/auth/steam', target='_self')
-                img.sits(src='/img/sits_small.png')
+              a.sits(href='/auth/steam', target='_self')
+                img(src='/img/sits_small.png')
   else
     nav.top-bar.attached
       ul
@@ -64,7 +64,7 @@ block body
             li(ng-cloak, ng-repeat='match in matches | orderBy:"-_id"', ng-class="{active: isActive(), 'live-match': match.isLive}")
               a(href='/stats?id={{match._id}}')
                 | {{match.hostname}} 
-                span.label(ng-show='match.isLive') Live
+                //- span.label(ng-show='match.isLive') Live
                 br
                 img.flag(ng-show="match.redCountry", ng-src="/img/flags/16/{{match.redCountry}}.png")
                 | {{match.redname}} vs 
