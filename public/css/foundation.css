@@ -111,8 +111,9 @@ blockquote cite a, blockquote cite a:visited { color: #555555; }
 /*abbr, acronym { text-transform: uppercase; font-size: 90%; color: #222222; border-bottom: 1px solid #ddd; cursor: help; }*/
 abbr, acronym { font-size: 90%; }
 
-/*overridden-removed*/
+/*overridden*/
 /*abbr { text-transform: none; }*/
+abbr { border-bottom: 1px solid #ddd; }
 
 /* Print styles.  Inlined to avoid required HTTP connection: www.phpied.com/delay-loading-your-print-css/ Credit to Paul Irish and HTML5 Boilerplate (html5boilerplate.com)
 */
@@ -690,9 +691,8 @@ div.alert-box a.close:hover, div.alert-box a.close:focus { opacity: 0.4; }
 .label.secondary { background-color: #e9e9e9; color: #505050; }
 
 /* Tooltips ---------------------- */
-/*overridden*/
+/*overridden-removed*/
 /*.has-tip { border-bottom: dotted 1px #cccccc; cursor: help; font-weight: bold; color: #333333; }*/
-.has-tip { border-bottom: dotted 1px #cccccc; font-weight: bold; }
 /*overridden-removed*/
 /*.has-tip:hover { border-bottom: dotted 1px #196177; color: #2ba6cb; }*/
 .has-tip.tip-left, .has-tip.tip-right { float: none !important; }
@@ -1179,8 +1179,11 @@ table.show-for-xlarge, table.show-for-large, table.hide-for-small, table.hide-fo
   /* UI Elements --- */
   /*                 */
   /* Tooltips */
-  .tooltip { font-size: 14; line-height: 1.4; padding: 7px 10px 9px 10px; left: 50% !important; max-width: 80% !important; margin-left: -40%; font-size: 110%; }
-  .tooltip > .nub, .tooltip.top > .nub, .tooltip.left > .nub, .tooltip.right > .nub { border-color: transparent transparent black transparent; border-color: transparent transparent rgba(0, 0, 0, 0.85) transparent; top: -12px; left: 10px; } }
+  /*overridden-removed*/
+  /*.tooltip { font-size: 14; line-height: 1.4; padding: 7px 10px 9px 10px; left: 50% !important; max-width: 80% !important; margin-left: -40%; font-size: 110%; }*/
+  /*overridden-removed*/
+  /*.tooltip > .nub, .tooltip.top > .nub, .tooltip.left > .nub, .tooltip.right > .nub { border-color: transparent transparent black transparent; border-color: transparent transparent rgba(0, 0, 0, 0.85) transparent; top: -12px; left: 10px; }*/
+}
 /* Topbar Specific Breakpoint that you can customize */
 /*overridden-max-width is by default 940px*/
 @media only screen and (max-width: 767px) { .top-bar { margin-bottom: 0; overflow: hidden; height: 45px; background: #222222; /* Override contain to grid stuff for breakpoint */ /* Setting up the sliding area */ /* When the Small Nav is Showing */ }

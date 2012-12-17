@@ -111,36 +111,37 @@
             'left' : left,
             'right' : right,
             'width' : (width) ? width : 'auto'
-          }).end();
+          });
         };
 
         objPos(tip, (target.offset().top + target.outerHeight() + 10), 'auto', 'auto', target.offset().left, width);
         objPos(nub, -nubHeight, 'auto', 'auto', 10);
 
-        if ($(window).width() < 767) {
-          column = target.closest('.columns');
+        /*overridden-fix-tooltips*/
+        // if ($(window).width() < 767) {
+        //   column = target.closest('.columns');
 
-          if (column.length < 0) {
-            // if not using Foundation
-            column = $('body');
-          }
-          tip.width(column.outerWidth() - 25).css('left', 15).addClass('tip-override');
-          objPos(nub, -nubHeight, 'auto', 'auto', target.offset().left);
-        } else {
-          if (classes && classes.indexOf('tip-top') > -1) {
-            objPos(tip, (target.offset().top - tip.outerHeight() - nubHeight), 'auto', 'auto', target.offset().left, width)
-              .removeClass('tip-override');
-            objPos(nub, 'auto', 'auto', -nubHeight, 'auto');
-          } else if (classes && classes.indexOf('tip-left') > -1) {
-            objPos(tip, (target.offset().top + (target.outerHeight() / 2) - nubHeight), 'auto', 'auto', (target.offset().left - tip.outerWidth() - 10), width)
-              .removeClass('tip-override');
-            objPos(nub, (tip.outerHeight() / 2) - (nubHeight / 2), -nubHeight, 'auto', 'auto');
-          } else if (classes && classes.indexOf('tip-right') > -1) {
-            objPos(tip, (target.offset().top + (target.outerHeight() / 2) - nubHeight), 'auto', 'auto', (target.offset().left + target.outerWidth() + 10), width)
-              .removeClass('tip-override');
-            objPos(nub, (tip.outerHeight() / 2) - (nubHeight / 2), 'auto', 'auto', -nubHeight);
-          }
+        //   if (column.length < 0) {
+        //     // if not using Foundation
+        //     column = $('body');
+        //   }
+        //   tip.width(column.outerWidth() - 25).css('left', 15).addClass('tip-override');
+        //   objPos(nub, -nubHeight, 'auto', 'auto', target.offset().left);
+        // } else {
+        if (classes && classes.indexOf('tip-top') > -1) {
+          objPos(tip, (target.offset().top - tip.outerHeight() - nubHeight), 'auto', 'auto', target.offset().left, width);
+            // .removeClass('tip-override');
+          objPos(nub, 'auto', 'auto', -nubHeight, 'auto');
+        } else if (classes && classes.indexOf('tip-left') > -1) {
+          objPos(tip, (target.offset().top + (target.outerHeight() / 2) - nubHeight), 'auto', 'auto', (target.offset().left - tip.outerWidth() - 10), width);
+            // .removeClass('tip-override');
+          objPos(nub, (tip.outerHeight() / 2) - (nubHeight / 2), -nubHeight, 'auto', 'auto');
+        } else if (classes && classes.indexOf('tip-right') > -1) {
+          objPos(tip, (target.offset().top + (target.outerHeight() / 2) - nubHeight), 'auto', 'auto', (target.offset().left + target.outerWidth() + 10), width);
+            // .removeClass('tip-override');
+          objPos(nub, (tip.outerHeight() / 2) - (nubHeight / 2), 'auto', 'auto', -nubHeight);
         }
+        // }
         tip.css('visibility', 'visible').hide();
       },
       inheritable_classes : function (target) {
