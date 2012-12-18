@@ -21,16 +21,12 @@ module.exports = function(app) {
 
   });
 
-  statsEmitter.on('newMatch', function (data) {
-    io.sockets.emit('matches:new', data);
-  });
-
   statsEmitter.on('updateMatch', function (data) {
     io.sockets.emit('matches:update', data);
   });
 
-  statsEmitter.on('newStats', function (data, matchId) {
-    io.sockets.in(matchId).emit('stats:send', data);
+  statsEmitter.on('updateStats', function (data, matchId) {
+    io.sockets.in(matchId).emit('stats:update', data);
   });
 
 };

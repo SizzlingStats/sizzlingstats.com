@@ -16,10 +16,6 @@ function MainCtrl($scope, $location, $rootScope) {
 }
 
 function SideBarCtrl($scope, $http, $routeParams, socket) {
-  socket.on('matches:new', function(data) {
-    $scope.matches.push(data);
-  });
-
   socket.on('matches:update', function(data) {
     for (var i=0, len=$scope.matches.length; i<len; i++) {
       if ($scope.matches[i]._id == data._id) {
@@ -27,6 +23,8 @@ function SideBarCtrl($scope, $http, $routeParams, socket) {
         return;
       }
     }
+    // data._id wasn't found, so just push it into $scope.matches[]
+    $scope.matches.push(data);
   });
 
   $http.get('/api/matches')
@@ -66,7 +64,7 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
     socket.emit('stats:subscribe', val);
   });
 
-  socket.on('stats:send', function (data) {
+  socket.on('stats:update', function (data) {
     console.log('Stat update received!');
     calculateStats(data, false);
   });

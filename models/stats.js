@@ -73,7 +73,7 @@ statsSchema.pre('save', function(next) {
 
   // Push the new stats to subscribed clients on websockets.
   stats.getPlayerData(function(err, playerdata) {
-    statsEmitter.emit('newStats', { stats: stats, playerdata: playerdata }, stats._id);
+    statsEmitter.emit('updateStats', { stats: stats, playerdata: playerdata }, stats._id);
   });
 
   next();
