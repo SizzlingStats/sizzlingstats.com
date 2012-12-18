@@ -248,6 +248,8 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
         $scope.playerMetaData[steamid].name = player.name;
         $scope.playerMetaData[steamid].team = player.team;
         player.avatar = $scope.playerMetaData[steamid].avatar;
+      } else {
+        $scope.playerMetaData[steamid] = { name: player.name, team: player.team };
       }
     }
   };
