@@ -262,11 +262,12 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
     // Determine what class was played the most by summing the rounddurations
     //  for the according tf2class in the "mostplayedclass" array.
     var totals = [0,0,0,0,0,0,0,0,0,0];
-    for (var i=0; i<$scope.numRounds; i++) {
-      // mpcArray[i] is the index (1-9) of the tf2class that the player played
+    for (var i=0, ilen=$scope.selectedRounds.length; i<ilen; i++) {
+      // mpcArray[r] is the id (1-9) of the tf2class that the player played
       //  the most in the ith round. The index of the max value in totals[] is
       //  the id of the tf2class that the player played the most in the match.
-      totals[ mpcArray[i] ] += $scope.stats.roundduration[i];
+      var r = $scope.selectedRounds[i];
+      totals[ mpcArray[r] ] += $scope.stats.roundduration[r];
     }
     // Find the index of the max value in totals[].
     var theClass=0, theMax=0;
