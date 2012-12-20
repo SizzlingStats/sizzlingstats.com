@@ -7,7 +7,6 @@ var async = require('async');
 var cfg = require('../cfg/cfg');
 var STATS_SECRET = process.env.STATS_SECRET || require('../cfg/secrets').stats_secret;
 var Stats = require('../models/stats');
-var Match = require('../models/match');
 var Counter = require('../models/counter');
 var Session = require('../models/session');
 var Player = require('../models/player');
@@ -53,7 +52,11 @@ var stats = function(req, res) {
 };
 
 var matches = function(req, res) {
-  Match.find({}).sort({_id:-1}).limit(12).exec(function(err, matches) {
+  Stats.find({})
+  .sort({_id:-1})
+  .limit(12)
+  .select('hostname redname bluname redCountry bluCountry isLive')
+  .exec(function(err, matches) {
     if (err) {
       console.log(err);
       console.trace(err);
@@ -65,6 +68,7 @@ var matches = function(req, res) {
     res.json({ matches: matches });
   });
 };
+
 
 // POST
 
@@ -79,26 +83,23 @@ var createStats = function(req, res) {
   // 2. Check if POST body contains the necessary info
   if (Object.keys(req.body).length === 0) { return res.end('false\n'); }
   if (!req.body.stats || !req.body.stats.players || req.body.stats.players.length === 0) { return res.end('false\n'); }
-
-  // 3. Massage the POST body data
-  // Remove spectators from players array
-  for (var i=req.body.stats.players.length-1; i>=0; i--) {
-    if (req.body.stats.players[i].team < 2) {
-      req.body.stats.players.splice(i,1);
-    }
-  }
   
-  // 4. Generate sessionid.
-  var sessionId, matchId, match;
+  // 3. Generate sessionid.
+  var sessionId, match;
+  // I'm putting matchId inside matchInfo so I can pass it by reference
+  //  because I am a fucking idiot
+  var matchInfo = {matchId: 0};
+
+  // TODO: Use forwarded ip address from header, because this is behind a proxy
   var ip = req.connection.remoteAddress;
 
-  // We probably need some more/better information in the hmac
+  // TODO: use some more/better information in the hmac
   var date = Date.now();
   var hmac = crypto.createHmac('sha1',STATS_SECRET);
   hmac.update(ip + date);
   sessionId = hmac.digest('hex');
 
-  // 5. Then save stats to database.
+  // 4. Then save stats to database.
   async.waterfall([
     // Get matchId (matchCounter.next)
     function(callback) {
@@ -107,60 +108,26 @@ var createStats = function(req, res) {
     // Create new session document
     function(matchCounter, callback) {
       if (!matchCounter) { callback(new Error('createStats() -- No matchCounter')); }
-      matchId = matchCounter.next;
       new Session({
         _id: sessionId,
-        matchId: matchId,
+        matchId: matchInfo.matchId = matchCounter.next,
         ip: ip,
         timeout: date + cfg.stats_session_timeout
       }).save(callback);
     },
-    // Create new match document
-    function(session, affectedDocs, callback) {
-      var matchData = {
-        _id: matchId,
-        hostname: req.body.stats.hostname,
-        bluname: req.body.stats.bluname,
-        redname: req.body.stats.redname,
-        isLive: true
-      };
-      match = new Match(matchData);
-      match.save(callback);
-    },
     // Create new stats document
-    function(match, affectedDocs, callback) {
-      var statsData = req.body.stats;
-      statsData.round = 0;
-      statsData.redscore = 0;
-      statsData.bluscore = 0;
-      statsData.roundduration = 0;
-      statsData._id = matchId;
-      statsData.isLive = true;
-      statsData.created = new Date();
-      statsData.updated = statsData.created;
-      new Stats(statsData).save(callback);
-    }
+    async.apply(Stats.createStats, matchInfo, req.body.stats)
   // async.waterfall callback
-  ], function(err, stats) {
-    if (err || !stats) {
+  ], function(err) {
+    if (err) {
       console.log(err);
       console.trace(err);
       return res.end('false\n');
     }
-    // Emit the 'newMatch' event.
-    statsEmitter.emit('newMatch', match);
-    // Respond to the gameserver
-    res.setHeader('matchurl', cfg.hostname + '/stats?id=' + matchId + '&ingame');
+    // Success! Respond to the gameserver with relevant info
+    res.setHeader('matchurl', cfg.hostname + '/stats?id=' + matchInfo.matchId + '&ingame');
     res.setHeader('sessionid', sessionId);
     res.end('true\n');
-    // See if you can update the match with the countrycode info etc.
-    match.updateWithPlayerData(stats, function(err) {
-      if (err) {
-        console.log(err);
-        console.trace(err);
-        // TODO: do something
-      }
-    });
   });
 };
 
@@ -239,10 +206,6 @@ var gameOver = function(req, res) {
         console.trace(err);
         return res.end('false\n');
       }
-
-      Match.setGameOver(session.matchId, null, function(err) {
-        if (err) { console.log(err); console.trace(err); }
-      });
 
       // If all went well, expire the sessionkey and send HTTP response
       session.expireSessionKey(function(err) {

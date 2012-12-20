@@ -69,17 +69,47 @@ statsSchema.pre('save', function(next) {
   stats.players.forEach(function(player) {
     steamids.push(player.steamid);
   });
-  Player.updateSteamInfo(steamids);
+  Player.updateSteamInfo(steamids, function(err) {
+    if (err) {console.log(err); console.trace(err); }
+    
+    // Push the new stats to subscribed clients on websockets.
+    stats.getPlayerData(function(err, playerData) {
 
-  // Push the new stats to subscribed clients on websockets.
-  stats.getPlayerData(function(err, playerdata) {
-    statsEmitter.emit('updateStats', { stats: stats, playerdata: playerdata }, stats._id);
+      // this doesn't belong here
+      stats.updateWithPlayerData(playerData, function(err) {
+        // do something
+      });
+
+      statsEmitter.emit('updateStats', stats, playerData);
+    });
+
+    next();
+
   });
-
-  next();
 
 });
 
+statsSchema.statics.createStats = function(matchInfo, statsData) {
+  var callback = arguments[arguments.length-1];
+
+  // statsData is the the POST body data (req.body.stats), so massage it
+  // Remove spectators from players array
+  for (var i=statsData.players.length-1; i>=0; i--) {
+    if (statsData.players[i].team < 2) {
+      statsData.players.splice(i,1);
+    }
+  }
+
+  // Set initial values for a new stats document
+  statsData.round = 0;
+  statsData.redscore = 0;
+  statsData.bluscore = 0;
+  statsData.roundduration = 0;
+  statsData._id = matchInfo.matchId;
+  statsData.isLive = true;
+  statsData.created = statsData.updated = new Date();
+  new Stats(statsData).save(callback);
+};
 
 statsSchema.statics.appendStats = function(newStats, matchId, isEndOfRound, cb) {
   Stats.findById(matchId, function(err, stats) {
@@ -174,18 +204,68 @@ statsSchema.statics.appendStats = function(newStats, matchId, isEndOfRound, cb) 
   }); // end Stats.findById()
 };
 
+statsSchema.methods.updateWithPlayerData = function(playerData, cb) {
+  var stats = this;
+
+  var redCountries = [];
+  var bluCountries = [];
+  // Fill out the team info for all the players
+  for (var i=0,player; player=stats.players[i]; i++) {
+    var steamid = player.steamid;
+    if (playerData[steamid]) {
+      playerData[steamid].team = player.team;
+    }
+  }
+  // Push the country info into the arrays
+  for (var steamid in playerData) {
+    if (playerData[steamid].country) {
+      if (playerData[steamid].team === 2) { redCountries.push(playerData[steamid].country); }
+      else if (playerData[steamid].team === 3) { bluCountries.push(playerData[steamid].country); }
+    }
+  }
+  // Find the most-occurring country for each team
+  var mode = function(array) {
+    if (array.length === 0)
+      return null;
+    var modeMap = {};
+    var maxEl = array[0], maxCount = 1;
+    for (var i = 0; i < array.length; i++)
+    {
+      var el = array[i];
+      if (modeMap[el] === null) {
+        modeMap[el] = 1;
+      }
+      else {
+        modeMap[el]++;
+      }
+      if (modeMap[el] > maxCount) {
+        maxEl = el;
+        maxCount = modeMap[el];
+      }
+    }
+    return maxEl;
+  };
+  stats.redCountry = mode(redCountries);
+  stats.bluCountry = mode(bluCountries);
+  stats.update({$set:{redCountry: stats.redCountry, bluCountry: stats.bluCountry}}, function(err) {
+    if (err) {console.log(err);} // do something
+  });
+
+};
+
 statsSchema.methods.getPlayerData = function(cb) {
+  // Create an array of all players' steamids
   var steamids = [];
   this.players.forEach(function(player) {
     steamids.push(player.steamid);
   });
 
+  // Lookup all steamids in database for the names
   Player.find( { _id: { $in : steamids } }).exec(function(err, players) {
-    if (err) {
-      return cb(err, {});
-    }
+    if (err) { return cb(err); }
 
     var playerdata = {};
+    // console.log(players);
     players.forEach(function(player) {
       playerdata[player._id] = {
         avatar: player.avatar,

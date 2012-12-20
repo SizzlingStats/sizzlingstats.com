@@ -2,7 +2,6 @@ var mongoose = require('mongoose');
 var cfg = require('../cfg/cfg');
 var cronJob = require('cron').CronJob;
 var Stats = require('./stats');
-var Match = require('./match');
 
 // This is a session model for tf2 servers
 
@@ -38,11 +37,7 @@ var expireSessionKeyJob = new cronJob('0 */' + cfg.session_expiry_interval + ' *
       Stats.setGameOver(session.matchId, null, null, function(err) {
         if (err) { console.log(err); }
       });
-
-      Match.setGameOver(session.matchId, function(err) {
-        if (err) { console.log(err); }
-      });
-
+      
       session.expireSessionKey(function(err) {
         if (err) { console.log(err); }
       });

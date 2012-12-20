@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var async = require('async');
 var request = require('request');
 var secrets = require('../cfg/secrets');
 var steamapi = process.env.STEAM_API || secrets.steamapi;
@@ -81,7 +82,7 @@ playerSchema.statics.getSteamApiInfo = function(numericId, callback) {
 
   var options = {
     uri: 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/',
-    qs: { key: secrets.steamapi, steamids: numericId },
+    qs: { key: steamapi, steamids: numericId },
     json: true,
     timeout: 7000
   };
@@ -102,7 +103,7 @@ playerSchema.statics.getSteamApiInfo = function(numericId, callback) {
   }); // End request
 };
 
-playerSchema.statics.updateSteamInfo = function(steamids) {
+playerSchema.statics.updateSteamInfo = function(steamids, callback) {
 
   var steamIdRegex = /STEAM_0\:(0|1)\:\d{1,15}$/;
   var convertedids = [];
@@ -114,45 +115,53 @@ playerSchema.statics.updateSteamInfo = function(steamids) {
     }
   });
 
-  var query = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=' +
-              steamapi + '&steamids=' + convertedids.join();
+  var options = {
+    uri: 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/',
+    qs: { key: steamapi, steamids: convertedids.join() },
+    json: true,
+    timeout: 7000
+  };
 
-  request(query, function(err, res, body) {
+  request(options, function(err, res, body) {
+    // LOTS OF ERROR CHECKING
     if (err) {
-      console.log(err);
-      return false;
+      return callback(err);
     }
     if (res.statusCode !== 200) {
-      // do more stuff here
-      console.log('Steam API Error: ' + res.statusCode);
-      return false;
+      return callback(new Error('player.js updateSteamInfo - Steam API Error: ' + res.statusCode));
     }
-    var steamInfo;
-    try {
-      steamInfo = JSON.parse(body);
-    } catch (e) {
-      console.log(e);
-      return false;
+    if (!body.response || !body.response.players) {
+      return callback(new Error('player.js updateSteamInfo - Steam API Error: body undefined'));
     }
-    steamInfo.response.players.forEach(function(player) {
-      // Player.update()
 
+    var newDate = new Date();
+
+    // Update all the players in DB, using new Steam API info.
+    async.forEach(body.response.players, function(player, aCallback) {
       var steamid = Player.numericIdToSteamId(player.steamid);
       var newPlayer = {
-                        numericid: player.steamid,
-                        name: player.personaname,
-                        avatar: player.avatar,
-                        updated: new Date()
-                      };
-      if (player.loccountrycode)
+        numericid: player.steamid,
+        name: player.personaname,
+        avatar: player.avatar,
+        updated: newDate
+      };
+
+      if (player.loccountrycode) {
         newPlayer.country = player.loccountrycode;
+      }
 
       Player.update({ _id: steamid }, newPlayer, { upsert: true}, function(err) {
-        if (err) {
-          console.log(err);
-        }
+        if (err) { aCallback(err); }
+        else { aCallback(null, newPlayer); }
       });
+    },
+    // Callback for when all the players are iterated over
+    function(err) {
+      if (err) { return callback(err); }
+      return callback(null);
     });
+
+
   }); // End request
 };
 

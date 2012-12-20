@@ -21,12 +21,17 @@ module.exports = function(app) {
 
   });
 
-  statsEmitter.on('updateMatch', function (data) {
-    io.sockets.emit('matches:update', data);
-  });
-
-  statsEmitter.on('updateStats', function (data, matchId) {
-    io.sockets.in(matchId).emit('stats:update', data);
+  statsEmitter.on('updateStats', function (stats, playerData) {
+    io.sockets.emit('matches:update', {
+      _id: stats._id,
+      isLive: stats.isLive,
+      hostname: stats.hostname,
+      redname: stats.redname,
+      bluname: stats.bluname,
+      redCountry: stats.redCountry,
+      bluCountry: stats.bluCountry
+    });
+    io.sockets.in(stats._id).emit('stats:update', { stats: stats, playerdata: playerData }, stats._id);
   });
 
 };
