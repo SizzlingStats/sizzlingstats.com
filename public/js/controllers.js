@@ -187,13 +187,16 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
     }
   };
   $scope.ctrl = false;
-  window.onkeydown = function(e) {
-    if (e.ctrlKey) { $scope.ctrl = true; }
+  window.onmouseup = function(e) {
+    $scope.ctrl = !!e.ctrlKey;
   };
-  window.onkeyup = function(e) {
-    if (e.ctrlKey) { $scope.ctrl = true; }
-    else { $scope.ctrl = false; }
-  };
+  // window.onkeydown = function(e) {
+  //   if (e.ctrlKey) { $scope.ctrl = true; }
+  // };
+  // window.onkeyup = function(e) {
+  //   if (e.ctrlKey) { $scope.ctrl = true; }
+  //   else { $scope.ctrl = false; }
+  // };
   $scope.clickRoundHeader = function(round) {
     if ($scope.selectedRounds.length === 0) {
       $scope.selectedRounds.push(round);
