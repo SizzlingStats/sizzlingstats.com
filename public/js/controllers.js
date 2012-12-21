@@ -135,6 +135,7 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
     // Calculate individual players' stats from the select range of rounds
     angular.forEach(stats.players, function(player) {
       player.mostPlayedClass = mostPlayedClass(player.mostplayedclass);
+      player.playedClasses = playedClasses(player.playedclasses);
       player.stats = [
         sumArray2(player.points),
         // Frags + Assists / Deaths
@@ -165,7 +166,7 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
           '" /><span>' + player.name + '</span><td><img class="class-icon" src="/img/classicons/' +
           player.mostPlayedClass + '.png"></img><td>' + player.stats.join('</td><td>') + '</td>';
       // Additional medic-specific stats
-      if (player.mostPlayedClass == 5) {
+      if (player.playedClasses & 1<<6) {
         player.medicStats = [
           sumArray2(player.healpoints),
           sumArray2(player.invulns),
@@ -259,9 +260,10 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
     return (!$scope.filterBinds || !chat.isBind);
   };
   var mostPlayedClass = function(mpcArray) {
-    if ($scope.numRounds === 1) {
-      return mpcArray[0];
-    }
+    // What is this for??? vvvvv
+    // if ($scope.numRounds === 1) {
+    //   return mpcArray[0];
+    // }
     // Determine what class was played the most by summing the rounddurations
     //  for the according tf2class in the "mostplayedclass" array.
     var totals = [0,0,0,0,0,0,0,0,0,0];
@@ -274,13 +276,20 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
     }
     // Find the index of the max value in totals[].
     var theClass=0, theMax=0;
-    for (var j=0; j<9 ;j++) {
+    for (var j=0; j<=9; j++) {
       if (totals[j] > theMax) {
         theMax = totals[j];
         theClass = j;
       }
     }
     return theClass;
+  };
+  var playedClasses = function(playedClassesArray) {
+    var filteredArray = [];
+    for (var i=0, ilen=$scope.selectedRounds.length; i<ilen; i++) {
+      filteredArray.push(playedClassesArray[$scope.selectedRounds[i]]);
+    }
+    return filteredArray.reduce(function(a,b) { return a | b; });
   };
   var sumArray = function(array) {
     var sum = 0, filteredArray = [];

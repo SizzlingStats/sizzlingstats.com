@@ -93,10 +93,13 @@ statsSchema.statics.createStats = function(matchInfo, statsData) {
   var callback = arguments[arguments.length-1];
 
   // statsData is the the POST body data (req.body.stats), so massage it
-  // Remove spectators from players array
   for (var i=statsData.players.length-1; i>=0; i--) {
+    // Remove spectators from players array
     if (statsData.players[i].team < 2) {
       statsData.players.splice(i,1);
+    } else {
+      // Remap playerclass data
+      statsData.players[i].mostplayedclass = remapMostPlayedClass(statsData.players[i].mostplayedclass);
     }
   }
 
@@ -125,6 +128,10 @@ statsSchema.statics.appendStats = function(newStats, matchId, isEndOfRound, cb) 
 
     newStats.players.forEach(function(player) {
       var isNewPlayer = true;
+
+      // Remap playerclass data
+      player.mostplayedclass = remapMostPlayedClass(player.mostplayedclass);
+      player.playedclasses = remapPlayedClasses(player.playedclasses);
 
       // look for the oldPlayer with a matching steamid
       // and add new values to the stat arrays
@@ -310,6 +317,45 @@ var appendChats = function(newChats, oldChats) {
     return oldChats.concat(newChats);
   }
   return oldChats;
+};
+
+var remapMostPlayedClass = function(mostPlayedClass) {
+  if (typeof mostPlayedClass !== 'number') { return 0; }
+  // The game doesn't report the classes by their nominal 1-9.
+  // So we must remap them.
+  return [0,1,8,2,4,7,5,3,9,6][mostPlayedClass];
+};
+
+// This function takes an integer that, in binary, represents
+//  a bitfield of tf2classes
+var remapPlayedClasses = function(playedClasses) {
+  if (typeof playedClasses !== 'number') { return 0; }
+  // Note that the game doesn't report the classes by their nominal 1-9.
+  // So we must remap them.
+
+  // PLAYED_SCOUT    = 1<<0; //   1          1  should be:          1
+  // PLAYED_SNIPER   = 1<<1; //   2         10  should be:   10000000
+  // PLAYED_SOLDIER  = 1<<2; //   4        100  should be:         10
+  // PLAYED_DEMOMAN  = 1<<3; //   8       1000  should be:       1000
+  // PLAYED_MEDIC    = 1<<4; //  16      10000  should be:    1000000
+  // PLAYED_HEAVY    = 1<<5; //  32     100000  should be:      10000
+  // PLAYED_PYRO     = 1<<6; //  64    1000000  should be:        100
+  // PLAYED_SPY      = 1<<7; // 128   10000000  should be:  100000000
+  // PLAYED_ENGINEER = 1<<8; // 256  100000000  should be:     100000
+
+  var map = 0;
+
+  if (playedClasses & 1)   { map |= 1; }
+  if (playedClasses & 4)   { map |= 2; }
+  if (playedClasses & 64)  { map |= 4; }
+  if (playedClasses & 8)   { map |= 8; }
+  if (playedClasses & 32)  { map |= 16; }
+  if (playedClasses & 256) { map |= 32; }
+  if (playedClasses & 16)  { map |= 64; }
+  if (playedClasses & 2)   { map |= 128; }
+  if (playedClasses & 128) { map |= 256; }
+
+  return map;
 };
 
 var Stats = mongoose.model('Stats', statsSchema);
