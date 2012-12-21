@@ -103,14 +103,11 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
     // Total playable time
     var playableTime = $scope.playableTime = sumArray(stats.roundduration);
 
-    // Calculate total damage for each team
+    // Calculate total damage and frags for each team
     var totalDamage = [0,0,0,0];
-    angular.forEach(stats.players, function(player) {
-      totalDamage[player.team] += sumArray(player.damagedone);
-    });
-    // Calculate total frags for each team
     var totalFrags = [0,0,0,0];
-    angular.forEach(stats.players, function(player) {
+    stats.players.forEach(function(player) {
+      totalDamage[player.team] += sumArray(player.damagedone);
       totalFrags[player.team] += sumArray(player.kills);
     });
 
@@ -139,13 +136,13 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
       player.stats = [
         sumArray2(player.points),
         // Frags + Assists / Deaths
-        ratio(player.deaths, true, player.kills, player.killassists),
+        ratio(player.deaths, player.kills, player.killassists),
         sumArray2(player.kills),
         sumArray2(player.killassists),
         sumArray2(player.deaths),
         sumArray2(player.suicides),
         // Damage Per Minute
-        ratio(playableTime/60, false, player.damagedone),
+        ratio(playableTime/60, player.damagedone),
         sumArray2(player.damagedone),
         sumArray2(player.medpicks),
         sumArray2(player.healsreceived),
@@ -191,13 +188,6 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
   window.onmouseup = function(e) {
     $scope.ctrl = !!e.ctrlKey;
   };
-  // window.onkeydown = function(e) {
-  //   if (e.ctrlKey) { $scope.ctrl = true; }
-  // };
-  // window.onkeyup = function(e) {
-  //   if (e.ctrlKey) { $scope.ctrl = true; }
-  //   else { $scope.ctrl = false; }
-  // };
   $scope.clickRoundHeader = function(round) {
     if ($scope.selectedRounds.length === 0) {
       $scope.selectedRounds.push(round);
@@ -212,7 +202,7 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
     } else {
       $scope.selectedRounds = [round];
     }
-    $scope.selectedRounds.sort(function(a,b){return a-b});
+    $scope.selectedRounds.sort(function(a,b){return a-b;});
     calculateStats({stats: $scope.stats, playerdata: $scope.playerMetaData}, false);
   };
 
@@ -260,10 +250,6 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
     return (!$scope.filterBinds || !chat.isBind);
   };
   var mostPlayedClass = function(mpcArray) {
-    // What is this for??? vvvvv
-    // if ($scope.numRounds === 1) {
-    //   return mpcArray[0];
-    // }
     // Determine what class was played the most by summing the rounddurations
     //  for the according tf2class in the "mostplayedclass" array.
     var totals = [0,0,0,0,0,0,0,0,0,0];
@@ -285,53 +271,34 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
     return theClass;
   };
   var playedClasses = function(playedClassesArray) {
-    var filteredArray = [];
-    for (var i=0, ilen=$scope.selectedRounds.length; i<ilen; i++) {
-      filteredArray.push(playedClassesArray[$scope.selectedRounds[i]]);
-    }
-    return filteredArray.reduce(function(a,b) { return a | b; });
+    return filterBySelectedRounds(playedClassesArray).reduce(function(a,b) { return a | b; });
   };
-  var sumArray = function(array) {
-    var sum = 0, filteredArray = [];
-    for (var i=0, ilen=$scope.selectedRounds.length; i<ilen; i++) {
-      filteredArray.push(array[$scope.selectedRounds[i]]);
-    }
-    for (var j=0, jlen=filteredArray.length; j<jlen; j++) {
-      if (filteredArray[j]) sum += filteredArray[j];
-    }
-    return sum;
+  var sumArray = function(arr) {
+    if (!arr || !arr.length) return 0;
+    return filterBySelectedRounds(arr).reduce(function(a,b) { return a + b; });
   };
-  var sumArray2 = function(array) {
-    if (!array.length) return '-'; // this is a hack
-    var sum = 0, filteredArray = [];
-    for (var i=0, len=$scope.selectedRounds.length; i<len; i++) {
-      filteredArray.push(array[$scope.selectedRounds[i]]);
-    }
-    for (var j=0, jlen=filteredArray.length; j<jlen; j++) {
-      if (filteredArray[j]) sum += filteredArray[j];
-    }
-    return sum;
+  var sumArray2 = function(arr) {
+    if (!arr.length) return '-'; // this is a hack
+    return filterBySelectedRounds(arr).reduce(function(a,b) { return a + b; });
   };
-  var ratio = function(den, denIsArray, numArray1, numArray2) {
+  var ratio = function(den, numArray1, numArray2) {
     if (!numArray1.length) return '-'; // this is a hack
-    var numerator, denominator;
-    if (!numArray2 || !numArray2.length) {
-      numerator = sumArray(numArray1);
-    } else {
-      numerator = sumArray(numArray1) + sumArray(numArray2);
-    }
+    var numerator = sumArray(numArray1) + sumArray(numArray2);
     if (numerator === 0) return 0;
-    if (denIsArray) {
-      denominator = sumArray(den);
-    } else {
-      denominator = den;
-    }
+    var denominator = den.length ? sumArray(den) : den;
     if (denominator === 0) return '&infin;';
     return Math.round( (numerator/denominator)*100 )/100;
   };
+  var filterBySelectedRounds = function(arr) {
+    var filteredArr = [];
+    for (var i=0, ilen=$scope.selectedRounds.length; i<ilen; i++) {
+      filteredArr.push(arr[$scope.selectedRounds[i]]);
+    }
+    return filteredArr;
+  };
   $scope.secondsToHMS = function(seconds) {
-    var h = parseInt(seconds/3600);
-    var m = parseInt((seconds-h*3600)/60);
+    var h = parseInt(seconds/3600, 10);
+    var m = parseInt((seconds-h*3600)/60, 10);
     var s = seconds-h*3600-m*60;
     if (h === 0) { return ('0'+m).slice(-2)+':'+('0'+s).slice(-2); }
     return h+':'+('0'+m).slice(-2)+':'+('0'+s).slice(-2);
