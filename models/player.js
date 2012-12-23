@@ -14,7 +14,7 @@ var playerSchema = new mongoose.Schema({
 });
 
 playerSchema.pre('validate', function(next) {
-  console.log(this);
+  // console.log(this);
   next();
 });
 
@@ -77,92 +77,131 @@ playerSchema.statics.numericIdToSteamId = function(profile) {
   return "STEAM_0:" + (subtract%2) + ":" + Math.floor(subtract/2);
 };
 
-// This takes in an already validated numericId
-playerSchema.statics.getSteamApiInfo = function(numericId, callback) {
+// // This takes in an already validated numericId
+// playerSchema.statics.getSteamApiInfo = function(numericId, callback) {
 
-  var options = {
-    uri: 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/',
-    qs: { key: steamapi, steamids: numericId },
-    json: true,
-    timeout: 7000
-  };
+//   var options = {
+//     uri: 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/',
+//     qs: { key: steamapi, steamids: numericId },
+//     json: true,
+//     timeout: 7000
+//   };
 
-  request(options, function(err, res, body) {
-    if (err) {
-      console.log('Steam API Request Error', err);
-      return callback(err);
-    }
-    if (res.statusCode !== 200) {
-      return callback(new Error('Steam API Status Code: ' + res.statusCode));
-    }
-    if (body.response.players.length === 0) {
-      console.log('Steam Api Player Not Found: ' + numericId);
-      return callback(new Error('Steam API Player Not Found: ' + numericId));
-    }
-    return callback(null, body.response.players[0]);
-  }); // End request
-};
+//   request(options, function(err, res, body) {
+//     if (err) {
+//       console.log('Steam API Request Error', err);
+//       return callback(err);
+//     }
+//     if (res.statusCode !== 200) {
+//       return callback(new Error('Steam API Status Code: ' + res.statusCode));
+//     }
+//     if (body.response.players.length === 0) {
+//       console.log('Steam Api Player Not Found: ' + numericId);
+//       return callback(new Error('Steam API Player Not Found: ' + numericId));
+//     }
+//     return callback(null, body.response.players[0]);
+//   }); // End request
+// };
 
-playerSchema.statics.updateSteamInfo = function(steamids, callback) {
-
+playerSchema.statics.getSteamApiInfo = function(steamids, callback) {
+  // Lookup the players in database, which were last updated less than one hour
+  //  ago. For the players that aren't found in database, poll the steam API.
   var steamIdRegex = /STEAM_0\:(0|1)\:\d{1,15}$/;
-  var convertedids = [];
-  
-  steamids.forEach(function(steamid) {
-    // Validation should take place elsewhere.
-    if (steamIdRegex.test(steamid)) {
-      convertedids.push(steamIdToNumericId(steamid));
-    }
-  });
 
-  var options = {
-    uri: 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/',
-    qs: { key: steamapi, steamids: convertedids.join() },
-    json: true,
-    timeout: 7000
-  };
+  var playerData = {};
 
-  request(options, function(err, res, body) {
-    // LOTS OF ERROR CHECKING
-    if (err) {
-      return callback(err);
-    }
-    if (res.statusCode !== 200) {
-      return callback(new Error('player.js updateSteamInfo - Steam API Error: ' + res.statusCode));
-    }
-    if (!body.response || !body.response.players) {
-      return callback(new Error('player.js updateSteamInfo - Steam API Error: body undefined'));
-    }
+  var currentDate = new Date();
+  var oneHourAgo = new Date(currentDate.getTime() - 60*60*1000);
 
-    var newDate = new Date();
+  Player.find( { _id: { $in : steamids }, updated: { $gt : oneHourAgo } } ).exec(function(err, players) {
+    if (err) { return callback(err); }
 
-    // Update all the players in DB, using new Steam API info.
-    async.forEach(body.response.players, function(player, aCallback) {
-      var steamid = Player.numericIdToSteamId(player.steamid);
-      var newPlayer = {
-        numericid: player.steamid,
-        name: player.personaname,
+    var slen = steamids.length;
+    var plen = players.length;
+
+    for (var i=0; i<plen; i++) {
+      var player=players[i];
+      playerData[player._id] = {
         avatar: player.avatar,
-        updated: newDate
+        numericid: player.numericid,
+        country: player.country
       };
+    }
 
-      if (player.loccountrycode) {
-        newPlayer.country = player.loccountrycode;
+    if (plen === slen) {
+      return callback(null, playerData);
+    }
+
+    // For the players who we didn't get cached data for,
+    //  convert their steamids to 64-bit and then hit the Steam API.
+    var playersNotFound = [];
+    for (var j=0; j<slen; j++) {
+      var steamid = steamids[j];
+
+      if ( !playerData[steamid] && steamIdRegex.test(steamid) ) {
+        playersNotFound.push(steamIdToNumericId(steamid));
       }
+    }
 
-      Player.update({ _id: steamid }, newPlayer, { upsert: true}, function(err) {
-        if (err) { aCallback(err); }
-        else { aCallback(null, newPlayer); }
+    var options = {
+      uri: 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/',
+      qs: { key: steamapi, steamids: playersNotFound.join() },
+      json: true,
+      timeout: 7000
+    };
+
+    request(options, function(err, res, body) {
+      // LOTS OF ERROR CHECKING
+      if (err) {
+        return callback(err);
+      }
+      if (res.statusCode !== 200) {
+        return callback(new Error('player.js updateSteamInfo - Steam API Error: ' + res.statusCode));
+      }
+      if (!body.response || !body.response.players) {
+        return callback(new Error('player.js updateSteamInfo - Steam API Error: body undefined'));
+      }
+      if (body.response.players.length === 0) {
+        return callback(new Error('Steam API Players Not Found: ' + steamids));
+      }
+      
+
+      // Update all the players in DB, using new Steam API info.
+      async.forEach(body.response.players, function(player, aCallback) {
+        var steamid = Player.numericIdToSteamId(player.steamid);
+        var newPlayer = {
+          numericid: player.steamid,
+          name: player.personaname,
+          avatar: player.avatar,
+          updated: currentDate
+        };
+
+        playerData[steamid] = {
+          avatar: player.avatar,
+          numericid: player.numericid
+        };
+
+        if (player.loccountrycode) {
+          newPlayer.country = player.loccountrycode;
+          playerData[steamid] = player.loccountrycode;
+        }
+
+        Player.update({ _id: steamid }, newPlayer, { upsert: true }, function(err) {
+          if (err) { aCallback(err); }
+          else { aCallback(); }
+        });
+      },
+      // Callback for when all the players are iterated over
+      function(err) {
+        if (err) { return callback(err); }
+        // Return a hash of the player data
+        return callback(null, playerData);
       });
-    },
-    // Callback for when all the players are iterated over
-    function(err) {
-      if (err) { return callback(err); }
-      return callback(null);
-    });
 
+    }); // End request
 
-  }); // End request
+  }); // End Player.find
+
 };
 
 

@@ -271,30 +271,35 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
     return theClass;
   };
   var playedClasses = function(playedClassesArray) {
-    return filterBySelectedRounds(playedClassesArray).reduce(function(a,b) { return a | b; });
+    return filterBySelectedRounds(playedClassesArray).reduce(function(a,b) { return a | b; },0);
   };
   var sumArray = function(arr) {
     if (!arr || !arr.length) return 0;
-    return filterBySelectedRounds(arr).reduce(function(a,b) { return a + b; });
+    return filterBySelectedRounds(arr).reduce(function(a,b) { return a + b; },0);
   };
   var sumArray2 = function(arr) {
-    if (!arr.length) return '-'; // this is a hack
-    return filterBySelectedRounds(arr).reduce(function(a,b) { return a + b; });
+    if (!arr || !arr.length) return '-';
+    var filteredArr = filterBySelectedRounds(arr);
+    if (!filteredArr.length) return '-';
+    return filteredArr.reduce(function(a,b) { return a + b; });
   };
   var ratio = function(den, numArray1, numArray2) {
-    if (!numArray1.length) return '-'; // this is a hack
-    var numerator = sumArray(numArray1) + sumArray(numArray2);
+    var numerator = sumArray2(numArray1) + sumArray(numArray2);
+    var denominator = den.length ? sumArray2(den) : den;
+    if (typeof numerator !== 'number') return '-';
     if (numerator === 0) return 0;
-    var denominator = den.length ? sumArray(den) : den;
     if (denominator === 0) return '&infin;';
     return Math.round( (numerator/denominator)*100 )/100;
   };
   var filterBySelectedRounds = function(arr) {
     var filteredArr = [];
-    for (var i=0, ilen=$scope.selectedRounds.length; i<ilen; i++) {
-      filteredArr.push(arr[$scope.selectedRounds[i]]);
+    for (var i=0, r; r=$scope.selectedRounds[i]+1; i++) {
+      if (exists(arr[r-1])) { filteredArr.push(arr[r-1]); }
     }
     return filteredArr;
+  };
+  var exists = function(n) {
+    return (n !== null && n !== undefined);
   };
   $scope.secondsToHMS = function(seconds) {
     var h = parseInt(seconds/3600, 10);

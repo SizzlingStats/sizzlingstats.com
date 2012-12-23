@@ -20,8 +20,8 @@ var statsSchema = new mongoose.Schema({
   round: { type: Number, min: 0, required: true },
   players: [{
     steamid: { type: String, required: true },
-    team: { type: Number, required: true },
     name: String,
+    team: { type: Number, required: true },
     mostplayedclass: [Number],
     playedclasses: [Number],
     kills: [Number],
@@ -60,31 +60,26 @@ var statsSchema = new mongoose.Schema({
   isLive: { type: Boolean, default: false }
 });
 
-
 statsSchema.pre('save', function(next) {
   var stats = this;
+  // Create an array of all players' steamids
+  var steamids = [];
+  for (var i=0, len=stats.players.length; i<len; i++) {
+    steamids.push(stats.players[i].steamid);
+  }
 
   // Notify Players collection that new stats have come in
-  steamids = [];
-  stats.players.forEach(function(player) {
-    steamids.push(player.steamid);
-  });
-  Player.updateSteamInfo(steamids, function(err) {
-    if (err) {console.log(err); console.trace(err); }
-    
-    // Push the new stats to subscribed clients on websockets.
-    stats.getPlayerData(function(err, playerData) {
-
-      // this doesn't belong here
-      stats.updateWithPlayerData(playerData, function(err) {
-        // do something
-      });
-
+  Player.getSteamApiInfo(steamids, function(err, playerData) {
+    if (err) {
+      console.log(err);
+      console.trace(err);
+      next();
+    } else {
+      stats.setCountryFlags(playerData);
+      // Push the new stats to subscribed clients on websockets.
       statsEmitter.emit('updateStats', stats, playerData);
-    });
-
-    next();
-
+      next();
+    }
   });
 
 });
@@ -136,6 +131,7 @@ statsSchema.statics.appendStats = function(newStats, matchId, isEndOfRound, cb) 
       // look for the oldPlayer with a matching steamid
       // and add new values to the stat arrays
       stats.players.forEach(function(oldPlayer) {
+        oldPlayer.poopy = 'poopy';
         if (oldPlayer.steamid === player.steamid) {
           isNewPlayer = false;
           
@@ -211,75 +207,52 @@ statsSchema.statics.appendStats = function(newStats, matchId, isEndOfRound, cb) 
   }); // end Stats.findById()
 };
 
-statsSchema.methods.updateWithPlayerData = function(playerData, cb) {
-  var stats = this;
-
+statsSchema.methods.setCountryFlags = function(playerData, cb) {
   var redCountries = [];
   var bluCountries = [];
   // Fill out the team info for all the players
-  for (var i=0,player; player=stats.players[i]; i++) {
-    var steamid = player.steamid;
-    if (playerData[steamid]) {
-      playerData[steamid].team = player.team;
+  for (var i=0,player; player=this.players[i]; i++) {
+    if (playerData[player.steamid]) {
+      playerData[player.steamid].team = player.team;
     }
   }
   // Push the country info into the arrays
   for (var steamid in playerData) {
     if (playerData[steamid].country) {
-      if (playerData[steamid].team === 2) { redCountries.push(playerData[steamid].country); }
-      else if (playerData[steamid].team === 3) { bluCountries.push(playerData[steamid].country); }
+      if (playerData[steamid].team === 2) {
+        redCountries.push(playerData[steamid].country);
+      }
+      else if (playerData[steamid].team === 3) {
+        bluCountries.push(playerData[steamid].country);
+      }
     }
   }
   // Find the most-occurring country for each team
-  var mode = function(array) {
-    if (array.length === 0)
-      return null;
-    var modeMap = {};
-    var maxEl = array[0], maxCount = 1;
-    for (var i = 0; i < array.length; i++)
-    {
-      var el = array[i];
-      if (modeMap[el] === null) {
-        modeMap[el] = 1;
-      }
-      else {
-        modeMap[el]++;
-      }
-      if (modeMap[el] > maxCount) {
-        maxEl = el;
-        maxCount = modeMap[el];
-      }
-    }
-    return maxEl;
-  };
-  stats.redCountry = mode(redCountries);
-  stats.bluCountry = mode(bluCountries);
-  stats.update({$set:{redCountry: stats.redCountry, bluCountry: stats.bluCountry}}, function(err) {
-    if (err) {console.log(err);} // do something
-  });
-
+  this.redCountry = mode(redCountries);
+  this.bluCountry = mode(bluCountries);
 };
 
 statsSchema.methods.getPlayerData = function(cb) {
   // Create an array of all players' steamids
   var steamids = [];
-  this.players.forEach(function(player) {
-    steamids.push(player.steamid);
-  });
+  for (var i=0, len=this.players.length; i<len; i++) {
+    steamids.push(this.players[i].steamid);
+  }
 
   // Lookup all steamids in database for the names
   Player.find( { _id: { $in : steamids } }).exec(function(err, players) {
     if (err) { return cb(err); }
 
     var playerdata = {};
-    // console.log(players);
-    players.forEach(function(player) {
+
+    for (var i=0, len=players.length; i<len; i++) {
+      var player = players[i];
       playerdata[player._id] = {
         avatar: player.avatar,
         numericid: player.numericid,
         country: player.country
       };
-    });
+    }
 
     return cb(null, playerdata);
   });
@@ -356,6 +329,29 @@ var remapPlayedClasses = function(playedClasses) {
   if (playedClasses & 128) { map |= 256; }
 
   return map;
+};
+
+var mode = function(array) {
+  if (!array.length) {
+    return null;
+  }
+  var modeMap = {};
+  var maxEl = array[0], maxCount = 1;
+  for (var i = 0, len=array.length; i < len; i++)
+  {
+    var el = array[i];
+    if (modeMap[el] === null) {
+      modeMap[el] = 1;
+    }
+    else {
+      modeMap[el]++;
+    }
+    if (modeMap[el] > maxCount) {
+      maxEl = el;
+      maxCount = modeMap[el];
+    }
+  }
+  return maxEl;
 };
 
 var Stats = mongoose.model('Stats', statsSchema);
