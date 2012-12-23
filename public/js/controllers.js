@@ -124,10 +124,10 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
     redRoundScores.push(totalFrags[2]);
     bluRoundScores.push(totalDamage[3]);
     bluRoundScores.push(totalFrags[3]);
-    $scope.redtr = '<td class="red">' + stats.redname + '</td><td>' +
-                    redRoundScores.join('</td><td>') + '</td>';
-    $scope.blutr = '<td class="blu">' + stats.bluname + '</td><td>' +
-                    bluRoundScores.join('</td><td>') + '</td>';
+    $scope.redtr = '<td class="red">' + escapeHtml(stats.redname) +
+                   '</td><td>' + redRoundScores.join('</td><td>') + '</td>';
+    $scope.blutr = '<td class="blu">' + escapeHtml(stats.bluname) +
+                   '</td><td>' + bluRoundScores.join('</td><td>') + '</td>';
 
     // Calculate individual players' stats from the select range of rounds
     angular.forEach(stats.players, function(player) {
@@ -159,9 +159,10 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
         // sumArray2(player.resupplypoints),
         // sumArray2(player.bonuspoints),
       ];
-      player.tr = '<td class="name"><img class="team' + player.team + '-avatar" src="' + (player.avatar || '') +
-          '" /><span>' + player.name + '</span><td><img class="class-icon" src="/img/classicons/' +
-          player.mostPlayedClass + '.png"></img><td>' + player.stats.join('</td><td>') + '</td>';
+      player.tr = '<td class="name"><img class="team' + player.team + '-avatar" src="' +
+          (player.avatar || '') + '" /><span>' + escapeHtml(player.name) +
+          '</span><td><img class="class-icon" src="/img/classicons/' + player.mostPlayedClass +
+          '.png"></img><td>' + player.stats.join('</td><td>') + '</td>';
       // Additional medic-specific stats
       if (player.playedClasses & 1<<6) {
         player.medicStats = [
@@ -169,8 +170,9 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
           sumArray2(player.invulns),
           sumArray2(player.ubersdropped)
         ];
-        player.medictr = '<td class="name"><img class="team' + player.team + '-avatar" src="' + (player.avatar || '') +
-            '" /><span>' + player.name + '</span><td>' + player.medicStats.join('</td><td>') + '</td>';
+        player.medictr = '<td class="name"><img class="team' + player.team +
+            '-avatar" src="' + (player.avatar || '') + '" /><span>' + escapeHtml(player.name) +
+            '</span><td>' + player.medicStats.join('</td><td>') + '</td>';
       }
     });
   };
@@ -301,6 +303,12 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
   var exists = function(n) {
     return (n !== null && n !== undefined);
   };
+  var escapeHtml = (function () {
+    var chr = { '"': '&quot;', '&': '&amp;', '<': '&lt;', '>': '&gt;' };
+    return function (text) {
+      return text.replace(/[\"&<>]/g, function (a) { return chr[a]; });
+    };
+  })();
   $scope.secondsToHMS = function(seconds) {
     var h = parseInt(seconds/3600, 10);
     var m = parseInt((seconds-h*3600)/60, 10);
