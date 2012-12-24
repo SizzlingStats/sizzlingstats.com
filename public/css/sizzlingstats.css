@@ -121,7 +121,7 @@ td:first-child, th:first-child {
   margin-right: 0.1em;
 }
 
-#stats {
+.stats {
   font-size: 13px !important;
 }
 .stats-description {
