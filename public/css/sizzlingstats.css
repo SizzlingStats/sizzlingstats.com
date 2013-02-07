@@ -37,6 +37,13 @@
 .sits img {
   margin-top: 10px;
 }
+.top-bar-avatar {
+  float: left;
+  margin: 6px 4px 0 -4px;
+  /*-moz-border-radius: 3px;*/
+  /*-webkit-border-radius: 3px;*/
+  border-radius: 3px;
+}
 
 .sidebar-nav a {
   padding: 8px 6px 8px 10px !important;
