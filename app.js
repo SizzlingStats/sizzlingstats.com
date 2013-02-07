@@ -166,7 +166,7 @@ app.configure(function() {
     //     ]
     //   }
     , files: [ // order matters here
-      //   'lib/jquery/jquery-1.8.2.min.js'
+      //   'lib/jquery/jquery-1.9.1.min.js'
       // , 'lib/angular/angular.js'
       // , 'lib/foundation/foundation.min.js'
         'lib/foundation/modernizr.foundation.js'
