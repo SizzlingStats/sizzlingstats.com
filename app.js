@@ -3,12 +3,12 @@
  * Module dependencies.
  */
 
-var express = require('express'),
-  mongoose = require('mongoose'),
-  everyauth = require('everyauth'),
-  cfg = require('./cfg/cfg'),
-  secrets = require('./cfg/secrets'),
-  Player = require('./models/player');
+var express = require('express')
+  , mongoose = require('mongoose')
+  , everyauth = require('everyauth')
+  , cfg = require('./cfg/cfg')
+  , secrets = require('./cfg/secrets')
+  , Player = require('./models/player');
 require('colors');
 // var db = mongoose.createConnection('localhost', 'sizzlingstats');
 mongoose.connect(cfg.mongo_url);
@@ -21,7 +21,7 @@ var app = module.exports = express.createServer();
  * Everyauth Configuration
  */
 
-everyauth.everymodule.moduleTimeout(8000); // Wait 8 seconds per step before timing out (default is 10)
+everyauth.everymodule.moduleTimeout(8000); // Wait 8 seconds per step before timing out (default 10)
 everyauth.everymodule.findUserById( function (req, userId, callback) {
   Player.findById(userId, callback);
   // callback has the signature, function (err, user) {...}
@@ -45,14 +45,15 @@ everyauth.steam
     steamId = Player.numericIdToSteamId(numericId);
     Player.findById(steamId, function(err, player) {
       if (err) {
-        console.log('Err looking up player '+steamId, err);
+        console.log('Error looking up player '+steamId, err);
+        console.trace(err);
         return promise.fail(err);
       }
       if (player) {
         // Update the player's info on login
         // Instead of just retrieving old info
 
-        Player.getSteamApiInfo(numericId, function(err, steamInfo) {
+        Player.getSteamApiInfoForOnePlayer(numericId, function(err, steamInfo) {
           if (err) return promise.fail(err);
 
           player.name = steamInfo.personaname;
@@ -64,14 +65,15 @@ everyauth.steam
 
           player.save(function(err) {
             if (err) {
-              console.log('Err saving player', err);
+              console.log('Error saving player', err);
+              console.trace(err);
               return promise.fail(err);
             }
             promise.fulfill(player);
           });
         });
       } else {
-        Player.getSteamApiInfo(numericId, function(err, steamInfo) {
+        Player.getSteamApiInfoForOnePlayer(numericId, function(err, steamInfo) {
           if (err) return promise.fail(err);
 
           var newPlayer = new Player({
@@ -88,6 +90,7 @@ everyauth.steam
           newPlayer.save(function(err) {
             if (err) {
               console.log('Error saving new player', err);
+              console.trace(err);
               return promise.fail(err);
             }
             promise.fulfill(newPlayer);
@@ -100,6 +103,7 @@ everyauth.steam
   })
   .moduleErrback( function (err) {
     console.log( 'EVERYAUTH ERROR:', err);
+    console.trace(err);
   })
   .redirectPath('/');
 everyauth.debug = false;
@@ -107,12 +111,12 @@ everyauth.debug = false;
 
 // Configuration
 
-app.configure('development', function(){
+app.configure('development', function() {
   // app.use(express.profiler());
   // app.use(express.logger({ format: 'dev' }));
 });
 
-app.configure(function(){
+app.configure(function() {
   app.use(express.limit('200kb'));
   app.use(express.favicon(__dirname + '/public/img/favicon.png', { maxAge: 48 * 60 * 60 * 1000 } ));
 
@@ -124,57 +128,66 @@ app.configure(function(){
   app.use(express.bodyParser());
   app.use(express.methodOverride());
 
-  app.store = new express.session.MemoryStore;
+  // app.store = new express.session.MemoryStore;
+  var RedisStore = require('connect-redis')(express);
+  app.store = new RedisStore({
+    prefix: 'sssess'
+  , host: cfg.redis_host
+  , port: cfg.redis_port
+  , db: cfg.redis_db
+  , pass: cfg.redis_password
+  });
+
   app.use(express.cookieParser());
   app.use(express.session({
-    secret: secrets.session,
-    store: app.store
+    secret: secrets.session
+  , store: app.store
   }));
   app.use(everyauth.middleware());
 
   var assetManager = require('connect-assetmanager')({
     js: {
-      route: /\/js\/all-[a-z0-9]+\.js/,
-      path: __dirname + '/public/js/',
-      dataType: 'javascript',
-      debug: process.env.NODE_ENV === 'development',
-      // preManipulate: {
-      //   '^': [
-      //     function(src, path, index, isLast, callback) {
-      //       callback(src.replace(/#socketIoPort#/g, env.port));
-      //     }
-      //     , function(src, path, index, isLast, callback) {
-      //       if (/\.coffee$/.test(path)) {
-      //         callback(coffee.compile(src));
-      //       } else {
-      //         callback(src);
-      //       }
-      //     }
-      //   ]
-      // },
-      files: [ // order matters here
-        // 'lib/jquery/jquery-1.8.2.min.js',
-        // 'lib/angular/angular.js',
-        // 'lib/foundation/foundation.min.js',
-        'lib/foundation/modernizr.foundation.js',
-        // 'lib/foundation/jquery.foundation.mediaQueryToggle.js',
-        // 'lib/foundation/jquery.foundation.navigation.js',
-        'lib/foundation/jquery.foundation.tooltips.js',
-        'lib/foundation/jquery.foundation.topbar.js',
-        'lib/foundation/app.js',
-        'app.js',
-        'services.js',
-        'controllers.js',
-        // 'filters.js',
-        'directives.js'
-        // '*'
+      route: /\/js\/all-[a-z0-9]+\.js/
+    , path: __dirname + '/public/js/'
+    , dataType: 'javascript'
+    , debug: process.env.NODE_ENV === 'development'
+    // , preManipulate: {
+    //     '^': [
+    //         function(src, path, index, isLast, callback) {
+    //           callback(src.replace(/#socketIoPort#/g, env.port));
+    //         }
+    //       , function(src, path, index, isLast, callback) {
+    //           if (/\.coffee$/.test(path)) {
+    //             callback(coffee.compile(src));
+    //           } else {
+    //             callback(src);
+    //           }
+    //         }
+    //     ]
+    //   }
+    , files: [ // order matters here
+      //   'lib/jquery/jquery-1.8.2.min.js'
+      // , 'lib/angular/angular.js'
+      // , 'lib/foundation/foundation.min.js'
+        'lib/foundation/modernizr.foundation.js'
+      // , 'lib/foundation/jquery.foundation.mediaQueryToggle.js'
+      // , 'lib/foundation/jquery.foundation.navigation.js'
+      , 'lib/foundation/jquery.foundation.tooltips.js'
+      , 'lib/foundation/jquery.foundation.topbar.js'
+      , 'lib/foundation/app.js'
+      , 'app.js'
+      , 'services.js'
+      , 'controllers.js'
+      // , 'filters.js'
+      , 'directives.js'
+      // , '*'
       ]
     },
     css: {
-      route: /\/css\/all-[a-z0-9]+\.css/,
-      path: __dirname + '/public/css/',
-      dataType: 'css',
-      debug: process.env.NODE_ENV === 'development',
+      route: /\/css\/all-[a-z0-9]+\.css/
+    , path: __dirname + '/public/css/'
+    , dataType: 'css'
+    , debug: process.env.NODE_ENV === 'development'
       // preManipulate: {
       //   '^': [
       //     function(src, path, index, isLast, callback) {
@@ -192,9 +205,9 @@ app.configure(function(){
       //     }
       //   ]
       // },
-      files: [ // order matters here
-        'foundation.css',
-        'sizzlingstats.css'
+    , files: [ // order matters here
+        'foundation.css'
+      , 'sizzlingstats.css'
       ]
     }
   });
@@ -203,11 +216,11 @@ app.configure(function(){
   app.use(express.staticCache());
 });
 
-app.configure('development', function(){
+app.configure('development', function() {
   app.use(express.static(__dirname + '/public'));
 });
 
-app.configure('production', function(){
+app.configure('production', function() {
   app.use(express.static(__dirname + '/public', { maxAge: 24 * 60 * 60 * 1000 }));
 });
 
@@ -215,11 +228,11 @@ app.configure(function() {
   app.use(app.router);
 });
 
-app.configure('development', function(){
+app.configure('development', function() {
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 
-app.configure('production', function(){
+app.configure('production', function() {
   app.use(express.errorHandler());
 });
 
@@ -233,16 +246,16 @@ app.io.enable('browser client etag');
 app.io.enable('browser client gzip');
 app.io.set('log level', 1);
 app.io.set('transports', [
-  'websocket',
-  // 'flashsocket',
-  'htmlfile',
-  'xhr-polling',
-  'jsonp-polling'
+  'websocket'
+// , 'flashsocket'
+, 'htmlfile'
+, 'xhr-polling'
+, 'jsonp-polling'
 ]);
 var socket = require('./routes/socket')(app);
 
 // Start server
 
-app.listen( cfg.port, function() {
+app.listen(cfg.port, function() {
   console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 });

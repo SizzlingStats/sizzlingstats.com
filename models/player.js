@@ -78,30 +78,30 @@ playerSchema.statics.numericIdToSteamId = function(profile) {
 };
 
 // // This takes in an already validated numericId
-// playerSchema.statics.getSteamApiInfo = function(numericId, callback) {
+playerSchema.statics.getSteamApiInfoForOnePlayer = function(numericId, callback) {
 
-//   var options = {
-//     uri: 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/',
-//     qs: { key: steamapi, steamids: numericId },
-//     json: true,
-//     timeout: 7000
-//   };
+  var options = {
+    uri: 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/',
+    qs: { key: steamapi, steamids: numericId },
+    json: true,
+    timeout: 7000
+  };
 
-//   request(options, function(err, res, body) {
-//     if (err) {
-//       console.log('Steam API Request Error', err);
-//       return callback(err);
-//     }
-//     if (res.statusCode !== 200) {
-//       return callback(new Error('Steam API Status Code: ' + res.statusCode));
-//     }
-//     if (body.response.players.length === 0) {
-//       console.log('Steam Api Player Not Found: ' + numericId);
-//       return callback(new Error('Steam API Player Not Found: ' + numericId));
-//     }
-//     return callback(null, body.response.players[0]);
-//   }); // End request
-// };
+  request(options, function(err, res, body) {
+    if (err) {
+      console.log('Steam API Request Error', err);
+      return callback(err);
+    }
+    if (res.statusCode !== 200) {
+      return callback(new Error('Steam API Status Code: ' + res.statusCode));
+    }
+    if (body.response.players.length === 0) {
+      console.log('Steam Api Player Not Found: ' + numericId);
+      return callback(new Error('Steam API Player Not Found: ' + numericId));
+    }
+    return callback(null, body.response.players[0]);
+  }); // End request
+};
 
 playerSchema.statics.getSteamApiInfo = function(steamids, callback) {
   // Lookup the players in database, which were last updated less than one hour
