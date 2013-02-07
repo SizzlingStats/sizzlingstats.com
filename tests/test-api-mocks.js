@@ -78,9 +78,9 @@ module.exports = {
     , {"steamid": "STEAM_0:1:9607258",  "team": 3, "name": "Dave__AC",    "mostplayedclass": 3, "playedclasses": 4,   "kills": 1, "deaths":4}
     , {"steamid": "STEAM_0:1:19111546", "team": 2, "name": "drdonutman",  "mostplayedclass": 4, "playedclasses": 8,   "kills": 1, "deaths":5}
     , {"steamid": "STEAM_0:0:21274546", "team": 3, "name": "Gobiner",     "mostplayedclass": 4, "playedclasses": 323, "kills": 3, "deaths":1}
-    , {"steamid": "STEAM_0:0:9038326",  "team": 2, "name": "Trekkie",     "mostplayedclass": 5, "playedclasses": 16 , "kills": 4, "deaths":6}
-    , {"steamid": "STEAM_0:0:5486374",  "team": 3, "name": "eXtine",      "mostplayedclass": 5, "playedclasses": 16 , "kills": 7, "deaths":1}
-    // , {"steamid": "STEAM_0:1:19550627", "team": 3, "name": "Jay",         "mostplayedclass": 5, "playedclasses": 16, "kills": 3, "deaths":0}
+    , {"steamid": "STEAM_0:0:9038326",  "team": 2, "name": "Trekkie",     "mostplayedclass": 5, "playedclasses": 16,  "kills": 4, "deaths":6}
+    , {"steamid": "STEAM_0:0:5486374",  "team": 3, "name": "eXtine",      "mostplayedclass": 5, "playedclasses": 16,  "kills": 7, "deaths":1}
+    // , {"steamid": "STEAM_0:1:19550627", "team": 3, "name": "Jay",         "mostplayedclass": 5, "playedclasses": 16,  "kills": 3, "deaths":0}
     ]
   }}
 
@@ -110,9 +110,9 @@ module.exports = {
     , {"steamid": "STEAM_0:1:9607258",  "team": 3, "name": "Dave__AC",    "mostplayedclass": 3, "playedclasses": 4,   "kills": 1, "deaths":4}
     , {"steamid": "STEAM_0:1:19111546", "team": 2, "name": "drdonutman",  "mostplayedclass": 4, "playedclasses": 8,   "kills": 1, "deaths":5}
     , {"steamid": "STEAM_0:0:21274546", "team": 3, "name": "Gobiner",     "mostplayedclass": 4, "playedclasses": 323, "kills": 3, "deaths":1}
-    , {"steamid": "STEAM_0:0:9038326",  "team": 2, "name": "Trekkie",     "mostplayedclass": 5, "playedclasses": 16 , "kills": 4, "deaths":6}
-    , {"steamid": "STEAM_0:0:5486374",  "team": 3, "name": "eXtine",      "mostplayedclass": 5, "playedclasses": 16 , "kills": 7, "deaths":1}
-    , {"steamid": "STEAM_0:1:19550627", "team": 3, "name": "Jay",         "mostplayedclass": 5, "playedclasses": 16, "kills": 3, "deaths":0}
+    , {"steamid": "STEAM_0:0:9038326",  "team": 2, "name": "Trekkie",     "mostplayedclass": 5, "playedclasses": 16,  "kills": 4, "deaths":6}
+    , {"steamid": "STEAM_0:0:5486374",  "team": 3, "name": "eXtine",      "mostplayedclass": 5, "playedclasses": 16,  "kills": 7, "deaths":1}
+    , {"steamid": "STEAM_0:1:19550627", "team": 3, "name": "Jay",         "mostplayedclass": 5, "playedclasses": 16,  "kills": 3, "deaths":0}
     ]
   }}
 
@@ -142,9 +142,9 @@ module.exports = {
     , {"steamid": "STEAM_0:1:9607258",  "team": 3, "name": "Dave__AC",    "mostplayedclass": 3, "playedclasses": 4,   "kills": 1, "deaths":4}
     , {"steamid": "STEAM_0:1:19111546", "team": 2, "name": "drdonutman",  "mostplayedclass": 4, "playedclasses": 8,   "kills": 1, "deaths":5}
     , {"steamid": "STEAM_0:0:21274546", "team": 3, "name": "Gobiner",     "mostplayedclass": 4, "playedclasses": 323, "kills": 3, "deaths":1}
-    , {"steamid": "STEAM_0:0:9038326",  "team": 2, "name": "Trekkie",     "mostplayedclass": 5, "playedclasses": 16 , "kills": 4, "deaths":6}
-    , {"steamid": "STEAM_0:0:5486374",  "team": 3, "name": "eXtine",      "mostplayedclass": 5, "playedclasses": 16 , "kills": 7, "deaths":1}
-    // , {"steamid": "STEAM_0:1:19550627", "team": 3, "name": "Jay",         "mostplayedclass": 5, "playedclasses": 16, "kills": 3, "deaths":0}
+    , {"steamid": "STEAM_0:0:9038326",  "team": 2, "name": "Trekkie",     "mostplayedclass": 5, "playedclasses": 16,  "kills": 4, "deaths":6}
+    , {"steamid": "STEAM_0:0:5486374",  "team": 3, "name": "eXtine",      "mostplayedclass": 5, "playedclasses": 16,  "kills": 7, "deaths":1}
+    // , {"steamid": "STEAM_0:1:19550627", "team": 3, "name": "Jay",         "mostplayedclass": 5, "playedclasses": 16,  "kills": 3, "deaths":0}
     ]
   }}
 
@@ -174,9 +174,9 @@ module.exports = {
     , {"steamid": "STEAM_0:1:9607258",  "team": 3, "name": "Dave__AC",    "mostplayedclass": 3, "playedclasses": 4,   "kills": 1, "deaths":4}
     , {"steamid": "STEAM_0:1:19111546", "team": 2, "name": "drdonutman",  "mostplayedclass": 4, "playedclasses": 8,   "kills": 1, "deaths":5}
     , {"steamid": "STEAM_0:0:21274546", "team": 3, "name": "Gobiner",     "mostplayedclass": 4, "playedclasses": 323, "kills": 3, "deaths":1}
-    , {"steamid": "STEAM_0:0:9038326",  "team": 2, "name": "Trekkie",     "mostplayedclass": 5, "playedclasses": 16 , "kills": 4, "deaths":6}
-    , {"steamid": "STEAM_0:0:5486374",  "team": 3, "name": "eXtine",      "mostplayedclass": 5, "playedclasses": 16 , "kills": 7, "deaths":1}
-    // , {"steamid": "STEAM_0:1:19550627", "team": 3, "name": "Jay",         "mostplayedclass": 5, "playedclasses": 16, "kills": 3, "deaths":0}
+    , {"steamid": "STEAM_0:0:9038326",  "team": 2, "name": "Trekkie",     "mostplayedclass": 5, "playedclasses": 16,  "kills": 4, "deaths":6}
+    , {"steamid": "STEAM_0:0:5486374",  "team": 3, "name": "eXtine",      "mostplayedclass": 5, "playedclasses": 16,  "kills": 7, "deaths":1}
+    // , {"steamid": "STEAM_0:1:19550627", "team": 3, "name": "Jay",         "mostplayedclass": 5, "playedclasses": 16,  "kills": 3, "deaths":0}
     , {"steamid": "STEAM_0:1:5201690",  "team": 2, "name": "b4nny",       "mostplayedclass": 4, "playedclasses": 8,   "kills": 9, "deaths":1}
     ]
   }}
@@ -184,11 +184,44 @@ module.exports = {
 
 , statsHeaders6: {
     "sizzlingstats": "v0.1"
+  , "endofround": "true"
+  , "sessionid": "something"
+  }
+
+, statsBody6: {"stats": {
+    "map": "YouShouldNotSeeThis"
+  , "hostname": "YouShouldNotSeeThis"
+  , "bluname": "YouShouldNotSeeThis"
+  , "redname": "YouShouldNotSeeThis"
+  , "bluscore": 2
+  , "redscore": 1
+  , "roundduration": 160
+  , "players": [
+      {"steamid": "STEAM_0:0:86144",    "team": 2, "name": "Cigar",       "mostplayedclass": 1, "playedclasses": 0,   "kills": 0, "deaths":2}
+    , {"steamid": "STEAM_0:1:17260233", "team": 3, "name": "SteveC",      "mostplayedclass": 1, "playedclasses": 3,   "kills": 0, "deaths":8}
+    , {"steamid": "STEAM_0:1:16097990", "team": 2, "name": "foster",      "mostplayedclass": 1, "playedclasses": 1,   "kills": 2, "deaths":4}
+    , {"steamid": "STEAM_0:0:7422703",  "team": 3, "name": "binarystar!", "mostplayedclass": 1, "playedclasses": 35,  "kills": 9, "deaths":9}
+    , {"steamid": "STEAM_0:0:17990207", "team": 2, "name": "techno",      "mostplayedclass": 3, "playedclasses": 4,   "kills": 8, "deaths":4}
+    , {"steamid": "STEAM_0:1:11029950", "team": 3, "name": "rando",       "mostplayedclass": 3, "playedclasses": 4,   "kills": 4, "deaths":2}
+    , {"steamid": "STEAM_0:0:14353663", "team": 2, "name": "Sizzling",    "mostplayedclass": 3, "playedclasses": 4,   "kills": 2, "deaths":2}
+    , {"steamid": "STEAM_0:1:9607258",  "team": 3, "name": "Dave__AC",    "mostplayedclass": 3, "playedclasses": 4,   "kills": 1, "deaths":4}
+    , {"steamid": "STEAM_0:1:19111546", "team": 2, "name": "drdonutman",  "mostplayedclass": 4, "playedclasses": 8,   "kills": 1, "deaths":5}
+    , {"steamid": "STEAM_0:0:21274546", "team": 3, "name": "Gobiner",     "mostplayedclass": 4, "playedclasses": 323, "kills": 3, "deaths":1}
+    , {"steamid": "STEAM_0:0:9038326",  "team": 2, "name": "Trekkie",     "mostplayedclass": 5, "playedclasses": 16 , "kills": 4, "deaths":6}
+    , {"steamid": "STEAM_0:0:5486374",  "team": 3, "name": "eXtine",      "mostplayedclass": 5, "playedclasses": 16 , "kills": 7, "deaths":1}
+    , {"steamid": "STEAM_0:1:19550627", "team": 3, "name": "Jay",         "mostplayedclass": 5, "playedclasses": 16,  "kills": 3, "deaths":0}
+    , {"steamid": "STEAM_0:1:5201690",  "team": 2, "name": "b4nny",       "mostplayedclass": 4, "playedclasses": 8,   "kills": 9, "deaths":1}
+    ]
+  }}
+
+
+, statsHeaders7: {
+    "sizzlingstats": "v0.1"
   , "sessionid": "something"
   , "matchduration": "222"
   }
 
-, statsBody6: {"chats": [
+, statsBody7: {"chats": [
     { "steamid": "STEAM_0:0:14353663"
     , "isTeam": 0
     , "time": 156

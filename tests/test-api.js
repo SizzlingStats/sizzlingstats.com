@@ -147,14 +147,37 @@ var test5 = function(callback) {
 };
 
 /**
- * Test 6: Mock gameover + chats
+ * Test 6: Mock updateStats, endofround=true, old player reappeared (Jay)
  */
 
 var test6 = function(callback) {
 
   mock.statsHeaders6.sessionid = sessionid;
-  optionsGameover.headers = mock.statsHeaders6;
-  optionsGameover.json = mock.statsBody6;
+  optionsUpdate.headers = mock.statsHeaders6;
+  optionsUpdate.json = mock.statsBody6;
+
+  request(optionsUpdate, function(err, res, body) {
+    // Error checking
+    if (err) {
+      return callback(err);
+    }
+    if (res.statusCode !== 200) {
+      return callback(new Error('tests/test-api.js -API Error: ' + res.statusCode));
+    }
+
+    return callback(null, res, body);
+  });
+};
+
+/**
+ * Test 7: Mock gameover + chats
+ */
+
+var test7 = function(callback) {
+
+  mock.statsHeaders7.sessionid = sessionid;
+  optionsGameover.headers = mock.statsHeaders7;
+  optionsGameover.json = mock.statsBody7;
 
   request(optionsGameover, function(err, res, body) {
     // Error checking
@@ -220,6 +243,15 @@ async.series([
 
 , function(callback) {
     test6(function(err, res, body) {
+      assert.ok(body, 'body should return true');
+      assert.ok(!res.headers.matchurl, 'matchurl should not be present');
+      assert.ok(!res.headers.sessionid, 'sessionid should not be present');
+      callback(err);
+    });
+  }
+
+  , function(callback) {
+    test7(function(err, res, body) {
       assert.ok(body, 'body should return true');
       assert.ok(!res.headers.matchurl, 'matchurl should not be present');
       assert.ok(!res.headers.sessionid, 'sessionid should not be present');
