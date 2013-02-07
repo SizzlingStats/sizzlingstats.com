@@ -37,12 +37,35 @@
 .sits img {
   margin-top: 10px;
 }
+
+/*Foundation Dropdown Menu Hacks*/
 .top-bar-avatar {
   float: left;
   margin: 6px 4px 0 -4px;
   /*-moz-border-radius: 3px;*/
   /*-webkit-border-radius: 3px;*/
   border-radius: 3px;
+}
+.dropdown {
+  width: 100%;
+  padding: 0 !important;
+}
+.dropdown a {
+  line-height: 42px !important;
+  height: 44px !important;
+  padding: 0 15px !important;
+  font-weight: bold !important;
+}
+.dropdown .divider {
+  height: 2px !important;
+  margin-top: -1px;
+}
+.dropdown li {
+  padding: 0 !important;
+}
+.dropdown li:hover {
+  color: #d9d9d9 !important;
+  background: black !important;
 }
 
 .sidebar-nav a {

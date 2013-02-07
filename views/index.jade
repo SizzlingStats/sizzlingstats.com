@@ -26,16 +26,17 @@ block body
               input(type='search')
           li.divider.show-for-medium-and-up
           if (loggedIn)
-            li
-              a.btn.dropdown-toggle(data-toggle='dropdown', href='javascript:')
-                img.top-bar-avatar(src='#{user.avatar}', ng-cloak)
-                span(ng-cloak)
+            li.has-dropdown
+              a(href='javascript:')
+                img.top-bar-avatar(src='#{user.avatar}')
+                span
                   | &nbsp;#{user.name}
                 span.caret
-              ul.dropdown-menu
-                li
-                  a(href='javascript:')
-                    del Profile
+              ul.dropdown
+                //- li.divider
+                //- li
+                //-   a(href='javascript:')
+                //-     del Profile
                 li.divider
                 li
                   a(href='/logout/', target='_self') Sign Out
