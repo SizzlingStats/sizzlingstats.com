@@ -28,7 +28,7 @@ module.exports = function(app) {
 
 var stats = function(req, res) {
   var id = req.params.id;
-  Stats.findById(id, function(err, stats) {
+  Stats.findByIdAndUpdate(id, {$inc: {viewCount: 1}}, function(err, stats) {
     if (err) {
       console.log(err);
       console.trace(err);

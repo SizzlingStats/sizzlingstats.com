@@ -4,60 +4,61 @@ var statsEmitter = require('../emitters').statsEmitter;
 
 // Mongoose Bullshit
 var statsSchema = new mongoose.Schema({
-  _id: { type: Number, required: true }, // matchId
-  redname: String,
-  bluname: String,
-  redscore: { type: [Number], required: true },
-  bluscore: { type: [Number], required: true },
-  redCountry: String,
-  bluCountry: String,
-  hostname: String,
+ _id: { type: Number, required: true } // matchId
+, redname: String
+, bluname: String
+, redscore: { type: [Number], required: true }
+, bluscore: { type: [Number], required: true }
+, redCountry: String
+, bluCountry: String
+, hostname: String
   // Duration of round, in seconds. Playable time only (humiliation time doesn't count)
-  roundduration: { type: [Number], required: true },
+, roundduration: { type: [Number], required: true }
   // Duration of match, in seconds. Only exists after gameover event is sent
-  matchDuration: Number,
-  map: { type: String, lowercase: true, required: true },
-  round: { type: Number, min: 0, required: true },
-  players: [{
-    steamid: { type: String, required: true },
-    name: String,
-    team: { type: Number, required: true },
-    mostplayedclass: [Number],
-    playedclasses: [Number],
-    kills: [Number],
-    killassists: [Number],
-    deaths: [Number],
-    captures: [Number],
-    defenses: [Number],
-    suicides: [Number],
-    dominations: [Number],
-    revenge: [Number],
-    buildingsbuilt: [Number],
-    buildingsdestroyed: [Number],
-    headshots: [Number],
-    backstabs: [Number],
-    healpoints: [Number],
-    invulns: [Number],
-    teleports: [Number],
-    damagedone: [Number],
-    crits: [Number],
-    resupplypoints: [Number],
-    bonuspoints: [Number],
-    points: [Number],
-    healsreceived: [Number],
-    ubersdropped: [Number],
-    medpicks: [Number]
-  }],
-  chats: [{
-    steamid: { type: String, required: true },
-    isTeam: Boolean,
-    isBind: Boolean,
-    time: { type: Number, required: true },
-    message: String
-  }],
-  created: { type: Date },
-  updated: { type: Date },
-  isLive: { type: Boolean, default: false }
+, matchDuration: Number
+, map: { type: String, lowercase: true, required: true }
+, round: { type: Number, required: true }
+, players: [{
+    steamid: { type: String, required: true }
+  , name: String
+  , team: { type: Number, required: true }
+  , mostplayedclass: [Number]
+  , playedclasses: [Number]
+  , kills: [Number]
+  , killassists: [Number]
+  , deaths: [Number]
+  , captures: [Number]
+  , defenses: [Number]
+  , suicides: [Number]
+  , dominations: [Number]
+  , revenge: [Number]
+  , buildingsbuilt: [Number]
+  , buildingsdestroyed: [Number]
+  , headshots: [Number]
+  , backstabs: [Number]
+  , healpoints: [Number]
+  , invulns: [Number]
+  , teleports: [Number]
+  , damagedone: [Number]
+  , crits: [Number]
+  , resupplypoints: [Number]
+  , bonuspoints: [Number]
+  , points: [Number]
+  , healsreceived: [Number]
+  , ubersdropped: [Number]
+  , medpicks: [Number]
+  }]
+, chats: [{
+    steamid: { type: String, required: true }
+  , isTeam: Boolean
+  , isBind: Boolean
+  , time: { type: Number, required: true }
+  , message: String
+  }]
+, created: { type: Date }
+, updated: { type: Date }
+, viewCount: Number
+, isLive: { type: Boolean, default: false }
 });
 
 statsSchema.pre('save', function(next) {
@@ -106,6 +107,7 @@ statsSchema.statics.createStats = function(matchInfo, statsData) {
   statsData._id = matchInfo.matchId;
   statsData.isLive = true;
   statsData.created = statsData.updated = new Date();
+  statsData.viewCount = 0;
   new Stats(statsData).save(callback);
 };
 
