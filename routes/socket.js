@@ -34,4 +34,8 @@ module.exports = function(app) {
     io.sockets.in(stats._id).emit('stats:update', { stats: stats, playerdata: playerData }, stats._id);
   });
 
+  statsEmitter.on('removeStats', function (matchId) {
+    io.sockets.emit('matches:remove', matchId);
+  });
+
 };

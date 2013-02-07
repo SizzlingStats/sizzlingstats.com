@@ -27,6 +27,14 @@ function SideBarCtrl($scope, $http, $routeParams, socket) {
     $scope.matches.push(data);
   });
 
+  socket.on('matches:remove', function(matchId) {
+    for (var i=$scope.matches.length-1; i>=0; i--) {
+      if ($scope.matches[i]._id == matchId) {
+        $scope.matches.splice(i,1);
+      }
+    }
+  });
+
   $http.get('/api/matches')
     .success(function(data, status, headers, config) {
       $scope.matches = data.matches;

@@ -85,6 +85,10 @@ statsSchema.pre('save', function(next) {
 
 });
 
+statsSchema.post('remove', function(stats) {
+  statsEmitter.emit('removeStats', stats._id);
+});
+
 statsSchema.statics.createStats = function(matchInfo, statsData) {
   var callback = arguments[arguments.length-1];
 
@@ -268,8 +272,14 @@ statsSchema.statics.setGameOver = function(matchId, matchDuration, newChats, cb)
     if (!stats) {
       return cb(new Error('setGameOver() - Stats not found'));
     }
+    // If there is only 1 value in roundduration[] and it's 0, then these are
+    //  "empty" stats and they should get deleted.
+    if (stats.roundduration.length === 1 && stats.roundduration[0] === 0) {
+      return stats.remove(cb);
+    }
 
     if (matchDuration) { stats.matchDuration = matchDuration; }
+
     stats.isLive = false;
     stats.chats = appendChats(newChats, stats.chats);
     stats.save(cb);
