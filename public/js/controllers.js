@@ -252,6 +252,9 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
     return (!$scope.filterBinds || !chat.isBind);
   };
   var mostPlayedClass = function(mpcArray) {
+    if (mpcArray.length == 1) {
+      return mpcArray[0];
+    }
     // Determine what class was played the most by summing the rounddurations
     //  for the according tf2class in the "mostplayedclass" array.
     var totals = [0,0,0,0,0,0,0,0,0,0];
