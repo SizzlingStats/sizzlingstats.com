@@ -2,6 +2,7 @@
 
 /views/*      # view templates
 /public/*     # static files
+/tests/*      # tests
 ./README.md   # a specific file
 *.css         # ignore any CSS files too
 *.log
