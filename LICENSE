@@ -1,15 +1,6 @@
-# sizzlingstats.com
-
-Website for viewing live statistics for competitive TF2 matches, collected by SizzlingCalamari's stats plugin.
-
-Runs on node.js, express, socket.io, mongodb and redis.
-
-
-## License 
-
 (The MIT License)
 
-Copyright (c) 2012-2013 Christopher Kim \<christopherjkim AT [Google's mail service]\>
+Copyright (c) 2012-2013 Christopher Kim <christopherjkim AT [Google's mail service]>
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
