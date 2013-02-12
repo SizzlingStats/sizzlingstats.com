@@ -17,6 +17,7 @@ module.exports = function(app) {
   // JSON API
   app.get('/api/stats/:id', stats);
   app.get('/api/matches', matches);
+  app.get('/api/player/:id', player);
 
   app.post('/api/stats/new', createStats);
   app.post('/api/stats/update', updateStats);
@@ -66,6 +67,22 @@ var matches = function(req, res) {
       return res.json(false);
     }
     res.json({ matches: matches });
+  });
+};
+
+var player = function(req, res) {
+  var id = req.params.id;
+  Player.findOne({numericid: id}, function(err, player) {
+    if (err) {
+      console.log(err);
+      console.trace(err);
+      return res.json(false);
+    }
+    if (!player) {
+      return res.json(false);
+    }
+
+    res.json({ player: player });
   });
 };
 

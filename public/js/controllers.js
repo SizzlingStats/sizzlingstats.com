@@ -168,7 +168,8 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
         // sumArray2(player.bonuspoints),
       ];
       player.tr = '<td class="name"><img class="team' + player.team + '-avatar" src="' +
-          (player.avatar || '') + '" /><span>' + escapeHtml(player.name) +
+          (player.avatar || '') + '" /><span><a href="/player/' +
+          (player.numericid || '') +'">' + escapeHtml(player.name) + '</a>' +
           '</span><td><img class="class-icon" src="/img/classicons/' + player.mostPlayedClass +
           '.png"></img><td>' + player.stats.join('</td><td>') + '</td>';
       // Additional medic-specific stats
@@ -250,6 +251,7 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
         $scope.playerMetaData[steamid].name = player.name;
         $scope.playerMetaData[steamid].team = player.team;
         player.avatar = $scope.playerMetaData[steamid].avatar;
+        player.numericid = $scope.playerMetaData[steamid].numericid;
       } else {
         $scope.playerMetaData[steamid] = { name: player.name, team: player.team };
       }

@@ -19,6 +19,12 @@ var app = angular.module('myApp', ['myApp.services']).
         templateUrl: 'partials/download',
         reloadOnSearch: true
       })
+      .when('/player/:id', {
+        templateUrl: 'partials/profile',
+        controller: ProfileCtrl,
+        resolve: ProfileCtrl.resolve,
+        reloadOnSearch: true
+      })
       .otherwise({
         redirectTo: '/',
         templateUrl: 'partials/home',

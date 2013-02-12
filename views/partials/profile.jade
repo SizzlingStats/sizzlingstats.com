@@ -1,0 +1,7 @@
+h2 {{player.name}}
+.panel
+  img(ng-src='{{player.avatarFull}}')
+  p Steam ID: {{player._id}}
+  p 64-bit Steam ID: {{player.numericid}}
+  p Country: {{player.country}}
+  p Updated: {{player.updated | date:'M/d/yy h:mma'}}
