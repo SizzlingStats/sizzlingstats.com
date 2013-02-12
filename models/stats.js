@@ -12,6 +12,8 @@ var statsSchema = new mongoose.Schema({
 , redCountry: String
 , bluCountry: String
 , hostname: String
+  // The team that wins the midfight (first to cap a cp). Can be 0, 2 (red), 3 (blu)
+, teamfirstcap: [Number]
   // Duration of round, in seconds. Playable time only (humiliation time doesn't count)
 , roundduration: { type: [Number], required: true }
   // Duration of match, in seconds. Only exists after gameover event is sent
@@ -107,6 +109,7 @@ statsSchema.statics.createStats = function(matchInfo, statsData) {
   statsData.round = 0;
   statsData.redscore = 0;
   statsData.bluscore = 0;
+  statsData.teamfirstcap = 0;
   statsData.roundduration = 0;
   statsData._id = matchInfo.matchId;
   statsData.isLive = true;
@@ -122,10 +125,16 @@ statsSchema.statics.appendStats = function(newStats, matchId, isEndOfRound, cb) 
 
     var round = stats.round;
 
-    // if (isEndOfRound) {
-      stats.bluscore[round] = newStats.bluscore;
-      stats.redscore[round] = newStats.redscore;
-    // }
+    // Need to set markModified if you don't use
+    //  Array.push() to set array elements
+    stats.bluscore[round] = newStats.bluscore;
+    stats.markModified('bluscore');
+    stats.redscore[round] = newStats.redscore;
+    stats.markModified('redscore');
+    stats.roundduration[round] = newStats.roundduration;
+    stats.markModified('roundduration');
+    stats.teamfirstcap[round] = newStats.teamfirstcap || 0;
+    stats.markModified('teamfirstcap');
 
     newStats.players.forEach(function(player) {
       var isNewPlayer = true;
@@ -195,11 +204,6 @@ statsSchema.statics.appendStats = function(newStats, matchId, isEndOfRound, cb) 
     // Need to set markModified if you don't use
     //  Array.push() to set array elements
     stats.markModified('players');
-
-    stats.roundduration[round] = newStats.roundduration;
-    stats.markModified('roundduration');
-    stats.markModified('redscore');
-    stats.markModified('bluscore');
 
     stats.chats = appendChats(newStats.chats, stats.chats);
     if (isEndOfRound) { stats.round += 1; }

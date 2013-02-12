@@ -119,6 +119,13 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
       totalFrags[player.team] += sumArray(player.kills);
     });
 
+    // Calculate total midfights won for each team
+    var totalMidfightsWon = [0,0,0,0];
+    var filteredTeamfirstcapArr = filterBySelectedRounds(stats.teamfirstcap);
+    for (var j=0; j<numRounds; j++) {
+      totalMidfightsWon[ filteredTeamfirstcapArr[j] ] += 1;
+    }
+
     // Assemble score overview table rows
     var redRoundScores = [stats.redscore[0]];
     var bluRoundScores = [stats.bluscore[0]];
@@ -130,8 +137,10 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
     bluRoundScores.push(stats.bluscore[numRounds-1]);
     redRoundScores.push(totalDamage[2]);
     redRoundScores.push(totalFrags[2]);
+    redRoundScores.push(totalMidfightsWon[2]);
     bluRoundScores.push(totalDamage[3]);
     bluRoundScores.push(totalFrags[3]);
+    bluRoundScores.push(totalMidfightsWon[3]);
     $scope.redtr = '<td class="red">' + escapeHtml(stats.redname) +
                    '</td><td>' + redRoundScores.join('</td><td>') + '</td>';
     $scope.blutr = '<td class="blu">' + escapeHtml(stats.bluname) +

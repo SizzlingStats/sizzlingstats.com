@@ -21,9 +21,10 @@
           th
           th.score-table-round-header(ng-repeat='n in stats.redscore', ng-click='clickRoundHeader($index)', ng-class='{"deselected-round":selectedRounds.indexOf($index)==-1}')
             acronym R{{$index + 1}}
-          th(title='Total Score', class="has-tip tip-top"): abbr T
-          th(title='Total Damage', class="has-tip tip-top"): abbr DMG
-          th(title='Total Frags', class="has-tip tip-top"): abbr F
+          th(title='Total Score', class='has-tip tip-top'): abbr T
+          th(title='Total Damage', class='has-tip tip-top'): abbr DMG
+          th(title='Total Frags', class='has-tip tip-top'): abbr F
+          th(title='Midfights Won', class='has-tip tip-top'): abbr MF
       tbody
         tr(ng-bind-html-unsafe='redtr')
         tr(ng-bind-html-unsafe='blutr')

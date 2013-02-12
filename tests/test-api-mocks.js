@@ -26,6 +26,10 @@
 
 module.exports = {
 
+  /**
+   * Test 1: Mock createStats
+   */
+
   statsHeaders1: {
     "sizzlingstats": "v0.1"
   }
@@ -52,6 +56,9 @@ module.exports = {
     ]
   }}
 
+  /**
+   * Test 2: Mock updateStats, endofround=false
+   */
 
 , statsHeaders2: {
     "sizzlingstats": "v0.1"
@@ -84,6 +91,9 @@ module.exports = {
     ]
   }}
 
+  /**
+   * Test 3: Mock updateStats, endofround=false, new player added (Jay)
+   */
 
 , statsHeaders3: {
     "sizzlingstats": "v0.1"
@@ -98,6 +108,7 @@ module.exports = {
   , "redname": "YouShouldNotSeeThis"
   , "bluscore": 0
   , "redscore": 0
+  , "teamfirstcap": 3
   , "roundduration": 120
   , "players": [
       {"steamid": "STEAM_0:0:86144",    "team": 2, "name": "Cigar",       "mostplayedclass": 1, "playedclasses": 0,   "kills": 0, "deaths":2}
@@ -116,6 +127,9 @@ module.exports = {
     ]
   }}
 
+  /**
+   * Test 4: Mock updateStats, endofround=true
+   */
 
 , statsHeaders4: {
     "sizzlingstats": "v0.1"
@@ -130,6 +144,7 @@ module.exports = {
   , "redname": "YouShouldNotSeeThis"
   , "bluscore": 0
   , "redscore": 1
+  , "teamfirstcap": 3
   , "roundduration": 160
   , "players": [
       {"steamid": "STEAM_0:0:86144",    "team": 2, "name": "Cigar",       "mostplayedclass": 1, "playedclasses": 0,   "kills": 0, "deaths":2}
@@ -148,6 +163,9 @@ module.exports = {
     ]
   }}
 
+  /**
+   * Test 5: Mock updateStats, endofround=true, new player added (b4nny)
+   */
 
 , statsHeaders5: {
     "sizzlingstats": "v0.1"
@@ -162,6 +180,7 @@ module.exports = {
   , "redname": "YouShouldNotSeeThis"
   , "bluscore": 1
   , "redscore": 1
+  , "teamfirstcap": 2
   , "roundduration": 160
   , "players": [
       {"steamid": "STEAM_0:0:86144",    "team": 2, "name": "Cigar",       "mostplayedclass": 1, "playedclasses": 0,   "kills": 0, "deaths":2}
@@ -181,6 +200,9 @@ module.exports = {
     ]
   }}
 
+  /**
+   * Test 6: Mock updateStats, endofround=true, old player reappeared (Jay)
+   */
 
 , statsHeaders6: {
     "sizzlingstats": "v0.1"
@@ -195,6 +217,7 @@ module.exports = {
   , "redname": "YouShouldNotSeeThis"
   , "bluscore": 2
   , "redscore": 1
+  , "teamfirstcap": 3
   , "roundduration": 160
   , "players": [
       {"steamid": "STEAM_0:0:86144",    "team": 2, "name": "Cigar",       "mostplayedclass": 1, "playedclasses": 0,   "kills": 0, "deaths":2}
@@ -214,6 +237,9 @@ module.exports = {
     ]
   }}
 
+  /**
+   * Test 7: Mock gameover + chats
+   */
 
 , statsHeaders7: {
     "sizzlingstats": "v0.1"
