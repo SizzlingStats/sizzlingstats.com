@@ -291,6 +291,25 @@ statsSchema.statics.setGameOver = function(matchId, matchDuration, newChats, cb)
   });
 };
 
+statsSchema.statics.findMatchesBySteamId = function(steamId, skip, limit, cb) {
+  var query = Stats.find({ 'players.steamid': steamId });
+
+  // TODO: Do these in parallel
+  query
+  .sort({_id:-1})
+  .skip(skip)
+  .limit(limit)
+  .select('hostname redname bluname redCountry bluCountry created')
+  .exec(function(err, matches) {
+    if (err) { return cb(err); }
+    
+    query.count(function(err, count) {
+      return cb(err, matches, count);
+    });
+
+  });
+};
+
 // Helpers
 var appendChats = function(newChats, oldChats) {
   // Strip the beginning/end quotations from new chat messages

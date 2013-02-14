@@ -82,7 +82,16 @@ var player = function(req, res) {
       return res.json(false);
     }
 
-    res.json({ player: player });
+    Stats.findMatchesBySteamId(player._id, 0, 10, function(err, matches, count) {
+      if (err) {
+        console.log(err);
+        console.trace(err);
+        // return res.json(false);
+      }
+
+      res.json({ player: player, matches: matches, count: count });
+    });
+
   });
 };
 

@@ -3,8 +3,9 @@ function ProfileCtrl($scope, $rootScope, $location, $http, socket, resolvedData)
     // do something
   }
   $scope.player = resolvedData.player;
+  $scope.matches = resolvedData.matches;
+  $scope.count = resolvedData.count;
   $scope.player.avatarFull = $scope.player.avatar.slice(0, -4) + '_full.jpg';
-  console.log($scope.player.avatarFull);
 }
 // This is for the first time you load the controller
 //  -- so that you don't see all the empty divs and tables.
