@@ -21,12 +21,8 @@ h3 Recent Matches
   .pagination-centered
     ul.pagination
       li.arrow.unavailable: a(href="javascript:") &laquo;
-      li.current: a(href="javascript:") 1
-      li: a(href="javascript:") 2
-      li: a(href="javascript:") 3
+      li(ng-cloak, ng-repeat='page in pages', ng-class="{'current': page.isCurrent}")
+        a(href="javascript:", ng-click='clickPageNumber($index)') {{page.num}}
       li.unavailable: a(href="javascript:") &hellip;
-      li: a(href="javascript:") 11
-      li: a(href="javascript:") 12
-      li: a(href="javascript:") 13
-      li.arrow: a(href="javascript:") &raquo
+      li.arrow.unavailable: a(href="javascript:") &raquo;
     p {{count}} matches found.

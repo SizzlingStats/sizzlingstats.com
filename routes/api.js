@@ -18,6 +18,7 @@ module.exports = function(app) {
   app.get('/api/stats/:id', stats);
   app.get('/api/matches', matches);
   app.get('/api/player/:id', player);
+  app.get('/api/player/:id/matches', playerMatches);
 
   app.post('/api/stats/new', createStats);
   app.post('/api/stats/update', updateStats);
@@ -93,6 +94,34 @@ var player = function(req, res) {
     });
 
   });
+};
+
+var playerMatches = function(req, res) {
+  var steamid = req.params.id;
+  var current = parseInt(req.query['currentmatch'], 10);
+  var skip = parseInt(req.query['skip'], 10);
+
+  if (skip < 0) {
+    Stats.findMatchesBySteamIdRanged(steamid, {$gt: current}, 1, -skip-10, 10, function(err, matches) {
+      if (err) {
+        console.log(err);
+        console.trace(err);
+        // return res.json(false);
+      }
+
+      res.json({ matches: matches.reverse() });
+    });
+  } else {
+    Stats.findMatchesBySteamIdRanged(steamid, {$lt: current}, -1, skip-1, 10, function(err, matches) {
+      if (err) {
+        console.log(err);
+        console.trace(err);
+        // return res.json(false);
+      }
+
+      res.json({ matches: matches });
+    });
+  }
 };
 
 

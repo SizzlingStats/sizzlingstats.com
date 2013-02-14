@@ -310,6 +310,21 @@ statsSchema.statics.findMatchesBySteamId = function(steamId, skip, limit, cb) {
   });
 };
 
+statsSchema.statics.findMatchesBySteamIdRanged = function(steamId, comparator, sort, skip, limit, cb) {
+  // Stats.find( { '_id': {$lt: current} } )
+  // Stats.find({ 'players.steamid': steamId })
+  Stats.find({ 'players.steamid': steamId, _id: comparator })
+  .sort({_id:sort})
+  .skip(skip)
+  .limit(limit)
+  .select('hostname redname bluname redCountry bluCountry created')
+  .exec(function(err, matches) {
+    if (err) { return cb(err); }
+    
+    return cb(err, matches);
+  });
+};
+
 // Helpers
 var appendChats = function(newChats, oldChats) {
   // Strip the beginning/end quotations from new chat messages
