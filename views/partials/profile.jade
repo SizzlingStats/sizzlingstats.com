@@ -1,12 +1,13 @@
-h2 {{player.name}}
-.panel
-  img(ng-src='{{player.avatarFull}}')
-  p Steam ID: {{player._id}}
-  p 64-bit Steam ID: {{player.numericid}}
-  p Country: {{player.country}}
-  p Updated: {{player.updated | date:'M/d/yy h:mma' | lowercase}}
-h3 Recent Matches
-.six.columns
+.five.columns
+  h2 {{player.name}}
+  .panel
+    img(ng-src='{{player.avatarFull}}')
+    p Steam ID: {{player._id}}
+    p 64-bit Steam ID: {{player.numericid}}
+    p Country: {{player.country}}
+    p Updated: {{player.updated | date:'M/d/yy h:mma' | lowercase}}
+.seven.columns
+  h3 Matches Played
   ul.tabs.vertical.sidebar-nav
     li(ng-cloak, ng-repeat='match in matches')
       a(href='/stats?id={{match._id}}')
@@ -20,9 +21,11 @@ h3 Recent Matches
         | {{match.created | date:'M/d/yy h:mma' | lowercase}}
   .pagination-centered
     ul.pagination
-      li.arrow.unavailable: a(href="javascript:") &laquo;
-      li(ng-cloak, ng-repeat='page in pages', ng-class="{'current': page.isCurrent}")
+      li.arrow(ng-class="{'unavailable': pageNumCurrent==1}")
+        a(href="javascript:", ng-click='clickPageLeft()') &laquo;
+      li(ng-cloak, ng-repeat='page in pages', ng-class="{'current': page.isCurrent()}")
         a(href="javascript:", ng-click='clickPageNumber($index)') {{page.num}}
-      li.unavailable: a(href="javascript:") &hellip;
-      li.arrow.unavailable: a(href="javascript:") &raquo;
-    p {{count}} matches found.
+      //- li.unavailable: a(href="javascript:") &hellip;
+      li.arrow(ng-class="{'unavailable': pageNumCurrent==pageNumLast}")
+        a(href="javascript:", ng-click='clickPageRight()') &raquo;
+    p {{count}} matches played.
