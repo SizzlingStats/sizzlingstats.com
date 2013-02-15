@@ -70,9 +70,9 @@ block body
                 | {{match.hostname}} 
                 //- span.label(ng-show='match.isLive') Live
                 br
-                img.flag(ng-show="match.redCountry", ng-src="/img/flags/16/{{match.redCountry}}.png")
+                img.flag.size-16(ng-show="match.redCountry", ng-src="/img/flags/16/{{match.redCountry}}.png")
                 | {{match.redname}} vs 
-                img.flag(ng-show="match.bluCountry", ng-src="/img/flags/16/{{match.bluCountry}}.png")
+                img.flag.size-16(ng-show="match.bluCountry", ng-src="/img/flags/16/{{match.bluCountry}}.png")
                 | {{match.bluname}}
       .nine.columns(ng-view)
         //- content

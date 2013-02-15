@@ -150,6 +150,14 @@ td:first-child, th:first-child {
   vertical-align: text-bottom;
   margin-right: 0.1em;
 }
+.size-16 {
+  width: 16px;
+  height: 16px;
+}
+.size-32 {
+  width: 32px;
+  height: 32px;
+}
 
 .stats {
   font-size: 13px !important;
@@ -213,6 +221,13 @@ td:first-child, th:first-child {
   /*-moz-border-radius: 4px;*/
   /*-webkit-border-radius: 4px;*/
   border-radius: 4px;
+}
+.player-name a {
+  color: #222;
+}
+.player-name a:hover {
+  color: #222;
+  text-decoration: underline;
 }
 .class-icon {
   margin-bottom: -2px;

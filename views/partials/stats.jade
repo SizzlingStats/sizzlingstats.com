@@ -1,10 +1,10 @@
 .stats
   .center
     h3.no-marg
-      img.flag(ng-show="stats.redCountry", ng-src="/img/flags/32/{{stats.redCountry}}.png")
+      img.flag.size-32(ng-show="stats.redCountry", ng-src="/img/flags/32/{{stats.redCountry}}.png")
       span.redname {{stats.redname}}
       |  {{scoreComparison}} 
-      img.flag(ng-show="stats.bluCountry", ng-src="/img/flags/32/{{stats.bluCountry}}.png")
+      img.flag.size-32(ng-show="stats.bluCountry", ng-src="/img/flags/32/{{stats.bluCountry}}.png")
       span.bluname {{stats.bluname}}
       |  {{redScore}} - {{bluScore}}
     .stats-description {{stats.created | date:'M/d/yy h:mma' | lowercase}} // {{secondsToHMS(playableTime)}} // {{stats.map}} 

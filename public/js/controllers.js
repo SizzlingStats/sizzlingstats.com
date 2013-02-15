@@ -176,7 +176,7 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
         // sumArray2(player.resupplypoints),
         // sumArray2(player.bonuspoints),
       ];
-      player.tr = '<td class="name"><img class="team' + player.team + '-avatar" src="' +
+      player.tr = '<td class="player-name"><img class="team' + player.team + '-avatar" src="' +
           (player.avatar || '') + '" /><span><a href="/player/' +
           (player.numericid || '') +'">' + escapeHtml(player.name) + '</a>' +
           '</span><td><img class="class-icon" src="/img/classicons/' + player.mostPlayedClass +
@@ -188,7 +188,7 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
           sumArray2(player.invulns),
           sumArray2(player.ubersdropped)
         ];
-        player.medictr = '<td class="name"><img class="team' + player.team +
+        player.medictr = '<td class="player-name"><img class="team' + player.team +
             '-avatar" src="' + (player.avatar || '') + '" /><span>' + escapeHtml(player.name) +
             '</span><td>' + player.medicStats.join('</td><td>') + '</td>';
       }
