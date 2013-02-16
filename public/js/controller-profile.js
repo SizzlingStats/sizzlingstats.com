@@ -18,10 +18,10 @@ function ProfileCtrl($scope, $rootScope, $location, $http, socket, resolvedData)
 
   function Page(num) {
     this.num = num;
-    this.isCurrent = function() {
-      return this.num === $scope.pageNumCurrent;
-    };
   }
+  Page.prototype.isCurrent = function() {
+    return this.num === $scope.pageNumCurrent;
+  };
 
   // Build the pagination ul
   var buildPagination = function() {
