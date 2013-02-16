@@ -102,10 +102,8 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
 
     if (reinitializeSelectedRounds) { $scope.initializeSelectedRoundsArray(); }
 
-    // Ask sizzling to send only individual round scores instead of cumulative
-    // It will make things a lot easier.
-    var redScore = $scope.redScore = stats.redscore[numRounds-1];
-    var bluScore = $scope.bluScore = stats.bluscore[numRounds-1];
+    var redScore = $scope.redScore = stats.redscore.reduce(function(a,b) { return a + b; },0);
+    var bluScore = $scope.bluScore = stats.bluscore.reduce(function(a,b) { return a + b; },0);
     $scope.scoreComparison = redScore > bluScore ? '>' : redScore < bluScore ? '<' : '==';
 
     // Total playable time
@@ -127,14 +125,10 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
     }
 
     // Assemble score overview table rows
-    var redRoundScores = [stats.redscore[0]];
-    var bluRoundScores = [stats.bluscore[0]];
-    for (var i=1; i<numRounds; i++) {
-      redRoundScores.push(stats.redscore[i] - stats.redscore[i-1]);
-      bluRoundScores.push(stats.bluscore[i] - stats.bluscore[i-1]);
-    }
-    redRoundScores.push(stats.redscore[numRounds-1]);
-    bluRoundScores.push(stats.bluscore[numRounds-1]);
+    var redRoundScores = stats.redscore.slice();
+    var bluRoundScores = stats.bluscore.slice();
+    redRoundScores.push(redScore);
+    bluRoundScores.push(bluScore);
     redRoundScores.push(totalDamage[2]);
     redRoundScores.push(totalFrags[2]);
     redRoundScores.push(totalMidfightsWon[2]);

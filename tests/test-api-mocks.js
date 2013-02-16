@@ -36,7 +36,7 @@ module.exports = {
 
 , statsBody1: {"stats": {
     "map": "cp_badlands"
-  , "hostname": "heyyyyy this is a pretty long title"
+  , "hostname": "mocks r0"
   , "bluname": "BluName"
   , "redname": "RedName"
   , "players": [
@@ -179,7 +179,7 @@ module.exports = {
   , "bluname": "YouShouldNotSeeThis"
   , "redname": "YouShouldNotSeeThis"
   , "bluscore": 1
-  , "redscore": 1
+  , "redscore": 0
   , "teamfirstcap": 2
   , "roundduration": 160
   , "players": [
@@ -215,8 +215,8 @@ module.exports = {
   , "hostname": "YouShouldNotSeeThis"
   , "bluname": "YouShouldNotSeeThis"
   , "redname": "YouShouldNotSeeThis"
-  , "bluscore": 2
-  , "redscore": 1
+  , "bluscore": 1
+  , "redscore": 0
   , "teamfirstcap": 3
   , "roundduration": 160
   , "players": [
