@@ -125,16 +125,8 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
     }
 
     // Assemble score overview table rows
-    var redRoundScores = stats.redscore.slice();
-    var bluRoundScores = stats.bluscore.slice();
-    redRoundScores.push(redScore);
-    bluRoundScores.push(bluScore);
-    redRoundScores.push(totalDamage[2]);
-    redRoundScores.push(totalFrags[2]);
-    redRoundScores.push(totalMidfightsWon[2]);
-    bluRoundScores.push(totalDamage[3]);
-    bluRoundScores.push(totalFrags[3]);
-    bluRoundScores.push(totalMidfightsWon[3]);
+    var redRoundScores = stats.redscore.concat(redScore,totalDamage[2],totalFrags[2],totalMidfightsWon[2]);
+    var bluRoundScores = stats.bluscore.concat(bluScore,totalDamage[3],totalFrags[3],totalMidfightsWon[3]);
     $scope.redtr = '<td class="red">' + escapeHtml(stats.redname) +
                    '</td><td>' + redRoundScores.join('</td><td>') + '</td>';
     $scope.blutr = '<td class="blu">' + escapeHtml(stats.bluname) +
