@@ -216,6 +216,9 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
   $scope.overallReverse = false;
   $scope.medicSort = 'name';
   $scope.medicReverse = false;
+  $scope.medicFilter = function(player) {
+    return (!!player.medicStats);
+  };
   $scope.sortBy = function(col, tableName) {
     // If previously sorting by 'name', and clicking a different column, then
     //  set reverse to true.

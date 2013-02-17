@@ -72,7 +72,7 @@
           th(ng-class="sortClass('stats[1]','medic')", ng-click="sortBy('stats[1]','medic')", class="has-tip tip-top", title='Ubers'): abbr U
           th(ng-class="sortClass('stats[2]','medic')", ng-click="sortBy('stats[2]','medic')", class="has-tip tip-top", title='Ubers Dropped'): abbr UD
       tbody
-        tr(ng-repeat='player in stats.players | orderBy:medicSort:medicReverse', ng-bind-html-unsafe='player.medictr')
+        tr(ng-repeat='player in stats.players | filter:medicFilter | orderBy:medicSort:medicReverse', ng-bind-html-unsafe='player.medictr')
   .chat-log
     ul
       li(ng-repeat='chat in stats.chats | filter:bindFilter')
