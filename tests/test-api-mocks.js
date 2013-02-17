@@ -44,7 +44,7 @@ module.exports = {
     , {"steamid": "STEAM_0:1:17260233", "team": 3, "name": "SteveC",      "mostplayedclass": 1}
     , {"steamid": "STEAM_0:1:16097990", "team": 2, "name": "foster",      "mostplayedclass": 1}
     , {"steamid": "STEAM_0:0:7422703",  "team": 3, "name": "binarystar!", "mostplayedclass": 1}
-    , {"steamid": "STEAM_0:0:17990207", "team": 2, "name": "techno",      "mostplayedclass": 3}
+    , {"steamid": "STEAM_0:0:17990207", "team": 2, "name": "dy<br>dx",    "mostplayedclass": 3}
     , {"steamid": "STEAM_0:1:11029950", "team": 3, "name": "rando",       "mostplayedclass": 3}
     , {"steamid": "STEAM_0:0:14353663", "team": 2, "name": "Sizzling",    "mostplayedclass": 3}
     , {"steamid": "STEAM_0:1:9607258",  "team": 3, "name": "Dave__AC",    "mostplayedclass": 3}
@@ -79,7 +79,7 @@ module.exports = {
     , {"steamid": "STEAM_0:1:17260233", "team": 3, "name": "SteveC",      "mostplayedclass": 1, "playedclasses": 3,   "kills": 0, "deaths":8}
     , {"steamid": "STEAM_0:1:16097990", "team": 2, "name": "foster",      "mostplayedclass": 1, "playedclasses": 1,   "kills": 2, "deaths":4}
     , {"steamid": "STEAM_0:0:7422703",  "team": 3, "name": "binarystar!", "mostplayedclass": 1, "playedclasses": 35,  "kills": 9, "deaths":9}
-    , {"steamid": "STEAM_0:0:17990207", "team": 2, "name": "techno",      "mostplayedclass": 3, "playedclasses": 4,   "kills": 8, "deaths":4}
+    , {"steamid": "STEAM_0:0:17990207", "team": 2, "name": "dy<br>dx",    "mostplayedclass": 3, "playedclasses": 4,   "kills": 8, "deaths":4}
     , {"steamid": "STEAM_0:1:11029950", "team": 3, "name": "rando",       "mostplayedclass": 3, "playedclasses": 4,   "kills": 4, "deaths":2}
     , {"steamid": "STEAM_0:0:14353663", "team": 2, "name": "Sizzling",    "mostplayedclass": 3, "playedclasses": 4,   "kills": 2, "deaths":2}
     , {"steamid": "STEAM_0:1:9607258",  "team": 3, "name": "Dave__AC",    "mostplayedclass": 3, "playedclasses": 4,   "kills": 1, "deaths":4}
@@ -115,7 +115,7 @@ module.exports = {
     , {"steamid": "STEAM_0:1:17260233", "team": 3, "name": "SteveC",      "mostplayedclass": 1, "playedclasses": 3,   "kills": 0, "deaths":8}
     , {"steamid": "STEAM_0:1:16097990", "team": 2, "name": "foster",      "mostplayedclass": 1, "playedclasses": 1,   "kills": 2, "deaths":4}
     , {"steamid": "STEAM_0:0:7422703",  "team": 3, "name": "binarystar!", "mostplayedclass": 1, "playedclasses": 35,  "kills": 9, "deaths":9}
-    , {"steamid": "STEAM_0:0:17990207", "team": 2, "name": "techno",      "mostplayedclass": 3, "playedclasses": 4,   "kills": 8, "deaths":4}
+    , {"steamid": "STEAM_0:0:17990207", "team": 2, "name": "dy<br>dx",    "mostplayedclass": 3, "playedclasses": 4,   "kills": 8, "deaths":4}
     , {"steamid": "STEAM_0:1:11029950", "team": 3, "name": "rando",       "mostplayedclass": 3, "playedclasses": 4,   "kills": 4, "deaths":2}
     , {"steamid": "STEAM_0:0:14353663", "team": 2, "name": "Sizzling",    "mostplayedclass": 3, "playedclasses": 4,   "kills": 2, "deaths":2}
     , {"steamid": "STEAM_0:1:9607258",  "team": 3, "name": "Dave__AC",    "mostplayedclass": 3, "playedclasses": 4,   "kills": 1, "deaths":4}
@@ -151,7 +151,7 @@ module.exports = {
     , {"steamid": "STEAM_0:1:17260233", "team": 3, "name": "SteveC",      "mostplayedclass": 1, "playedclasses": 3,   "kills": 0, "deaths":8}
     , {"steamid": "STEAM_0:1:16097990", "team": 2, "name": "foster",      "mostplayedclass": 1, "playedclasses": 1,   "kills": 2, "deaths":4}
     , {"steamid": "STEAM_0:0:7422703",  "team": 3, "name": "binarystar!", "mostplayedclass": 1, "playedclasses": 35,  "kills": 9, "deaths":9}
-    , {"steamid": "STEAM_0:0:17990207", "team": 2, "name": "techno",      "mostplayedclass": 3, "playedclasses": 4,   "kills": 8, "deaths":4}
+    , {"steamid": "STEAM_0:0:17990207", "team": 2, "name": "dy<br>dx",    "mostplayedclass": 3, "playedclasses": 4,   "kills": 8, "deaths":4}
     , {"steamid": "STEAM_0:1:11029950", "team": 3, "name": "rando",       "mostplayedclass": 3, "playedclasses": 4,   "kills": 4, "deaths":2}
     , {"steamid": "STEAM_0:0:14353663", "team": 2, "name": "Sizzling",    "mostplayedclass": 3, "playedclasses": 4,   "kills": 2, "deaths":2}
     , {"steamid": "STEAM_0:1:9607258",  "team": 3, "name": "Dave__AC",    "mostplayedclass": 3, "playedclasses": 4,   "kills": 1, "deaths":4}
@@ -187,7 +187,7 @@ module.exports = {
     , {"steamid": "STEAM_0:1:17260233", "team": 3, "name": "SteveC",      "mostplayedclass": 1, "playedclasses": 3,   "kills": 0, "deaths":8}
     , {"steamid": "STEAM_0:1:16097990", "team": 2, "name": "foster",      "mostplayedclass": 1, "playedclasses": 1,   "kills": 2, "deaths":4}
     , {"steamid": "STEAM_0:0:7422703",  "team": 3, "name": "binarystar!", "mostplayedclass": 1, "playedclasses": 35,  "kills": 9, "deaths":9}
-    , {"steamid": "STEAM_0:0:17990207", "team": 2, "name": "techno",      "mostplayedclass": 3, "playedclasses": 4,   "kills": 8, "deaths":4}
+    , {"steamid": "STEAM_0:0:17990207", "team": 2, "name": "dy<br>dx",    "mostplayedclass": 3, "playedclasses": 4,   "kills": 8, "deaths":4}
     , {"steamid": "STEAM_0:1:11029950", "team": 3, "name": "rando",       "mostplayedclass": 3, "playedclasses": 4,   "kills": 4, "deaths":2}
     , {"steamid": "STEAM_0:0:14353663", "team": 2, "name": "Sizzling",    "mostplayedclass": 3, "playedclasses": 4,   "kills": 2, "deaths":2}
     , {"steamid": "STEAM_0:1:9607258",  "team": 3, "name": "Dave__AC",    "mostplayedclass": 3, "playedclasses": 4,   "kills": 1, "deaths":4}
@@ -224,7 +224,7 @@ module.exports = {
     , {"steamid": "STEAM_0:1:17260233", "team": 3, "name": "SteveC",      "mostplayedclass": 1, "playedclasses": 3,   "kills": 0, "deaths":8}
     , {"steamid": "STEAM_0:1:16097990", "team": 2, "name": "foster",      "mostplayedclass": 1, "playedclasses": 1,   "kills": 2, "deaths":4}
     , {"steamid": "STEAM_0:0:7422703",  "team": 3, "name": "binarystar!", "mostplayedclass": 1, "playedclasses": 35,  "kills": 9, "deaths":9}
-    , {"steamid": "STEAM_0:0:17990207", "team": 2, "name": "techno",      "mostplayedclass": 3, "playedclasses": 4,   "kills": 8, "deaths":4}
+    , {"steamid": "STEAM_0:0:17990207", "team": 2, "name": "dy<br>dx",    "mostplayedclass": 3, "playedclasses": 4,   "kills": 8, "deaths":4}
     , {"steamid": "STEAM_0:1:11029950", "team": 3, "name": "rando",       "mostplayedclass": 3, "playedclasses": 4,   "kills": 4, "deaths":2}
     , {"steamid": "STEAM_0:0:14353663", "team": 2, "name": "Sizzling",    "mostplayedclass": 3, "playedclasses": 4,   "kills": 2, "deaths":2}
     , {"steamid": "STEAM_0:1:9607258",  "team": 3, "name": "Dave__AC",    "mostplayedclass": 3, "playedclasses": 4,   "kills": 1, "deaths":4}
