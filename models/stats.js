@@ -387,13 +387,11 @@ var mode = function(array) {
   }
   var modeMap = {};
   var maxEl = array[0], maxCount = 1;
-  for (var i = 0, len=array.length; i < len; i++)
-  {
+  for (var i=0, len=array.length; i<len; i++) {
     var el = array[i];
-    if (modeMap[el] === null) {
+    if (modeMap[el] === undefined) {
       modeMap[el] = 1;
-    }
-    else {
+    } else {
       modeMap[el]++;
     }
     if (modeMap[el] > maxCount) {
