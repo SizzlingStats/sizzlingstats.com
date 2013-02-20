@@ -250,7 +250,10 @@ statsSchema.methods.getPlayerData = function(cb) {
   }
 
   // Lookup all steamids in database for the names
-  Player.find( { _id: { $in : steamids } }).exec(function(err, players) {
+  Player
+  .find( { _id: { $in : steamids } })
+  .select('avatar numericid country')
+  .exec(function(err, players) {
     if (err) { return cb(err); }
 
     var playerdata = {};

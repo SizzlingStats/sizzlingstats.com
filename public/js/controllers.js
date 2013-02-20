@@ -66,7 +66,7 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
       url: '/api/stats/' + val
     }).success(function(data) {
       $rootScope.loading = false;
-      calculateStats(data, true);
+      parseStats(data, true);
     });
 
     socket.emit('stats:subscribe', val);
@@ -74,10 +74,77 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
 
   socket.on('stats:update', function (data) {
     console.log('Stat update received!');
-    calculateStats(data, false);
+    parseStats(data, false);
   });
 
-  var calculateStats = function(data, reinitializeSelectedRounds) {
+  function Player(data) {
+    for (var key in data) {
+      this[key] = data[key];
+    }
+  }
+  Player.prototype.sumOf = function(statistic) {
+    return sumArray2(this[statistic]);
+  };
+  Player.prototype.perMinute = function(statistic) {
+    return ratio($scope.playableTime/60, this[statistic]);
+  };
+  Player.prototype.fapd = function() {
+    return ratio(this.deaths, this.kills, this.killassists);
+  };
+  Player.prototype.mostPlayedClass = function() {
+      if (this.mostplayedclass.length == 1) {
+        return this.mostplayedclass[0];
+      }
+      // Determine what class was played the most by summing the rounddurations
+      //  for the according tf2class in the "mostplayedclass" array.
+      var totals = [0,0,0,0,0,0,0,0,0,0];
+      for (var i=0, ilen=$scope.selectedRounds.length; i<ilen; i++) {
+        // mostplayedclass[r] is the id (1-9) of the tf2class that the player played
+        //  the most in the ith round. The index of the max value in totals[] is
+        //  the id of the tf2class that the player played the most in the match.
+        var r = $scope.selectedRounds[i];
+        totals[ this.mostplayedclass[r] ] += $scope.stats.roundduration[r];
+      }
+      // Find the index of the max value in totals[].
+      var theClass=0, theMax=0;
+      for (var j=0; j<=9; j++) {
+        if (totals[j] > theMax) {
+          theMax = totals[j];
+          theClass = j;
+        }
+      }
+      return theClass;
+  };
+
+  $scope.overallStatsTableData = [
+    ['C', 'Most Played Class', 'mostPlayedClass()']
+  , ['P', 'Points', 'sumOf("points")']
+  , ['FA/D', 'Frags+Assists Per Death', 'fapd()']
+  , ['F', 'Frags', 'sumOf("kills")']
+  , ['A', 'Assists', 'sumOf("killassists")']
+  , ['D', 'Deaths', 'sumOf("deaths")']
+  , ['S', 'Suicides', 'sumOf("suicides")']
+  , ['DPM', 'Damage Per Minute', 'perMinute("damagedone")']
+  , ['DMG', 'Damage', 'sumOf("damagedone")']
+  , ['MP', 'Medic Picks', 'sumOf("medpicks")']
+  , ['HR', 'Heals Received', 'sumOf("healsreceived")']
+  , ['CPC', 'Capture Points Captured', 'sumOf("captures")']
+  , ['CPB', 'Capture Points Blocked', 'sumOf("defenses")']
+  , ['DOM', 'Dominations', 'sumOf("dominations")']
+  , ['REV', 'Revenges', 'sumOf("revenge")']
+  , ['HS', 'Headshots', 'sumOf("headshots")']
+  , ['BS', 'Backstabs', 'sumOf("backstabs")']
+  // , ['', '', 'sumOf("buildingsbuilt")']
+  // , ['', '', 'sumOf("buildingsdestroyed")']
+  // , ['', '', 'sumOf("crits")']
+  // , ['', '', 'sumOf("teleports")']
+  // , ['', '', 'sumOf("resupplypoints")']
+  // , ['', '', 'sumOf("bonuspoints")']
+  ];
+
+  $scope.players = {};
+
+  var parseStats = function(data, reinitializeSelectedRounds) {
     // Stupid placeholder object for when things go wrong
     if (!data  || typeof data !== 'object') {
       data = { stats: {
@@ -89,8 +156,7 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
       }};
     }
     var stats = $scope.stats = data.stats;
-    $scope.playerMetaData = data.playerdata;
-    fillOutPlayerMetaData();
+
 
     // If redscore.length is greater than the current number of rounds, then that
     //  means a new round just started -- add it to $scope.selectedRounds.
@@ -109,20 +175,20 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
     // Total playable time
     var playableTime = $scope.playableTime = sumArray(stats.roundduration);
 
-    // Calculate total damage and frags for each team
-    var totalDamage = [0,0,0,0];
-    var totalFrags = [0,0,0,0];
-    stats.players.forEach(function(player) {
-      totalDamage[player.team] += sumArray(player.damagedone);
-      totalFrags[player.team] += sumArray(player.kills);
-    });
-
     // Calculate total midfights won for each team
     var totalMidfightsWon = [0,0,0,0];
     var filteredTeamfirstcapArr = filterBySelectedRounds(stats.teamfirstcap);
     for (var j=0; j<numRounds; j++) {
       totalMidfightsWon[ filteredTeamfirstcapArr[j] ] += 1;
     }
+
+    // Calculate total damage and frags for each team
+    var totalDamage = [0,0,0,0];
+    var totalFrags = [0,0,0,0];
+    angular.forEach($scope.players, function(player, steamid) {
+      totalDamage[player.team] += sumArray(player.damagedone);
+      totalFrags[player.team] += sumArray(player.kills);
+    });
 
     // Assemble score overview table rows
     var redRoundScores = stats.redscore.concat(redScore,totalDamage[2],totalFrags[2],totalMidfightsWon[2]);
@@ -133,40 +199,10 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
                    '</td><td>' + bluRoundScores.join('</td><td>') + '</td>';
 
     // Calculate individual players' stats from the select range of rounds
-    angular.forEach(stats.players, function(player) {
-      player.mostPlayedClass = mostPlayedClass(player.mostplayedclass);
-      player.playedClasses = playedClasses(player.playedclasses);
-      player.stats = [
-        sumArray2(player.points),
-        // Frags + Assists / Deaths
-        ratio(player.deaths, player.kills, player.killassists),
-        sumArray2(player.kills),
-        sumArray2(player.killassists),
-        sumArray2(player.deaths),
-        sumArray2(player.suicides),
-        // Damage Per Minute
-        ratio(playableTime/60, player.damagedone),
-        sumArray2(player.damagedone),
-        sumArray2(player.medpicks),
-        sumArray2(player.healsreceived),
-        sumArray2(player.captures),
-        sumArray2(player.defenses),
-        sumArray2(player.dominations),
-        sumArray2(player.revenge),
-        sumArray2(player.headshots),
-        sumArray2(player.backstabs)
-        // sumArray2(player.buildingsbuilt),
-        // sumArray2(player.buildingsdestroyed),
-        // sumArray2(player.crits),
-        // sumArray2(player.teleports),
-        // sumArray2(player.resupplypoints),
-        // sumArray2(player.bonuspoints),
-      ];
-      player.tr = '<td class="player-name"><img class="team' + player.team + '-avatar" src="' +
-          (player.avatar || '') + '" /><span><a href="/player/' +
-          (player.numericid || '') +'">' + escapeHtml(player.name) + '</a>' +
-          '</span><td><img class="class-icon" src="/img/classicons/' + player.mostPlayedClass +
-          '.png"></img><td>' + player.stats.join('</td><td>') + '</td>';
+    angular.forEach(stats.players, function(playerdata, steamid) {
+
+      var player = $scope.players[steamid] = new Player(playerdata);
+      
       // Additional medic-specific stats
       if (player.playedClasses & 1<<6) {
         player.medicStats = [
@@ -209,7 +245,7 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
       $scope.selectedRounds = [round];
     }
     $scope.selectedRounds.sort(function(a,b){return a-b;});
-    calculateStats({stats: $scope.stats, playerdata: $scope.playerMetaData}, false);
+    parseStats({stats: $scope.stats, playerdata: $scope.playerMetaData}, false);
   };
 
   $scope.overallSort = 'name';
@@ -219,84 +255,28 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
   $scope.medicFilter = function(player) {
     return (!!player.medicStats);
   };
-  $scope.sortBy = function(col, tableName) {
-    // If previously sorting by 'name', and clicking a different column, then
-    //  set reverse to true.
-    var sort = tableName+'Sort';
-    var rev = tableName+'Reverse';
-    if (col === $scope[sort] || ($scope[sort] === 'name' && !$scope[rev]) ) {
-      $scope[rev] = !$scope[rev];
-    }
-    $scope[sort] = col;
-  };
-  $scope.sortClass = function(col, tableName) {
-    var sort = tableName+'Sort';
-    var rev = tableName+'Reverse';
-    if ($scope[sort] === col) {
-      return $scope[rev] ? 'sort-true' : 'sort-false';
-    }
-    return '';
-  };
   $scope.separateTeams = false;
   $scope.separateTeamsPredicate = function() {
     return $scope.separateTeams ? ( ($scope.overallReverse ? '-' : '+') + 'team' ) : '';
-  };
-  var fillOutPlayerMetaData = function() {
-    for (var i=0,player; player=$scope.stats.players[i]; i++) {
-      var steamid = player.steamid;
-
-      if ($scope.playerMetaData[steamid]) {
-        $scope.playerMetaData[steamid].name = player.name;
-        $scope.playerMetaData[steamid].team = player.team;
-        player.avatar = $scope.playerMetaData[steamid].avatar;
-        player.numericid = $scope.playerMetaData[steamid].numericid;
-      } else {
-        $scope.playerMetaData[steamid] = { name: player.name, team: player.team };
-      }
-    }
   };
   $scope.filterBinds = true;
   $scope.bindFilter = function(chat) {
     return (!$scope.filterBinds || !chat.isBind);
   };
-  var mostPlayedClass = function(mpcArray) {
-    if (mpcArray.length == 1) {
-      return mpcArray[0];
-    }
-    // Determine what class was played the most by summing the rounddurations
-    //  for the according tf2class in the "mostplayedclass" array.
-    var totals = [0,0,0,0,0,0,0,0,0,0];
-    for (var i=0, ilen=$scope.selectedRounds.length; i<ilen; i++) {
-      // mpcArray[r] is the id (1-9) of the tf2class that the player played
-      //  the most in the ith round. The index of the max value in totals[] is
-      //  the id of the tf2class that the player played the most in the match.
-      var r = $scope.selectedRounds[i];
-      totals[ mpcArray[r] ] += $scope.stats.roundduration[r];
-    }
-    // Find the index of the max value in totals[].
-    var theClass=0, theMax=0;
-    for (var j=0; j<=9; j++) {
-      if (totals[j] > theMax) {
-        theMax = totals[j];
-        theClass = j;
-      }
-    }
-    return theClass;
-  };
   var playedClasses = function(playedClassesArray) {
     return filterBySelectedRounds(playedClassesArray).reduce(function(a,b) { return a | b; },0);
   };
-  var sumArray = function(arr) {
+  var sumArray = $scope.sumArray = function(arr) {
     if (!arr || !arr.length) return 0;
     return filterBySelectedRounds(arr).reduce(function(a,b) { return a + b; },0);
   };
-  var sumArray2 = function(arr) {
+  var sumArray2 = $scope.sumArray2 = function(arr) {
     if (!arr || !arr.length) return '-';
     var filteredArr = filterBySelectedRounds(arr);
     if (!filteredArr.length) return '-';
     return filteredArr.reduce(function(a,b) { return a + b; });
   };
-  var ratio = function(den, numArray1, numArray2) {
+  var ratio = $scope.ratio = function(den, numArray1, numArray2) {
     var numerator = sumArray2(numArray1) + sumArray(numArray2);
     var denominator = den.length ? sumArray2(den) : den;
     if (typeof numerator !== 'number') return '-';
@@ -314,7 +294,7 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
   var exists = function(n) {
     return (n !== null && n !== undefined);
   };
-  var escapeHtml = (function () {
+  var escapeHtml = $scope.escapeHtml = (function () {
     var chr = { '"': '&quot;', '&': '&amp;', '<': '&lt;', '>': '&gt;' };
     return function (text) {
       return text.replace(/[\"&<>]/g, function (a) { return chr[a]; });
@@ -329,7 +309,7 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
   };
 
   // The very first time you load the controller, use the resolvedData.
-  calculateStats(resolvedData, true);
+  parseStats(resolvedData, true);
 }
 // This is for the first time you load the controller
 //  -- so that you don't see all the empty divs and tables.

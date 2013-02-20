@@ -29,7 +29,8 @@
         tr(ng-bind-html-unsafe='redtr')
         tr(ng-bind-html-unsafe='blutr')
   .overall-stats
-    table.overall-stats-table.stats-table
+    table.overall-stats-table.stats-table(data='overallStatsTableData', name='Name', stats-table='')
+    //- table.overall-stats-table.stats-table
       thead
         tr
           th(ng-class="sortClass('name','overall')", ng-click="sortBy('name','overall')"): acronym Name
@@ -57,7 +58,8 @@
           //- th(ng-class="sortClass('stats[16]')", ng-click='sortBy("stats[21]")', class="has-tip tip-top", title='Resupply Points'): abbr RP
           //- th(ng-class="sortClass('stats[17]')", ng-click='sortBy("stats[22]")', class="has-tip tip-top", title='Bonus Points'): abbr BP
       tbody
-        tr(ng-repeat='player in stats.players | orderBy:[separateTeamsPredicate(),overallSort]:overallReverse ', ng-bind-html-unsafe='player.tr')
+        //- tr(ng-repeat='player in stats.players | orderBy:[separateTeamsPredicate(),overallSort]:overallReverse', ng-bind-html-unsafe='player.tr')
+        //- tr(ng-repeat='player in players | orderBy:[separateTeamsPredicate(),overallSort]:overallReverse', stats-table='')
     dl.sub-nav.no-marg
       dd(ng-class='{active:!separateTeams}')
         a(href="javascript:", ng-click="separateTeams=false") All
@@ -72,13 +74,13 @@
           th(ng-class="sortClass('stats[1]','medic')", ng-click="sortBy('stats[1]','medic')", class="has-tip tip-top", title='Ubers'): abbr U
           th(ng-class="sortClass('stats[2]','medic')", ng-click="sortBy('stats[2]','medic')", class="has-tip tip-top", title='Ubers Dropped'): abbr UD
       tbody
-        tr(ng-repeat='player in stats.players | filter:medicFilter | orderBy:medicSort:medicReverse', ng-bind-html-unsafe='player.medictr')
+        tr(ng-repeat='player in players | filter:medicFilter | orderBy:medicSort:medicReverse', ng-bind-html-unsafe='player.medictr')
   .chat-log
     ul
       li(ng-repeat='chat in stats.chats | filter:bindFilter')
         span.chat-time {{secondsToHMS(chat.time)}}&nbsp;
-        span.chat-name(ng-class='{true:"team-message"}[chat.isTeam]', class='team{{playerMetaData[chat.steamid].team}}')
-          b {{playerMetaData[chat.steamid].name || "spectator"}}
+        span.chat-name(ng-class='{true:"team-message"}[chat.isTeam]', class='team{{players[chat.steamid].team}}')
+          b {{players[chat.steamid].name || "spectator"}}
         span.chat-message : {{chat.message}}
     dl.sub-nav.no-marg
       dd(ng-class='{active:!filterBinds}')
