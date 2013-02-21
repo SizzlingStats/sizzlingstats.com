@@ -7,9 +7,10 @@ var cfg = {
 , redis_port: parseInt(process.env.REDIS_PORT, 10) || 6379
 , redis_db: parseInt(process.env.REDIS_DB, 10) || 2
 , redis_password: process.env.REDIS_PASSWORD
+, session_prefix: (process.env.SESSION_PREFIX) || 'ss_sess'
   // Stats Sessions are valid for only 30 minutes since last update
 , stats_session_timeout: 30*60*1000
-  // Check for sessions to expire every 15 minutes
+  // Check for stat-sessions to expire every 15 minutes
 , session_expiry_interval: 15
 };
 

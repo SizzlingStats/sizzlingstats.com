@@ -109,7 +109,9 @@ everyauth.steam
 everyauth.debug = false;
 
 
-// Configuration
+/**
+ * Express Configuration
+ */
 
 app.configure('development', function() {
   // app.use(express.profiler());
@@ -128,10 +130,16 @@ app.configure(function() {
   app.use(express.bodyParser());
   app.use(express.methodOverride());
 
+  // Trust proxy -- so req.ip gets mapped to X-Forwarded-For
+  app.enable('trust proxy');
+
+
+  // Sessions
+
   // app.store = new express.session.MemoryStore;
   var RedisStore = require('connect-redis')(express);
   app.store = new RedisStore({
-    prefix: 'sssess'
+    prefix: cfg.session_prefix
   , host: cfg.redis_host
   , port: cfg.redis_port
   , db: cfg.redis_db
@@ -144,6 +152,9 @@ app.configure(function() {
   , store: app.store
   }));
   app.use(everyauth.middleware());
+
+
+  // Asset Management
 
   var assetManager = require('connect-assetmanager')({
     js: {

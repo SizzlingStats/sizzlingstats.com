@@ -159,13 +159,10 @@ var createStats = function(req, res) {
   //  because I am a fucking idiot
   var matchInfo = {matchId: 0};
 
-  // TODO: Use forwarded ip address from header, because this is behind a proxy
-  var ip = req.connection.remoteAddress;
-
   // TODO: use some more/better information in the hmac
   var date = Date.now();
   var hmac = crypto.createHmac('sha1',STATS_SECRET);
-  hmac.update(ip + date);
+  hmac.update(req.ip + date);
   sessionId = hmac.digest('hex');
 
   // 4. Then save stats to database.
@@ -180,7 +177,7 @@ var createStats = function(req, res) {
       new Session({
         _id: sessionId,
         matchId: matchInfo.matchId = matchCounter.next,
-        ip: ip,
+        ip: req.ip,
         timeout: date + cfg.stats_session_timeout
       }).save(callback);
     },
@@ -215,7 +212,6 @@ var updateStats = function(req, res) {
   }
 
   var isEndOfRound = (req.headers.endofround === 'true');
-  var ip = req.connection.remoteAddress;
   var matchId;
 
   // Validate sessionid and update the timeout
@@ -225,7 +221,7 @@ var updateStats = function(req, res) {
       console.trace(err);
       return res.end('false\n');
     }
-    if (!session || ip !== session.ip) return res.end('false\n');
+    if (!session || req.ip !== session.ip) return res.end('false\n');
 
     // The request is validated, now we have to append the new data to the old
     matchId = session.matchId;
@@ -255,7 +251,6 @@ var gameOver = function(req, res) {
   
   var sessionId = req.headers.sessionid;
   var matchDuration = parseInt(req.headers.matchduration, 10);
-  var ip = req.connection.remoteAddress;
 
   // Validate sessionid
   Session.findById(sessionId, function(err, session) {
@@ -264,7 +259,7 @@ var gameOver = function(req, res) {
       console.trace(err);
       return res.end('false\n');
     }
-    if (!session || ip !== session.ip) return res.end('false\n');
+    if (!session || req.ip !== session.ip) return res.end('false\n');
 
     // The request is validated, now set game over
     var matchId = session.matchId;
