@@ -1,3 +1,5 @@
+/*jshint browser: true, globalstrict: true*/
+/*global angular, console*/
 'use strict';
 
 /* Controllers */
@@ -115,9 +117,13 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
       }
       return theClass;
   };
+  Player.prototype.getName = function() {
+    return this.name;
+  };
 
   $scope.overallStatsTableData = [
-    ['C', 'Most Played Class', 'mostPlayedClass()']
+    ['Name', null, 'getName()']
+  , ['C', 'Most Played Class', 'mostPlayedClass()']
   , ['P', 'Points', 'sumOf("points")']
   , ['FA/D', 'Frags+Assists Per Death', 'fapd()']
   , ['F', 'Frags', 'sumOf("kills")']
@@ -141,10 +147,20 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
   // , ['', '', 'sumOf("resupplypoints")']
   // , ['', '', 'sumOf("bonuspoints")']
   ];
+  $scope.medicStatsTableData = [
+    ['Medics', null, 'getName()']
+  , ['H', 'Heals Given', 'sumOf("healpoints")']
+  , ['U', 'Ubers', 'sumOf("invulns")']
+  , ['UD', 'Ubers Dropped', 'sumOf("ubersdropped")']
+  ];
 
   $scope.players = {};
 
   var parseStats = function(data, reinitializeSelectedRounds) {
+    // Stupid hack -- need to keep both a hash and and array of players, because
+    //  AngularJS's orderBy function doesn't work on a hash.
+    $scope.playersArr = [];
+
     // Stupid placeholder object for when things go wrong
     if (!data  || typeof data !== 'object') {
       data = { stats: {
@@ -152,7 +168,7 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
         bluname: 'BLU',
         redscore: [],
         bluscore: [],
-        players: []
+        players: {}
       }};
     }
     var stats = $scope.stats = data.stats;
@@ -202,6 +218,7 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
     angular.forEach(stats.players, function(playerdata, steamid) {
 
       var player = $scope.players[steamid] = new Player(playerdata);
+      $scope.playersArr.push(player);
       
       // Additional medic-specific stats
       if (player.playedClasses & 1<<6) {
@@ -247,17 +264,14 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
     $scope.selectedRounds.sort(function(a,b){return a-b;});
     parseStats({stats: $scope.stats, playerdata: $scope.playerMetaData}, false);
   };
-
-  $scope.overallSort = 'name';
-  $scope.overallReverse = false;
   $scope.medicSort = 'name';
   $scope.medicReverse = false;
   $scope.medicFilter = function(player) {
     return (!!player.medicStats);
   };
-  $scope.separateTeams = false;
-  $scope.separateTeamsPredicate = function() {
-    return $scope.separateTeams ? ( ($scope.overallReverse ? '-' : '+') + 'team' ) : '';
+  $scope.separateTeams = {
+    sort: false,
+    property: 'team'
   };
   $scope.filterBinds = true;
   $scope.bindFilter = function(chat) {

@@ -1,3 +1,5 @@
+/*jshint browser: true, globalstrict: true*/
+/*global angular, console*/
 'use strict';
 
 // Declare app level module which depends on filters, and services

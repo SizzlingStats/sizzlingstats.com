@@ -1,3 +1,7 @@
+/*jshint browser: true, globalstrict: true*/
+/*global angular, console*/
+'use strict';
+
 function ProfileCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
   if (!resolvedData) {
     // do something
