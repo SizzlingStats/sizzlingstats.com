@@ -138,8 +138,6 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
   , ['CPB', 'Capture Points Blocked', 'sumOf("defenses")']
   , ['DOM', 'Dominations', 'sumOf("dominations")']
   , ['REV', 'Revenges', 'sumOf("revenge")']
-  , ['HS', 'Headshots', 'sumOf("headshots")']
-  , ['BS', 'Backstabs', 'sumOf("backstabs")']
   // , ['', '', 'sumOf("buildingsbuilt")']
   // , ['', '', 'sumOf("buildingsdestroyed")']
   // , ['', '', 'sumOf("crits")']
@@ -152,6 +150,14 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
   , ['H', 'Heals Given', 'sumOf("healpoints")']
   , ['U', 'Ubers', 'sumOf("invulns")']
   , ['UD', 'Ubers Dropped', 'sumOf("ubersdropped")']
+  ];
+  $scope.sniperStatsTableData = [
+    ['Snipers', null, 'name']
+  , ['HS', 'Headshots', 'sumOf("headshots")']
+  ];
+  $scope.spyStatsTableData = [
+    ['Spies', null, 'name']
+  , ['BS', 'Backstabs', 'sumOf("backstabs")']
   ];
 
 

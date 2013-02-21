@@ -37,6 +37,8 @@
         a(href="javascript:", ng-click="separateTeams.sort=true") Teams
   .class-stats
     table.stats-table(stats-table='', data='medicStatsTableData', class-to-filter='6')
+    table.stats-table(stats-table='', data='sniperStatsTableData', class-to-filter='7')
+    table.stats-table(stats-table='', data='spyStatsTableData', class-to-filter='8')
   .chat-log
     ul
       li(ng-repeat='chat in stats.chats | filter:bindFilter')
