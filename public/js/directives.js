@@ -7,7 +7,11 @@ angular.module('myApp.directives', [])
   .directive('statsTable', function($compile) {
     return {
       restrict: 'A',
-      
+      scope: {
+        data: '&'
+      , criteria: '&'
+      },
+
       controller: function($scope) {
         $scope.sort = {
           col: 0,
@@ -29,17 +33,20 @@ angular.module('myApp.directives', [])
           }
           return '';
         };
-        $scope.otherCriteria = function(criteria) {
-          return $scope[criteria].sort ? $scope[criteria].property : '';
-        };
         $scope.sortPredicate = function() {
-          return ($scope.sort.reverse ? '-' : '+') + $scope.data[$scope.sort.col][2];
+          return ($scope.sort.reverse ? '-' : '+') + $scope.data()[$scope.sort.col][2];
+        };
+        $scope.otherCriteria = function(criteria) {
+          return criteria.sort ? criteria.property : '';
+        };
+        $scope.classFilter = function(player) {
+          return player.playedClasses() & 1 << $scope.classToFilter;
         };
       },
 
       link: function(scope, element, attrs) {
-
-        var data = scope.data = scope[attrs.data], showClassIcons;
+        var data = scope.data(), criteria = scope.criteria(), showClassIcons;
+        scope.classToFilter = parseInt(attrs.classToFilter,10);
         if (data[1][0] === 'C') { showClassIcons = true; }
 
         // Table Header
@@ -68,8 +75,10 @@ angular.module('myApp.directives', [])
 
         // Table Body
         var $tbody = angular.element('<tbody>');
-        var rows = '<tr ng-repeat="player in playersArr | orderBy:[' +
-                   (attrs.criteria ? 'otherCriteria(\'' + attrs.criteria + '\'),' : '') +
+        var rows = '<tr ng-repeat="player in $parent.playersArr | ' +
+                   (attrs.classToFilter ? 'filter:classFilter | ' : '') +
+                   'orderBy:[' +
+                   (scope.criteria() ? 'otherCriteria(criteria()),' : '') +
                    'sortPredicate()]" stats-tr></tr>';
         $tbody.append( $compile(rows)(scope) );
 
@@ -81,15 +90,14 @@ angular.module('myApp.directives', [])
     return {
       restrict: 'A'
     , link: function(scope, element, attrs) {
-
-        var data = scope.data, showClassIcons;
+        var data = scope.data(), showClassIcons;
         if (data[1][0] === 'C') { showClassIcons = true; }
 
         var playerRow = '<td class="player-name"><img class="team' +
                   scope.player.team + '-avatar" src="' +
                   (scope.player.avatar || '') + '" /><span><a href="/player/' +
                   (scope.player.numericid || '') + '">' +
-                  scope.escapeHtml(scope.player.name) + '</a></span></td>';
+                  scope.$parent.$parent.escapeHtml(scope.player.name) + '</a></span></td>';
         var i = 1;
         if (showClassIcons) {
           i = 2;

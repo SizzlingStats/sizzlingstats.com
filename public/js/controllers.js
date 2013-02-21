@@ -117,12 +117,12 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
       }
       return theClass;
   };
-  Player.prototype.getName = function() {
-    return this.name;
+  Player.prototype.playedClasses = function() {
+    return filterBySelectedRounds(this.playedclasses).reduce(function(a,b) { return a | b; },0);
   };
 
   $scope.overallStatsTableData = [
-    ['Name', null, 'getName()']
+    ['Name', null, 'name']
   , ['C', 'Most Played Class', 'mostPlayedClass()']
   , ['P', 'Points', 'sumOf("points")']
   , ['FA/D', 'Frags+Assists Per Death', 'fapd()']
@@ -148,18 +148,18 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
   // , ['', '', 'sumOf("bonuspoints")']
   ];
   $scope.medicStatsTableData = [
-    ['Medics', null, 'getName()']
+    ['Medics', null, 'name']
   , ['H', 'Heals Given', 'sumOf("healpoints")']
   , ['U', 'Ubers', 'sumOf("invulns")']
   , ['UD', 'Ubers Dropped', 'sumOf("ubersdropped")']
   ];
 
-  $scope.players = {};
 
   var parseStats = function(data, reinitializeSelectedRounds) {
     // Stupid hack -- need to keep both a hash and and array of players, because
     //  AngularJS's orderBy function doesn't work on a hash.
     $scope.playersArr = [];
+    $scope.players = {};
 
     // Stupid placeholder object for when things go wrong
     if (!data  || typeof data !== 'object') {
@@ -191,6 +191,13 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
     // Total playable time
     var playableTime = $scope.playableTime = sumArray(stats.roundduration);
 
+    // Construct player objects
+    angular.forEach(stats.players, function(playerdata, steamid) {
+      var player = $scope.players[steamid] = new Player(playerdata);
+      // stupid hack
+      $scope.playersArr.push(player);
+    });
+
     // Calculate total midfights won for each team
     var totalMidfightsWon = [0,0,0,0];
     var filteredTeamfirstcapArr = filterBySelectedRounds(stats.teamfirstcap);
@@ -213,25 +220,6 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
                    '</td><td>' + redRoundScores.join('</td><td>') + '</td>';
     $scope.blutr = '<td class="blu">' + escapeHtml(stats.bluname) +
                    '</td><td>' + bluRoundScores.join('</td><td>') + '</td>';
-
-    // Calculate individual players' stats from the select range of rounds
-    angular.forEach(stats.players, function(playerdata, steamid) {
-
-      var player = $scope.players[steamid] = new Player(playerdata);
-      $scope.playersArr.push(player);
-      
-      // Additional medic-specific stats
-      if (player.playedClasses & 1<<6) {
-        player.medicStats = [
-          sumArray2(player.healpoints),
-          sumArray2(player.invulns),
-          sumArray2(player.ubersdropped)
-        ];
-        player.medictr = '<td class="player-name"><img class="team' + player.team +
-            '-avatar" src="' + (player.avatar || '') + '" /><span>' + escapeHtml(player.name) +
-            '</span><td>' + player.medicStats.join('</td><td>') + '</td>';
-      }
-    });
   };
 
   // Helpers
@@ -264,11 +252,6 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
     $scope.selectedRounds.sort(function(a,b){return a-b;});
     parseStats({stats: $scope.stats, playerdata: $scope.playerMetaData}, false);
   };
-  $scope.medicSort = 'name';
-  $scope.medicReverse = false;
-  $scope.medicFilter = function(player) {
-    return (!!player.medicStats);
-  };
   $scope.separateTeams = {
     sort: false,
     property: 'team'
@@ -276,9 +259,6 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
   $scope.filterBinds = true;
   $scope.bindFilter = function(chat) {
     return (!$scope.filterBinds || !chat.isBind);
-  };
-  var playedClasses = function(playedClassesArray) {
-    return filterBySelectedRounds(playedClassesArray).reduce(function(a,b) { return a | b; },0);
   };
   var sumArray = $scope.sumArray = function(arr) {
     if (!arr || !arr.length) return 0;
