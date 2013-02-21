@@ -169,7 +169,8 @@ app.configure(function() {
       //   'lib/jquery/jquery-1.9.1.min.js'
       // , 'lib/angular/angular.js'
       // , 'lib/foundation/foundation.min.js'
-        'lib/foundation/modernizr.foundation.js'
+        'lib/typeahead.js'
+      , 'lib/foundation/modernizr.foundation.js'
       // , 'lib/foundation/jquery.foundation.mediaQueryToggle.js'
       // , 'lib/foundation/jquery.foundation.navigation.js'
       , 'lib/foundation/jquery.foundation.tooltips.js'
@@ -208,6 +209,7 @@ app.configure(function() {
       // },
     , files: [ // order matters here
         'foundation.css'
+      , 'typeahead.css'
       , 'sizzlingstats.css'
       ]
     }

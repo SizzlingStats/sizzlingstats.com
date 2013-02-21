@@ -38,6 +38,48 @@
   margin-top: 10px;
 }
 
+/* Twitter typeahead.js suggestion styling */
+.search form {
+  height: 32px;
+  /* If I don't do this then the form moves down 1px when the typeahead
+     suggestions pop open. No idea why. */
+  margin-bottom: 1px !important;
+}
+.twitter-typeahead {
+  vertical-align: top;
+  width: 100% !important;
+}
+.tt-hint {
+  /*color: #999;*/
+  color: #ccc;
+}
+.tt-dropdown-menu {
+  width: 320px;
+  margin-top: 12px;
+  padding: 8px 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  -webkit-border-radius: 8px;
+     -moz-border-radius: 8px;
+          border-radius: 8px;
+  -webkit-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+     -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+          box-shadow: 0 5px 10px rgba(0,0,0,.2);
+}
+.tt-suggestion {
+  padding: 3px 20px;
+  font-size: 18px !important;
+  line-height: 24px !important;
+}
+.tt-suggestion.tt-is-under-cursor {
+  color: #fff;
+  background-color: #0097cf;
+}
+.tt-suggestion p {
+  margin: 0;
+}
+
 /*Foundation Dropdown Menu Hacks*/
 .top-bar-avatar {
   float: left;

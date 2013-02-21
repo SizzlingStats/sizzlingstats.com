@@ -1225,7 +1225,7 @@ table.show-for-xlarge, table.show-for-large, table.hide-for-small, table.hide-fo
 /* Topbar Specific Breakpoint that you can customize */
 /*overridden*/
 /*@media only screen and (max-width: 940px) { .top-bar { margin-bottom: 0; overflow: hidden; height: 45px; background: #222222; /* Override contain to grid stuff for breakpoint */ /* Setting up the sliding area */ /* When the Small Nav is Showing */ /*}*/
-@media only screen and (max-width: 767px) { .top-bar { margin-bottom: 0; overflow: hidden; height: 45px; background: #222222; /* Override contain to grid stuff for breakpoint */ /* Setting up the sliding area */ /* When the Small Nav is Showing */ }
+@media only screen and (max-width: 855px) { .top-bar { margin-bottom: 0; overflow: hidden; height: 45px; background: #222222; /* Override contain to grid stuff for breakpoint */ /* Setting up the sliding area */ /* When the Small Nav is Showing */ }
   .top-bar .js-generated { display: block; }
   .contain-to-grid .top-bar { width: auto; }
   .top-bar section { left: 0; position: relative; width: auto; -webkit-transition: left 300ms 0; -moz-transition: left 300ms 0; -o-transition: left 300ms 0; transition: left 300ms 0; }
