@@ -191,6 +191,7 @@ app.configure(function() {
       , 'app.js'
       , 'services.js'
       , 'controllers.js'
+      , 'controller-stats.js'
       , 'controller-profile.js'
       // , 'filters.js'
       , 'directives.js'
