@@ -131,7 +131,8 @@ app.configure(function() {
   app.use(express.methodOverride());
 
   // Trust proxy -- so req.ip gets mapped to X-Forwarded-For
-  app.enable('trust proxy');
+  // OOPS! This doesn't exist in express 2.x. TODO: Upgrade to express 3
+  // app.enable('trust proxy');
 
 
   // Sessions

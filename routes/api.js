@@ -161,8 +161,10 @@ var createStats = function(req, res) {
 
   // TODO: use some more/better information in the hmac
   var date = Date.now();
+  var ip = req.header('x-forwarded-for') || req.connection.remoteAddress;
+  console.log(ip);
   var hmac = crypto.createHmac('sha1',STATS_SECRET);
-  hmac.update(req.ip + date);
+  hmac.update(ip + date);
   sessionId = hmac.digest('hex');
 
   // 4. Then save stats to database.
@@ -177,7 +179,7 @@ var createStats = function(req, res) {
       new Session({
         _id: sessionId,
         matchId: matchInfo.matchId = matchCounter.next,
-        ip: req.ip,
+        ip: ip,
         timeout: date + cfg.stats_session_timeout
       }).save(callback);
     },
@@ -213,6 +215,7 @@ var updateStats = function(req, res) {
 
   var isEndOfRound = (req.headers.endofround === 'true');
   var matchId;
+  var ip = req.header('x-forwarded-for') || req.connection.remoteAddress;
 
   // Validate sessionid and update the timeout
   Session.findByIdAndUpdate(sessionId, {$set:{timeout: Date.now()+cfg.stats_session_timeout}}, function(err, session) {
@@ -221,7 +224,7 @@ var updateStats = function(req, res) {
       console.trace(err);
       return res.end('false\n');
     }
-    if (!session || req.ip !== session.ip) return res.end('false\n');
+    if (!session || ip !== session.ip) return res.end('false\n');
 
     // The request is validated, now we have to append the new data to the old
     matchId = session.matchId;
@@ -251,6 +254,7 @@ var gameOver = function(req, res) {
   
   var sessionId = req.headers.sessionid;
   var matchDuration = parseInt(req.headers.matchduration, 10);
+  var ip = req.header('x-forwarded-for') || req.connection.remoteAddress;
 
   // Validate sessionid
   Session.findById(sessionId, function(err, session) {
@@ -259,7 +263,7 @@ var gameOver = function(req, res) {
       console.trace(err);
       return res.end('false\n');
     }
-    if (!session || req.ip !== session.ip) return res.end('false\n');
+    if (!session || ip !== session.ip) return res.end('false\n');
 
     // The request is validated, now set game over
     var matchId = session.matchId;
