@@ -66,7 +66,7 @@ block body
             li.nav-header.center
               h5 Recent Matches
             li(ng-cloak, ng-repeat='match in matches | orderBy:"-_id"', ng-class="{active: isActive(), 'live-match': match.isLive}")
-              a(href='/stats?id={{match._id}}')
+              a(href='/stats/{{match._id}}')
                 | {{match.hostname}} 
                 //- span.label(ng-show='match.isLive') Live
                 br

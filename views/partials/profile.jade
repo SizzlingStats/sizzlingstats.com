@@ -10,7 +10,7 @@
   h3 Matches Played
   ul.tabs.vertical.sidebar-nav
     li(ng-cloak, ng-repeat='match in matches')
-      a(href='/stats?id={{match._id}}')
+      a(href='/stats/{{match._id}}')
         | {{match.hostname}}
         br
         img.flag.size-16(ng-show="match.redCountry", ng-src="/img/flags/16/{{match.redCountry}}.png")

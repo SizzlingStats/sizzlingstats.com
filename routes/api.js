@@ -191,7 +191,7 @@ var createStats = function(req, res) {
       return res.end('false\n');
     }
     // Success! Respond to the gameserver with relevant info
-    res.setHeader('matchurl', cfg.hostname + '/stats?id=' + matchInfo.matchId + '&ingame');
+    res.setHeader('matchurl', cfg.hostname + '/stats/' + matchInfo.matchId + '?ingame');
     res.setHeader('sessionid', sessionId);
     res.end('true\n');
   });

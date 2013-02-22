@@ -7,7 +7,7 @@
 var app = angular.module('myApp', ['myApp.services', 'myApp.directives']).
   config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
     $routeProvider
-      .when('/stats', {
+      .when('/stats/:id', {
         templateUrl: 'partials/stats',
         controller: StatsCtrl,
         resolve: StatsCtrl.resolve,

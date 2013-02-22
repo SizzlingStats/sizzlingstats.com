@@ -4,12 +4,9 @@
 
 /* Controllers */
 
-function MainCtrl($scope, $location, $rootScope) {
-  $scope.path = function() {
-    return $location.path();
-  };
+function MainCtrl($scope, $rootScope) {
   $rootScope.loading = false;
-  $rootScope.$on('$routeChangeStart', function() {
+  $rootScope.$on('$locationChangeStart', function() {
     $rootScope.loading = true;
   });
   $rootScope.$on('$routeChangeSuccess', function() {
@@ -17,7 +14,7 @@ function MainCtrl($scope, $location, $rootScope) {
   });
 }
 
-function SideBarCtrl($scope, $http, $routeParams, socket) {
+function SideBarCtrl($scope, $http, $route, socket) {
   socket.on('matches:update', function(data) {
     for (var i=0, len=$scope.matches.length; i<len; i++) {
       if ($scope.matches[i]._id == data._id) {
@@ -43,35 +40,34 @@ function SideBarCtrl($scope, $http, $routeParams, socket) {
     });
   
   $scope.isActive = function() {
-    return this.match._id === parseInt($routeParams.id,10);
+    return this.match._id === parseInt($route.current.params.id,10);
   };
 }
 
-function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
-  var firstLoad = true;
+function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
+  // A hack to short circuit the routechange so that the controller doesn't get
+  //  reloaded on path change
+  var lastRoute = $route.current;
+  $scope.$on('$locationChangeSuccess', function(event) {
+    // Only do it for the stats path.
+    if ($route.current.$route && $route.current.$route.templateUrl === 'partials/stats') {
+    // if (lastRoute && $route.current.$route.templateUrl === 'partials/stats') {
+      // Grab the new matchid before we stop the routechange
+      var matchId = $route.current.params.id;
+      // This stops the routechange from succeeding
+      $route.current = lastRoute;
+      $route.current.params.id = matchId;
 
-  $scope.location = $location;
-  $scope.$watch("location.search().id", function (val, old) {
-    if (!val) { return; }
-    // We don't want to request the data again if the controller just loaded.
-    //  If we click away from the original stats, then set firstLoad to false.
-    //  Otherwise if firstLoad == true, exit.
-    if (old && val !== old) {
-      firstLoad = false;
+      $http({
+        method: 'GET',
+        url: '/api/stats/' + matchId
+      }).success(function(data) {
+        $rootScope.loading = false;
+        parseStats(data, true);
+      });
+
+      socket.emit('stats:subscribe', matchId);
     }
-    if (firstLoad) { return; }
-
-    $rootScope.loading = true;
-
-    $http({
-      method: 'GET',
-      url: '/api/stats/' + val
-    }).success(function(data) {
-      $rootScope.loading = false;
-      parseStats(data, true);
-    });
-
-    socket.emit('stats:subscribe', val);
   });
 
   socket.on('stats:update', function (data) {
@@ -310,11 +306,21 @@ function StatsCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
 
   // The very first time you load the controller, use the resolvedData.
   parseStats(resolvedData, true);
+
+  // hack. FIXME
+  $rootScope.statsCtrlIsLoadedSoDontCallResolveFunction = true;
+  $scope.$on('$destroy', function() {
+    $rootScope.statsCtrlIsLoadedSoDontCallResolveFunction = false;
+  });
 }
 // This is for the first time you load the controller
 //  -- so that you don't see all the empty divs and tables.
 StatsCtrl.resolve = {
-  resolvedData: function($q, $http, $route) {
+  resolvedData: function($q, $http, $route, $rootScope) {
+    // hack. FIXME
+    if ($rootScope.statsCtrlIsLoadedSoDontCallResolveFunction) {
+      return;
+    }
     var deferred = $q.defer();
     $http({
       method: 'GET',
