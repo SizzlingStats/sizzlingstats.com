@@ -36,8 +36,17 @@ angular.module('myApp.directives', [])
         };
         $scope.classFilter = function(classId) {
           return function(player) {
-            return player.playedClasses() & 1 << parseInt(classId,10);
+            return player.playedClasses() & 1 << classId;
           };
+        };
+        $scope.hasBeenPlayed = function(classId) {
+          var hasBeenPlayed = false;
+          angular.forEach($scope.$parent.players, function(player) {
+            if (player.playedClasses() & 1 << classId) {
+              hasBeenPlayed = true;
+            }
+          });
+          return hasBeenPlayed;
         };
       }
 

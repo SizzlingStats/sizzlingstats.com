@@ -31,9 +31,9 @@
   .overall-stats
     stats-table(data='overallStatsTableData', split-teams='')
   .class-stats
-    stats-table(data='medicStatsTableData', filter='classFilter(6)')
-    stats-table(data='sniperStatsTableData', filter='classFilter(7)')
-    stats-table(data='spyStatsTableData', filter='classFilter(8)')
+    stats-table(data='medicStatsTableData', filter='classFilter(6)', ng-show='hasBeenPlayed(6)')
+    stats-table(data='sniperStatsTableData', filter='classFilter(7)', ng-show='hasBeenPlayed(7)')
+    stats-table(data='spyStatsTableData', filter='classFilter(8)', ng-show='hasBeenPlayed(8)')
   .chat-log
     ul
       li(ng-repeat='chat in stats.chats | filter:bindFilter')
