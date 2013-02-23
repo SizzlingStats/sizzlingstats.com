@@ -6,13 +6,13 @@
 angular.module('myApp.directives', [])
   .directive('statsTable', function($compile) {
     return {
-      restrict: 'A',
-      scope: {
+      restrict: 'E'
+    , scope: {
         data: '&'
       , criteria: '&'
-      },
+      }
 
-      controller: function($scope) {
+    , controller: function($scope) {
         $scope.sort = {
           col: 0,
           reverse: false
@@ -20,12 +20,10 @@ angular.module('myApp.directives', [])
         $scope.sortBy = function(col) {
           // If previously sorting by name (column 0), and clicking a different
           //  column, then set reverse to true.
-          $scope.$apply( function() {
-            if (col === $scope.sort.col || ($scope.sort.col === 0 && !$scope.sort.reverse) ) {
-              $scope.sort.reverse = !$scope.sort.reverse;
-            }
+          if (col === $scope.sort.col || ($scope.sort.col === 0 && !$scope.sort.reverse) ) {
+            $scope.sort.reverse = !$scope.sort.reverse;
+          }
             $scope.sort.col = col;
-          });
         };
         $scope.sortClass = function(col) {
           if ($scope.sort.col === col) {
@@ -36,53 +34,52 @@ angular.module('myApp.directives', [])
         $scope.sortPredicate = function() {
           return ($scope.sort.reverse ? '-' : '+') + $scope.data()[$scope.sort.col][2];
         };
-        $scope.otherCriteria = function(criteria) {
-          return criteria.sort ? criteria.property : '';
+        $scope.classFilter = function(classId) {
+          return function(player) {
+            return player.playedClasses() & 1 << parseInt(classId,10);
+          };
         };
-        $scope.classFilter = function(player) {
-          return player.playedClasses() & 1 << $scope.classToFilter;
-        };
-      },
+      }
 
-      link: function(scope, element, attrs) {
+    , link: function(scope, element, attrs) {
         var data = scope.data(), criteria = scope.criteria(), showClassIcons;
-        scope.classToFilter = parseInt(attrs.classToFilter,10);
         if (data[1][0] === 'C') { showClassIcons = true; }
-
+        var $table = angular.element('<table class="stats-table">');
+        
         // Table Header
         var $thead = angular.element('<thead>');
-        var $header = angular.element('<tr>');
 
-        angular.forEach(data, function(datum, index) {
-          var $cell;
-          if (index === 0) {
-            $cell = angular.element('<th><acronym>' + datum[0] + '</acronym></th>');
-          } else {
-            $cell = angular.element('<th class="has-tip tip-top" title="' +
-                            datum[1] + '"><abbr>' + datum[0] + '</abbr></th>');
+        scope.header = function() {
+          var header = '<tr class="header">';
+          for (var index=0, datum; datum=data[index]; index++) {
+            if (index === 0) {
+              header += '<th ng-click="sortBy(' + index +
+                        ')" ng-class="sortClass(' + index +
+                        ')"><acronym>' + datum[0] + '</acronym></th>';
+            } else {
+              header += '<th class="has-tip tip-top" title="' + datum[1] +
+                        '" ng-click="sortBy(' + index +
+                        ')" ng-class="sortClass(' + index + ')"><abbr>' +
+                        datum[0] + '</abbr></th>';
+            }
           }
-          $cell.addClass(scope.sortClass(index));
-          $cell.bind('click', function() {
-            scope.sortBy(index);
-            angular.element(this).parent().children().removeClass('sort-true sort-false');
-            angular.element(this).addClass(scope.sortClass(index));
-          });
-          $header.append($cell);
-        });
-
-        element.append($thead.append($header));
+          return $compile( header + '</tr>' )(scope);
+        };
+        $table.append( $thead.append( scope.header() ) );
 
 
         // Table Body
-        var $tbody = angular.element('<tbody>');
-        var rows = '<tr ng-repeat="player in $parent.playersArr | ' +
-                   (attrs.classToFilter ? 'filter:classFilter | ' : '') +
-                   'orderBy:[' +
-                   (scope.criteria() ? 'otherCriteria(criteria()),' : '') +
-                   'sortPredicate()]" stats-tr></tr>';
-        $tbody.append( $compile(rows)(scope) );
+        var $tbody = scope.$tbody = angular.element('<tbody>');
+        scope.rows = function(filter) {
+          var row = '<tr ng-repeat="player in $parent.playersArr' +
+                    (filter ? ' | filter:' + filter : '') +
+                    ' | orderBy:sortPredicate()" stats-tr></tr>';
+          return $compile( row )(scope);
+        };
+        $tbody.append( scope.rows(attrs.filter) );
 
-        element.append( $tbody );
+        $table.append( $tbody );
+        element.prepend( $table );
       }
     };
   })
@@ -108,6 +105,32 @@ angular.module('myApp.directives', [])
           playerRow += '<td>' + eval("scope.player." + data[i][2]) + '</td>';
         }
         element.html(playerRow);
+      }
+    };
+  })
+  .directive('splitTeams', function() {
+    return {
+      restrict: 'A'
+    , template: '<dl class="sub-nav no-marg", ng-init="split=false">' +
+                  '<dd ng-class="{active:!split}">' +
+                    '<a href="javascript:" ng-click="splitTeams(false)">' +
+                      'All</a></dd>' +
+                  '<dd ng-class="{active:split}">' +
+                    '<a href="javascript:" ng-click="splitTeams(true)">' +
+                      'Teams</a></dd></dl>'
+    , link: function(scope, element, attrs) {
+        scope.splitTeams = function(split) {
+          if (split === scope.split) { return; }
+          scope.$tbody.empty();
+          if (split) {
+            scope.$tbody.append( scope.rows('{team:2}') );
+            scope.$tbody.append( scope.header() );
+            scope.$tbody.append( scope.rows('{team:3}') );
+          } else {
+            scope.$tbody.append( scope.rows() );
+          }
+          scope.split = split;
+        };
       }
     };
   })

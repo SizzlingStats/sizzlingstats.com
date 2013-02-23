@@ -212,10 +212,6 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
     $scope.selectedRounds.sort(function(a,b){return a-b;});
     parseStats({stats: $scope.stats, playerdata: $scope.playerMetaData}, false);
   };
-  $scope.separateTeams = {
-    sort: false,
-    property: 'team'
-  };
   $scope.filterBinds = true;
   $scope.bindFilter = function(chat) {
     return (!$scope.filterBinds || !chat.isBind);

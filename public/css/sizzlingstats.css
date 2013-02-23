@@ -161,14 +161,17 @@ td, th {
   border-top: 1px solid #ddd;
 }
 th {
+  font-size: 14px;
+}
+thead th {
   border-top: none;
 }
-th:first-child {
+thead th:first-child {
   /*-webkit-border-radius: 3px 0 0 0;*/
   /*-moz-border-radius: 3px 0 0 0;*/
   border-radius: 3px 0 0 0;
 }
-th:last-child {
+thead th:last-child {
   /*-webkit-border-radius: 0 3px 0 0;*/
   /*-moz-border-radius: 0 3px 0 0;*/
   border-radius: 0 3px 0 0;
@@ -239,7 +242,7 @@ td:first-child, th:first-child {
   display: inline-block;
   white-space: nowrap;
 }
-.overall-stats-table {
+.overall-stats table {
   margin-right: 0 !important;
 }
 

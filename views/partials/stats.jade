@@ -29,16 +29,11 @@
         tr(ng-bind-html-unsafe='redtr')
         tr(ng-bind-html-unsafe='blutr')
   .overall-stats
-    table.overall-stats-table.stats-table(stats-table='', data='overallStatsTableData', criteria='separateTeams')
-    dl.sub-nav.no-marg
-      dd(ng-class='{active:!separateTeams.sort}')
-        a(href="javascript:", ng-click="separateTeams.sort=false") All
-      dd(ng-class='{active:separateTeams.sort}')
-        a(href="javascript:", ng-click="separateTeams.sort=true") Teams
+    stats-table(data='overallStatsTableData', split-teams='')
   .class-stats
-    table.stats-table(stats-table='', data='medicStatsTableData', class-to-filter='6')
-    table.stats-table(stats-table='', data='sniperStatsTableData', class-to-filter='7')
-    table.stats-table(stats-table='', data='spyStatsTableData', class-to-filter='8')
+    stats-table(data='medicStatsTableData', filter='classFilter(6)')
+    stats-table(data='sniperStatsTableData', filter='classFilter(7)')
+    stats-table(data='spyStatsTableData', filter='classFilter(8)')
   .chat-log
     ul
       li(ng-repeat='chat in stats.chats | filter:bindFilter')
