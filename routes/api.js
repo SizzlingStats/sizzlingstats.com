@@ -40,7 +40,7 @@ var stats = function(req, res) {
       return res.json(false);
     }
 
-    stats.getPlayerData(function(err, playerdata) {
+    stats.getPlayerData(function(err, playerData) {
       if (err) {
         console.log(err);
         console.trace(err);
@@ -51,10 +51,10 @@ var stats = function(req, res) {
       //  and also add the metadata properties.
       statsObj = stats.toObject();
       statsObj.players = statsObj.players.reduce(function(reduced, item) {
-        if (playerdata[item.steamid]) {
-          item.avatar = playerdata[item.steamid].avatar;
-          item.numericid = playerdata[item.steamid].numericid;
-          item.country = playerdata[item.steamid].country;
+        if (playerData[item.steamid]) {
+          item.avatar = playerData[item.steamid].avatar;
+          item.numericid = playerData[item.steamid].numericid;
+          item.country = playerData[item.steamid].country;
         }
         reduced[item.steamid] = item;
         return reduced;
