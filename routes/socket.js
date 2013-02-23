@@ -21,7 +21,7 @@ module.exports = function(app) {
 
   });
 
-  statsEmitter.on('updateStats', function (stats, playerData) {
+  statsEmitter.on('updateStats', function (stats) {
     io.sockets.emit('matches:update', {
       _id: stats._id,
       isLive: stats.isLive,
@@ -31,7 +31,7 @@ module.exports = function(app) {
       redCountry: stats.redCountry,
       bluCountry: stats.bluCountry
     });
-    io.sockets.in(stats._id).emit('stats:update', { stats: stats, playerdata: playerData }, stats._id);
+    io.sockets.in(stats._id).emit('stats:update', { stats: stats }, stats._id);
   });
 
   statsEmitter.on('removeStats', function (matchId) {

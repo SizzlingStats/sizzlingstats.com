@@ -80,7 +80,21 @@ statsSchema.pre('save', function(next) {
     } else {
       stats.setCountryFlags(playerData);
       // Push the new stats to subscribed clients on websockets.
-      statsEmitter.emit('updateStats', stats, playerData);
+      
+      // Turn the players array into an "associative array" using steamid as key
+      //  and also add the metadata properties.
+      statsObj = stats.toObject();
+      statsObj.players = statsObj.players.reduce(function(reduced, item) {
+        if (playerdata[item.steamid]) {
+          item.avatar = playerdata[item.steamid].avatar;
+          item.numericid = playerdata[item.steamid].numericid;
+          item.country = playerdata[item.steamid].country;
+        }
+        reduced[item.steamid] = item;
+        return reduced;
+      }, {});
+
+      statsEmitter.emit('updateStats', statsObj);
       next();
     }
   });
