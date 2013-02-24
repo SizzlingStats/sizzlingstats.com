@@ -63,6 +63,26 @@ var statsSchema = new mongoose.Schema({
 , isLive: { type: Boolean, default: false }
 });
 
+statsSchema.options.toObject = {
+  // Turn the players array into an "associative array" using steamid as key
+  //  and also add the metadata properties.
+  transform: function reducePlayersAndAddMetadata(doc, ret, options) {
+    if (!options.playerData) {
+      return;
+    }
+    var playerData = options.playerData;
+    ret.players = ret.players.reduce(function(reduced, item) {
+      if (playerData[item.steamid]) {
+        item.avatar = playerData[item.steamid].avatar;
+        item.numericid = playerData[item.steamid].numericid;
+        item.country = playerData[item.steamid].country;
+      }
+      reduced[item.steamid] = item;
+      return reduced;
+    }, {});
+  }
+};
+
 statsSchema.pre('save', function(next) {
   var stats = this;
   // Create an array of all players' steamids
@@ -72,27 +92,15 @@ statsSchema.pre('save', function(next) {
   }
 
   // Notify Players collection that new stats have come in
-  Player.getSteamApiInfo(steamids, function(err, playerData) {
+  Player.findOrUpsertPlayerInfoBySteamIds(steamids, function(err, playerData) {
     if (err) {
       console.log(err);
       console.trace(err);
       next();
     } else {
       stats.setCountryFlags(playerData);
-      // Push the new stats to subscribed clients on websockets.
-
-      // Turn the players array into an "associative array" using steamid as key
-      //  and also add the metadata properties.
-      statsObj = stats.toObject();
-      statsObj.players = statsObj.players.reduce(function(reduced, item) {
-        if (playerData[item.steamid]) {
-          item.avatar = playerData[item.steamid].avatar;
-          item.numericid = playerData[item.steamid].numericid;
-          item.country = playerData[item.steamid].country;
-        }
-        reduced[item.steamid] = item;
-        return reduced;
-      }, {});
+      // Transform stats with playaerData and push to subscribed clients on websockets.
+      var statsObj = stats.toObject({ transform: true, playerData: playerData });
 
       statsEmitter.emit('updateStats', statsObj);
       next();
@@ -160,7 +168,7 @@ statsSchema.statics.appendStats = function(newStats, matchId, isEndOfRound, cb) 
       // look for the oldPlayer with a matching steamid
       // and add new values to the stat arrays
       stats.players.forEach(function(oldPlayer) {
-        oldPlayer.poopy = 'poopy';
+
         if (oldPlayer.steamid === player.steamid) {
           isNewPlayer = false;
           
@@ -189,9 +197,9 @@ statsSchema.statics.appendStats = function(newStats, matchId, isEndOfRound, cb) 
       if (isNewPlayer) {
         
         var newPlayer = {
-          steamid: player.steamid,
-          team: player.team,
-          name: player.name
+          steamid: player.steamid
+        , team: player.team
+        , name: player.name
         };
 
         for (var field in player) {
@@ -275,9 +283,9 @@ statsSchema.methods.getPlayerData = function(cb) {
     for (var i=0, len=players.length; i<len; i++) {
       var player = players[i];
       playerdata[player._id] = {
-        avatar: player.avatar,
-        numericid: player.numericid,
-        country: player.country
+        avatar: player.avatar
+      , numericid: player.numericid
+      , country: player.country
       };
     }
 

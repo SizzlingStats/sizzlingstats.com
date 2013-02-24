@@ -5,18 +5,28 @@ var secrets = require('../cfg/secrets');
 var steamapi = process.env.STEAM_API || secrets.steamapi;
 
 var playerSchema = new mongoose.Schema({
-  _id: { type: String, required: true }, // steamid
-  numericid: { type: String, required: true, index: { unique: true } }, // numeric 64-bit steamid
-  name: String,
-  avatar: { type: String, default: '/img/steam-default-32.jpg' },
-  updated: { type: Date, default: Date.now },
-  country: { type: String } // Some players don't have this
+  _id: { type: String, required: true } // steamid
+, numericid: { type: String, required: true, index: { unique: true } } // numeric 64-bit steamid
+, name: String
+, avatar: { type: String }
+, country: { type: String } // Some players don't have this
+, apikey: { type: String }
+, privileges: { type: Number, default: 1 }
+, updated: { type: Date, default: Date.now }
 });
 
-playerSchema.pre('validate', function(next) {
-  // console.log(this);
-  next();
-});
+playerSchema.options.toJSON = {
+  // remove private data
+  transform: function removePrivateFields(doc, ret, options) {
+    delete ret.privileges;
+    delete ret.apikey;
+  }
+};
+
+// playerSchema.pre('validate', function(next) {
+//   console.log(this);
+//   next();
+// });
 
 var steamIdToNumericId = function(steamid) {
   var parts = steamid.split(":");
@@ -77,35 +87,37 @@ playerSchema.statics.numericIdToSteamId = function(profile) {
   return "STEAM_0:" + (subtract%2) + ":" + Math.floor(subtract/2);
 };
 
-// // This takes in an already validated numericId
-playerSchema.statics.getSteamApiInfoForOnePlayer = function(numericId, callback) {
-
+// This takes in an array of already validated numericIds
+//  If successful, returns an array of player info objects
+playerSchema.statics.getSteamApiInfo = function(numericIds, callback) {
   var options = {
-    uri: 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/',
-    qs: { key: steamapi, steamids: numericId },
-    json: true,
-    timeout: 7000
+    uri: 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/'
+  , qs: { key: steamapi, steamids: numericIds.join() }
+  , json: true
+  , timeout: 7000
   };
 
   request(options, function(err, res, body) {
+    // LOTS OF ERROR CHECKING
     if (err) {
-      console.log('Steam API Request Error', err);
       return callback(err);
     }
     if (res.statusCode !== 200) {
-      return callback(new Error('Steam API Status Code: ' + res.statusCode));
+      return callback(new Error('Steam API Error: ' + res.statusCode));
+    }
+    if (!body.response || !body.response.players) {
+      return callback(new Error('Steam API Error: body undefined'));
     }
     if (body.response.players.length === 0) {
-      console.log('Steam Api Player Not Found: ' + numericId);
-      return callback(new Error('Steam API Player Not Found: ' + numericId));
+      return callback(new Error('Steam API Error: Players Not Found: ' + numericIds));
     }
-    return callback(null, body.response.players[0]);
+    return callback(null, body.response.players);
   }); // End request
 };
 
-playerSchema.statics.getSteamApiInfo = function(steamids, callback) {
-  // Lookup the players in database, which were last updated less than one hour
-  //  ago. For the players that aren't found in database, poll the steam API.
+// Lookup the players in database, which were last updated less than one hour
+//  ago. For the players that aren't found in database, poll the steam API.
+playerSchema.statics.findOrUpsertPlayerInfoBySteamIds = function(steamids, callback) {
   var steamIdRegex = /STEAM_0\:(0|1)\:\d{1,15}$/;
 
   var playerData = {};
@@ -122,9 +134,9 @@ playerSchema.statics.getSteamApiInfo = function(steamids, callback) {
     for (var i=0; i<plen; i++) {
       var player=players[i];
       playerData[player._id] = {
-        avatar: player.avatar,
-        numericid: player.numericid,
-        country: player.country
+        avatar: player.avatar
+      , numericid: player.numericid
+      , country: player.country
       };
     }
 
@@ -149,42 +161,24 @@ playerSchema.statics.getSteamApiInfo = function(steamids, callback) {
       return callback(null, playerData);
     }
 
-    var options = {
-      uri: 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/',
-      qs: { key: steamapi, steamids: playersNotFound.join() },
-      json: true,
-      timeout: 7000
-    };
-
-    request(options, function(err, res, body) {
-      // LOTS OF ERROR CHECKING
+    Player.getSteamApiInfo(playersNotFound, function(err, players) {
       if (err) {
         return callback(err);
       }
-      if (res.statusCode !== 200) {
-        return callback(new Error('player.js updateSteamInfo - Steam API Error: ' + res.statusCode));
-      }
-      if (!body.response || !body.response.players) {
-        return callback(new Error('player.js updateSteamInfo - Steam API Error: body undefined'));
-      }
-      if (body.response.players.length === 0) {
-        return callback(new Error('Steam API Players Not Found: ' + steamids));
-      }
-      
 
       // Update all the players in DB, using new Steam API info.
-      async.forEach(body.response.players, function(player, aCallback) {
+      async.forEach(players, function(player, aCallback) {
         var steamid = Player.numericIdToSteamId(player.steamid);
         var newPlayer = {
-          numericid: player.steamid,
-          name: player.personaname,
-          avatar: player.avatar,
-          updated: currentDate
+          numericid: player.steamid
+        , name: player.personaname
+        , avatar: player.avatar
+        , updated: currentDate
         };
 
         playerData[steamid] = {
-          avatar: player.avatar,
-          numericid: player.numericid
+          avatar: player.avatar
+        , numericid: player.numericid
         };
 
         if (player.loccountrycode) {
@@ -198,13 +192,13 @@ playerSchema.statics.getSteamApiInfo = function(steamids, callback) {
         });
       },
       // Callback for when all the players are iterated over
-      function(err) {
-        if (err) { return callback(err); }
+      function(error) {
+        if (error) { return callback(error); }
         // Return a hash of the player data
         return callback(null, playerData);
       });
 
-    }); // End request
+    }); // End Player.getSteamApiInfo
 
   }); // End Player.find
 

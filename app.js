@@ -53,14 +53,14 @@ everyauth.steam
         // Update the player's info on login
         // Instead of just retrieving old info
 
-        Player.getSteamApiInfoForOnePlayer(numericId, function(err, steamInfo) {
+        Player.getSteamApiInfo([numericId], function(err, steamInfo) {
           if (err) return promise.fail(err);
 
-          player.name = steamInfo.personaname;
-          player.avatar = steamInfo.avatar;
+          player.name = steamInfo[0].personaname;
+          player.avatar = steamInfo[0].avatar;
           player.updated = new Date();
-          if (steamInfo.loccountrycode) {
-            player.country = steamInfo.loccountrycode;
+          if (steamInfo[0].loccountrycode) {
+            player.country = steamInfo[0].loccountrycode;
           }
 
           player.save(function(err) {
@@ -73,18 +73,18 @@ everyauth.steam
           });
         });
       } else {
-        Player.getSteamApiInfoForOnePlayer(numericId, function(err, steamInfo) {
+        Player.getSteamApiInfo([numericId], function(err, steamInfo) {
           if (err) return promise.fail(err);
 
           var newPlayer = new Player({
-            _id: steamId,
-            numericid: numericId,
-            name: steamInfo.personaname,
-            avatar: steamInfo.avatar,
-            updated: new Date()
+            _id: steamId
+          , numericid: numericId
+          , name: steamInfo[0].personaname
+          , avatar: steamInfo[0].avatar
+          , updated: new Date()
           });
-          if (steamInfo.loccountrycode) {
-            newPlayer.country = steamInfo.loccountrycode;
+          if (steamInfo[0].loccountrycode) {
+            newPlayer.country = steamInfo[0].loccountrycode;
           }
 
           newPlayer.save(function(err) {

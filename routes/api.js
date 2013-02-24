@@ -47,18 +47,8 @@ var stats = function(req, res) {
         return res.json(false);
       }
 
-      // Turn the players array into an "associative array" using steamid as key
-      //  and also add the metadata properties.
-      statsObj = stats.toObject();
-      statsObj.players = statsObj.players.reduce(function(reduced, item) {
-        if (playerData[item.steamid]) {
-          item.avatar = playerData[item.steamid].avatar;
-          item.numericid = playerData[item.steamid].numericid;
-          item.country = playerData[item.steamid].country;
-        }
-        reduced[item.steamid] = item;
-        return reduced;
-      }, {});
+      // Transform stats with playerData
+      var statsObj = stats.toObject({ transform: true, playerData: playerData });
 
       res.json({ stats: statsObj });
     });
