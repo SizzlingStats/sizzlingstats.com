@@ -200,7 +200,9 @@ async.series([
     test1(function(err, res, body) {
       assert.ok(body, 'body should return true');
       assert.ok(res.headers.matchurl, 'matchurl should be present');
+      console.log(res.headers.matchurl);
       assert.ok(res.headers.sessionid, 'sessionid should be present');
+      console.log(res.headers.sessionid);
       callback(err);
     });
   }

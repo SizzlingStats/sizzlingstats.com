@@ -141,52 +141,47 @@ var createStats = function(req, res) {
 
   // 2. Check if POST body contains the necessary info
   if (Object.keys(req.body).length === 0) { return res.end('false\n'); }
-  if (!req.body.stats || !req.body.stats.players || req.body.stats.players.length === 0) { return res.end('false\n'); }
+  if (!req.body.stats || !req.body.stats.players || !req.body.stats.players.length) { return res.end('false\n'); }
   
   // 3. Generate sessionid.
-  var sessionId, match;
-  // I'm putting matchId inside matchInfo so I can pass it by reference
-  //  because I am a fucking idiot
-  var matchInfo = {matchId: 0};
-
-  // TODO: use some more/better information in the hmac
-  var date = Date.now();
-  var ip = req.header('x-forwarded-for') || req.connection.remoteAddress;
-  console.log(ip);
-  var hmac = crypto.createHmac('sha1',STATS_SECRET);
-  hmac.update(ip + date);
-  sessionId = hmac.digest('hex');
+  var sessionId
+    , date = Date.now()
+    , ip = req.header('x-forwarded-for') || req.connection.remoteAddress;
+  crypto.randomBytes(32, function(ex, buf) {
+    sessionId = buf.toString('base64');
+  });
 
   // 4. Then save stats to database.
   async.waterfall([
-    // Get matchId (matchCounter.next)
-    function(callback) {
-      Counter.findOneAndUpdate({ "counter" : "matches" }, { $inc: {next:1} }, callback);
-    },
-    // Create new session document
-    function(matchCounter, callback) {
-      if (!matchCounter) { callback(new Error('createStats() -- No matchCounter')); }
-      new Session({
-        _id: sessionId,
-        matchId: matchInfo.matchId = matchCounter.next,
-        ip: ip,
-        timeout: date + cfg.stats_session_timeout
-      }).save(callback);
-    },
-    // Create new stats document
-    async.apply(Stats.createStats, matchInfo, req.body.stats)
-  // async.waterfall callback
-  ], function(err) {
-    if (err) {
-      console.log(err);
-      console.trace(err);
-      return res.end('false\n');
-    }
-    // Success! Respond to the gameserver with relevant info
-    res.setHeader('matchurl', cfg.hostname + '/stats/' + matchInfo.matchId + '?ingame');
-    res.setHeader('sessionid', sessionId);
-    res.end('true\n');
-  });
+      // Get matchId (matchCounter.next)
+      function(callback) {
+        Counter.findOneAndUpdate({ "counter" : "matches" }, { $inc: {next:1} }, callback);
+      }
+      // Create new session document
+    , function(matchCounter, callback) {
+        if (!matchCounter) { callback(new Error('createStats() -- No matchCounter')); }
+        new Session({
+          _id: sessionId
+        , matchId: matchCounter.next
+        , ip: ip
+        , timeout: date + cfg.stats_session_timeout
+        }).save(callback);
+      }
+      // Create new stats document
+    , async.apply(Stats.createStats, req.body.stats)
+    ]
+    // async.waterfall callback
+  , function(err, stats) {
+      if (err) {
+        console.log(err);
+        console.trace(err);
+        return res.end('false\n');
+      }
+      // Success! Respond to the gameserver with relevant info
+      res.setHeader('matchurl', cfg.hostname + '/stats/' + stats._id + '?ingame');
+      res.setHeader('sessionid', sessionId);
+      res.end('true\n');
+    });
 };
 
 var updateStats = function(req, res) {
