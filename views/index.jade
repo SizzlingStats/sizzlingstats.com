@@ -36,10 +36,9 @@ block body
                   | &nbsp;#{user.name}
                 span.caret
               ul.dropdown
-                //- li.divider
-                //- li
-                //-   a(href='javascript:')
-                //-     del Profile
+                li.divider
+                li
+                  a(href='/player/#{user.numericid}') Profile
                 li.divider
                 li
                   a(href='/logout/', target='_self') Sign Out
@@ -59,7 +58,7 @@ block body
   //- Main Content
   .row
     if (typeof(query.ingame) == 'undefined')
-      .three.columns
+      .three.columns(ng-show='showSideBar')
         //- listmatches
         section(ng-controller='SideBarCtrl')
           ul.tabs.vertical.sidebar-nav
@@ -74,7 +73,7 @@ block body
                 | {{match.redname}} vs 
                 img.flag.size-16(ng-show="match.bluCountry", ng-src="/img/flags/16/{{match.bluCountry}}.png")
                 | {{match.bluname}}
-      .nine.columns(ng-view)
+      .columns(ng-class='{true:"nine", false:"twelve"}[showSideBar]', ng-view)
         //- content
     else
       .ingame(ng-view)
@@ -82,8 +81,3 @@ block body
     hr
     footer
       p &copy; 2013 Jordan "SizzlingCalamari" Cristiano &amp; Chris "dy/dx" Kim
-  //- else
-  //-   .ingame(ng-view)
-  //-   hr
-  //-   footer
-  //-     p &copy; 2013 Jordan "SizzlingCalamari" Cristiano &amp; Chris "dy-dx" Kim

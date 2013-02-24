@@ -4,13 +4,16 @@
 
 /* Controllers */
 
-function MainCtrl($scope, $rootScope) {
+function MainCtrl($scope, $rootScope, $route) {
   $rootScope.loading = false;
+  $scope.showSideBar = true;
   $rootScope.$on('$locationChangeStart', function() {
     $rootScope.loading = true;
   });
   $rootScope.$on('$routeChangeSuccess', function() {
     $rootScope.loading = false;
+    $scope.showSideBar = !$route.current.$route ||
+                         ($route.current.$route.templateUrl !== 'partials/profile');
   });
 }
 
