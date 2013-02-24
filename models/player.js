@@ -143,6 +143,12 @@ playerSchema.statics.getSteamApiInfo = function(steamids, callback) {
       }
     }
 
+    // If there aren't any players left to get fresh Steam API info for,
+    //  then return.
+    if (playersNotFound.length === 0) {
+      return callback(null, playerData);
+    }
+
     var options = {
       uri: 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/',
       qs: { key: steamapi, steamids: playersNotFound.join() },
