@@ -7,11 +7,27 @@
 var app = angular.module('myApp', ['myApp.services', 'myApp.directives']).
   config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
     $routeProvider
+      .when('/', {
+        templateUrl: 'partials/home',
+        reloadOnSearch: true
+      })
+      .when('/stats/', {
+        redirectTo: '/'
+      })
       .when('/stats/:id', {
         templateUrl: 'partials/stats',
         controller: StatsCtrl,
         resolve: StatsCtrl.resolve,
         reloadOnSearch: false
+      })
+      .when('/player/', {
+        redirectTo: '/'
+      })
+      .when('/player/:id', {
+        templateUrl: 'partials/profile',
+        controller: ProfileCtrl,
+        resolve: ProfileCtrl.resolve,
+        reloadOnSearch: true
       })
       .when('/about', {
         templateUrl: 'partials/about',
@@ -21,16 +37,8 @@ var app = angular.module('myApp', ['myApp.services', 'myApp.directives']).
         templateUrl: 'partials/download',
         reloadOnSearch: true
       })
-      .when('/player/:id', {
-        templateUrl: 'partials/profile',
-        controller: ProfileCtrl,
-        resolve: ProfileCtrl.resolve,
-        reloadOnSearch: true
-      })
       .otherwise({
-        redirectTo: '/',
-        templateUrl: 'partials/home',
-        reloadOnSearch: true
+        redirectTo: '/'
       });
     $locationProvider.html5Mode(true);
   }]);
