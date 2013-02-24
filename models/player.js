@@ -1,8 +1,9 @@
-var mongoose = require('mongoose');
-var async = require('async');
-var request = require('request');
-var secrets = require('../cfg/secrets');
-var steamapi = process.env.STEAM_API || secrets.steamapi;
+var mongoose = require('mongoose')
+  , async = require('async')
+  , request = require('request')
+  , cfg = require('../cfg/cfg')
+  , secrets = require('../cfg/secrets')
+  , steamapi = process.env.STEAM_API || secrets.steamapi;
 
 var playerSchema = new mongoose.Schema({
   _id: { type: String, required: true } // steamid
@@ -16,7 +17,7 @@ var playerSchema = new mongoose.Schema({
 });
 
 playerSchema.options.toJSON = {
-  // remove private data
+  // remove private data when serializing
   transform: function removePrivateFields(doc, ret, options) {
     delete ret.privileges;
     delete ret.apikey;
@@ -123,23 +124,22 @@ playerSchema.statics.findOrUpsertPlayerInfoBySteamIds = function(steamids, callb
   var playerData = {};
 
   var currentDate = new Date();
-  var oneHourAgo = new Date(currentDate.getTime() - 60*60*1000);
+  var cacheThreshold = new Date(currentDate.getTime() - cfg.player_metadata_cache_length);
 
-  Player.find( { _id: { $in : steamids }, updated: { $gt : oneHourAgo } } ).exec(function(err, players) {
+  Player.find( { _id: { $in : steamids }, updated: { $gt : cacheThreshold } } ).exec(function(err, players) {
     if (err) { return callback(err); }
 
     var slen = steamids.length;
     var plen = players.length;
 
     for (var i=0; i<plen; i++) {
-      var player=players[i];
-      playerData[player._id] = {
-        avatar: player.avatar
-      , numericid: player.numericid
-      , country: player.country
+      playerData[players[i]._id] = {
+        avatar: players[i].avatar
+      , numericid: players[i].numericid
+      , country: players[i].country
       };
     }
-
+    // Exit early if we don't need to hit the Steam API
     if (plen === slen) {
       return callback(null, playerData);
     }
@@ -148,15 +148,13 @@ playerSchema.statics.findOrUpsertPlayerInfoBySteamIds = function(steamids, callb
     //  convert their steamids to 64-bit and then hit the Steam API.
     var playersNotFound = [];
     for (var j=0; j<slen; j++) {
-      var steamid = steamids[j];
-
-      if ( !playerData[steamid] && steamIdRegex.test(steamid) ) {
-        playersNotFound.push(steamIdToNumericId(steamid));
+      if ( !playerData[ steamids[j] ] && steamIdRegex.test( steamids[j] ) ) {
+        playersNotFound.push(steamIdToNumericId( steamids[j] ));
       }
     }
 
     // If there aren't any players left to get fresh Steam API info for,
-    //  then return.
+    //  i.e. they all failed the regex test, then return.
     if (playersNotFound.length === 0) {
       return callback(null, playerData);
     }
