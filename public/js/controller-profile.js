@@ -3,9 +3,6 @@
 'use strict';
 
 function ProfileCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
-  if (!resolvedData) {
-    // do something
-  }
   var PAGE_SIZE = 10;
   var NUM_ADJACENT_PAGES = 2;
   var MAX_NUM_PAGES = 9;
@@ -103,7 +100,11 @@ ProfileCtrl.resolve = {
       url: '/api/player/' + $route.current.params.id
     })
       .success(function(data) {
-        deferred.resolve(data);
+        if (data === 'false') {
+          deferred.reject(data);
+        } else {
+          deferred.resolve(data);
+        }
       })
       .error(function(data) {
         deferred.reject(data);

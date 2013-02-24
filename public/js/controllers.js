@@ -4,9 +4,16 @@
 
 /* Controllers */
 
-function MainCtrl($scope, $rootScope, $route) {
+function MainCtrl($scope, $rootScope, $route, $location) {
   $rootScope.loading = false;
   $scope.showSideBar = true;
+  $rootScope.$on('$routeChangeError', function(event, current, previous, rejection) {
+    if (!previous) {
+      $location.path('/');
+    } else {
+      window.history.back();
+    }
+  });
   $rootScope.$on('$locationChangeStart', function() {
     $rootScope.loading = true;
   });
