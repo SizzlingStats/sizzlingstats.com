@@ -7,17 +7,17 @@
       img.flag.size-32(ng-show="stats.bluCountry", ng-src="/img/flags/32/{{stats.bluCountry}}.png")
       span.bluname {{stats.bluname}}
       |  {{redScore}} - {{bluScore}}
-    .stats-description {{stats.created | date:'M/d/yy h:mma' | lowercase}} // {{secondsToHMS(playableTime)}} // {{stats.map}} 
-      span.label(ng-show='stats.isLive') Live
-    //- .asdf {{stats.hostname}}
-    //- .servername Server: {{stats.hostname}}
-    //- .mapname Map: {{stats.map}}
-    //- .date Date: {{stats.created | date:'medium'}}
-    //- .match-duration(ng-show='stats.matchDuration') Match Duration: {{secondsToHMS(stats.matchDuration)}}
-    //- .playable-time Playable Time: {{secondsToHMS(playableTime)}}
-    div Server Owner:
-      a(href='/player/{{stats.owner.id}}') {{stats.owner.name}}
-    div: a.button(href='/stats/{{stats._id}}/edit', ng-show='stats.iHaveOwnership') Click here to edit this thang
+    .stats-details
+      .stats-description {{stats.created | date:'M/d/yy h:mma' | lowercase}} // {{secondsToHMS(playableTime)}} // {{stats.map}} 
+        span.label(ng-show='stats.isLive') Live
+      .stats-hostname Server Name: {{stats.hostname}}
+      //- .mapname Map: {{stats.map}}
+      //- .date Date: {{stats.created | date:'medium'}}
+      //- .match-duration(ng-show='stats.matchDuration') Match Duration: {{secondsToHMS(stats.matchDuration)}}
+      //- .playable-time Playable Time: {{secondsToHMS(playableTime)}}
+      .stats-owner Server Owner: {{(stats.owner.id) && "" || "anonymous "}}
+        a(ng-href='{{(stats.owner.id) && "/player/"+stats.owner.id || "javascript:"}}') {{stats.owner.name || '&#60;claim this server!&#62;'}}
+        a.button(href='/stats/{{stats._id}}/edit', ng-show='stats.iHaveOwnership') Edit these stats
     table.score-table
       thead
         tr

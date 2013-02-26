@@ -195,14 +195,15 @@ td:first-child, th:first-child {
 }
 
 .flag {
-  vertical-align: text-bottom;
   margin-right: 0.1em;
+  vertical-align: text-bottom;
 }
 .size-16 {
   width: 16px;
   height: 16px;
 }
 .size-32 {
+  vertical-align: bottom;
   width: 32px;
   height: 32px;
 }
@@ -210,8 +211,11 @@ td:first-child, th:first-child {
 .stats {
   font-size: 13px !important;
 }
-.stats-description {
-  /*margin-top: 5px;*/
+.stats-details {
+  margin-top: 5px;
+  display: inline-block;
+  text-align: left;
+  line-height: 1.2;
 }
 
 .score-table {
