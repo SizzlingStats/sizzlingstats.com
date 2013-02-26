@@ -1,11 +1,14 @@
 .five.columns
   h2 {{player.name}}
-  .panel
+  .panel.center
     img(ng-src='{{player.avatarFull}}')
-    p Steam ID: {{player._id}}
-    p 64-bit Steam ID: {{player.numericid}}
-    p Country: {{player.country}}
-    p Updated: {{player.updated | date:'M/d/yy h:mma' | lowercase}}
+    span.align-left(style='margin:0 auto;display:inline-block;line-height:1.5') {{player._id}}
+      br
+      a(href='http://steamcommunity.com/profiles/{{player.numericid}}') Steam Profile
+      br
+      | Country: {{player.country}}
+      br
+      | Updated: {{player.updated | date:'M/d/yy h:mma' | lowercase}}
 .seven.columns
   h3 Matches Played
   ul.tabs.vertical.sidebar-nav

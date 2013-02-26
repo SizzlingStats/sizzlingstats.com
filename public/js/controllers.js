@@ -4,7 +4,9 @@
 
 /* Controllers */
 
-function MainCtrl($scope, $rootScope, $route, $location) {
+function MainCtrl($scope, $rootScope, $route, $location, me) {
+  // console.log(me);
+
   $rootScope.loading = false;
   $scope.showSideBar = true;
   $rootScope.$on('$routeChangeError', function(event, current, previous, rejection) {
@@ -20,7 +22,7 @@ function MainCtrl($scope, $rootScope, $route, $location) {
   $rootScope.$on('$routeChangeSuccess', function() {
     $rootScope.loading = false;
     $scope.showSideBar = !$route.current.$route ||
-                         ($route.current.$route.templateUrl !== 'partials/profile');
+                         ($route.current.$route.templateUrl !== 'partials/player');
   });
 }
 
@@ -40,6 +42,7 @@ function SideBarCtrl($scope, $http, $route, socket) {
     for (var i=$scope.matches.length-1; i>=0; i--) {
       if ($scope.matches[i]._id == matchId) {
         $scope.matches.splice(i,1);
+        return;
       }
     }
   });

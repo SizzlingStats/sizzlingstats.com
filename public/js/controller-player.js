@@ -2,7 +2,7 @@
 /*global angular, console*/
 'use strict';
 
-function ProfileCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
+function PlayerCtrl($scope, $rootScope, $location, $http, socket, resolvedData) {
   var PAGE_SIZE = 10;
   var NUM_ADJACENT_PAGES = 2;
   var MAX_NUM_PAGES = 9;
@@ -92,7 +92,7 @@ function ProfileCtrl($scope, $rootScope, $location, $http, socket, resolvedData)
 }
 // This is for the first time you load the controller
 //  -- so that you don't see all the empty divs and tables.
-ProfileCtrl.resolve = {
+PlayerCtrl.resolve = {
   resolvedData: function($q, $http, $route) {
     var deferred = $q.defer();
     $http({

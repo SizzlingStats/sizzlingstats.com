@@ -21,6 +21,9 @@
 .center {
   text-align: center;
 }
+.align-left {
+  text-align: left;
+}
 .no-marg {
   margin: 0 !important;
 }

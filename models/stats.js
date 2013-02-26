@@ -5,8 +5,8 @@ var statsEmitter = require('../emitters').statsEmitter;
 // Mongoose Bullshit
 var statsSchema = new mongoose.Schema({
  _id: { type: Number, required: true } // matchId
-, redname: String
-, bluname: String
+, redname: { type: String, required: true }
+, bluname: { type: String, required: true }
 , redscore: { type: [Number], required: true }
 , bluscore: { type: [Number], required: true }
 , redCountry: String
@@ -57,6 +57,10 @@ var statsSchema = new mongoose.Schema({
   , time: { type: Number, required: true }
   , message: String
   }]
+, owner: {
+    numericid: String
+  , name: String
+  }
 , created: { type: Date }
 , updated: { type: Date }
 , viewCount: Number
@@ -343,11 +347,7 @@ statsSchema.statics.findMatchesBySteamIdRanged = function(steamId, comparator, s
   .skip(skip)
   .limit(limit)
   .select('hostname redname bluname redCountry bluCountry created')
-  .exec(function(err, matches) {
-    if (err) { return cb(err); }
-    
-    return cb(err, matches);
-  });
+  .exec(cb);
 };
 
 // Helpers

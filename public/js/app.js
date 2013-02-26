@@ -8,34 +8,40 @@ var app = angular.module('myApp', ['myApp.services', 'myApp.directives']).
   config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
     $routeProvider
       .when('/', {
-        templateUrl: 'partials/home',
-        reloadOnSearch: true
+        templateUrl: 'partials/home'
+      , reloadOnSearch: true
       })
       .when('/stats/', {
         redirectTo: '/'
       })
       .when('/stats/:id', {
-        templateUrl: 'partials/stats',
-        controller: StatsCtrl,
-        resolve: StatsCtrl.resolve,
-        reloadOnSearch: false
+        templateUrl: 'partials/stats'
+      , controller: StatsCtrl
+      , resolve: StatsCtrl.resolve
+      , reloadOnSearch: false
+      })
+      .when('/stats/:id/edit', {
+        templateUrl: 'partials/stats/edit'
+      , controller: StatsEditCtrl
+      , resolve: StatsCtrl.resolve
+      , reloadOnSearch: true
       })
       .when('/player/', {
         redirectTo: '/'
       })
       .when('/player/:id', {
-        templateUrl: 'partials/profile',
-        controller: ProfileCtrl,
-        resolve: ProfileCtrl.resolve,
-        reloadOnSearch: true
+        templateUrl: 'partials/player'
+      , controller: PlayerCtrl
+      , resolve: PlayerCtrl.resolve
+      , reloadOnSearch: true
       })
       .when('/about', {
-        templateUrl: 'partials/about',
-        reloadOnSearch: true
+        templateUrl: 'partials/about'
+      , reloadOnSearch: true
       })
       .when('/download', {
-        templateUrl: 'partials/download',
-        reloadOnSearch: true
+        templateUrl: 'partials/download'
+      , reloadOnSearch: true
       })
       .otherwise({
         redirectTo: '/'

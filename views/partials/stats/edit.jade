@@ -1,0 +1,18 @@
+form
+  .row
+    .two.columns
+      label.right.inline Red Team:
+    .ten.columns
+      input.four(type='text', ng-model='data.redname')
+  .row
+    .two.columns
+      label.right.inline Blue Team:
+    .ten.columns
+      input.four(type='text', ng-model='data.bluname')
+  .row
+    .two.columns.offset-by-two
+      input.button(type='submit', value='Save', ng-click='saveButton()')
+    .two.columns.end
+      input.alert.button(type='submit', value='Delete', ng-click='deleteButton()')
+
+pre(ng-model="data") {{data | json}}

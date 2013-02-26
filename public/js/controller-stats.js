@@ -273,7 +273,7 @@ StatsCtrl.resolve = {
   resolvedData: function($q, $http, $route, $rootScope) {
     // hack. FIXME
     if ($rootScope.statsCtrlIsLoadedSoDontCallResolveFunction) {
-      return;
+      // return;
     }
     var deferred = $q.defer();
     $http({
@@ -284,8 +284,46 @@ StatsCtrl.resolve = {
         deferred.resolve(data);
       })
       .error(function(data) {
+        window.alert('Something went wrong.');
         deferred.reject(data);
       });
     return deferred.promise;
   }
 };
+
+function StatsEditCtrl($scope, $location, $route, $http, socket, resolvedData) {
+  $scope.data = {
+    redname: resolvedData.stats.redname
+  , bluname: resolvedData.stats.bluname
+  };
+
+  $scope.saveButton = function() {
+    $http.put('/api/stats/' + resolvedData.stats._id, $scope.data)
+      .success(function(data, status, headers, config) {
+        // TODO: Do something better
+        $location.path('/stats/' + resolvedData.stats._id);
+      })
+      .error(function(data, status, headers, config) {
+        console.log(data);
+        window.alert('Something went wrong.');
+      });
+
+  };
+
+  $scope.deleteButton = function() {
+    if ( !window.confirm('Are you sure you want to delete these stats?') ) {
+      return false;
+    }
+    $http.delete('/api/stats/' + resolvedData.stats._id)
+      .success(function(data, status, headers, config) {
+        // TODO: Do something better
+        $location.path( "/" );
+      })
+      .error(function(data, status, headers, config) {
+        // TODO: Do something
+        console.log(data);
+        window.alert('Something went wrong.');
+      });
+  };
+
+}

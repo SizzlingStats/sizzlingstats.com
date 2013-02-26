@@ -15,6 +15,9 @@
     //- .date Date: {{stats.created | date:'medium'}}
     //- .match-duration(ng-show='stats.matchDuration') Match Duration: {{secondsToHMS(stats.matchDuration)}}
     //- .playable-time Playable Time: {{secondsToHMS(playableTime)}}
+    div Server Owner:
+      a(href='/player/{{stats.owner.id}}') {{stats.owner.name}}
+    div: a.button(href='/stats/{{stats._id}}/edit', ng-show='stats.iHaveOwnership') Click here to edit this thang
     table.score-table
       thead
         tr

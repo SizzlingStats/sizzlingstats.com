@@ -26,7 +26,18 @@ html(lang="en", ng-app="myApp")
       script( src='/js/services.js' )
       script( src='/js/controllers.js' )
       script( src='/js/controller-stats.js' )
-      script( src='/js/controller-profile.js' )
+      script( src='/js/controller-player.js' )
+      //- script( src='/js/controller-profile.js' )
       script( src='/js/filters.js' )
       script( src='/js/directives.js' )
-      
+    //- FIXME
+    //- Surely there is a better way to do this?????
+    //- script
+      app.service('me', function() {
+        return {
+          id: '#{user.numericid}'
+        , name: '#{user.name}'
+        };
+      });
+    script
+      app.service('me', function() {return {id: '#{user.numericid}', name: '#{user.name}'}; });

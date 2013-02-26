@@ -12,6 +12,7 @@ var playerSchema = new mongoose.Schema({
 , avatar: { type: String }
 , country: { type: String } // Some players don't have this
 , apikey: { type: String }
+// privilege greater than 10 is admin I guess
 , privileges: { type: Number, default: 1 }
 , updated: { type: Date, default: Date.now }
 });

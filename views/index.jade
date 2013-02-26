@@ -31,14 +31,13 @@ block body
           if (loggedIn)
             li.has-dropdown
               a(href='javascript:')
-                img.top-bar-avatar(src='#{user.avatar}')
-                span
-                  | &nbsp;#{user.name}
+                img.top-bar-avatar(src=user.avatar)
+                span= '&nbsp;' + user.name
                 span.caret
               ul.dropdown
                 li.divider
                 li
-                  a(href='/player/#{user.numericid}') Profile
+                  a(href='/player/' + user.numericid) Profile
                 li.divider
                 li
                   a(href='/logout/', target='_self') Sign Out
