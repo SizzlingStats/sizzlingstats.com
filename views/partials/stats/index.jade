@@ -15,10 +15,11 @@
       //- .date Date: {{stats.created | date:'medium'}}
       //- .match-duration(ng-show='stats.matchDuration') Match Duration: {{secondsToHMS(stats.matchDuration)}}
       //- .playable-time Playable Time: {{secondsToHMS(playableTime)}}
-      .stats-owner Server Owner: {{(stats.owner.id) && "" || "anonymous "}}
-        a(ng-href='{{(stats.owner.id) && "/player/"+stats.owner.id || "javascript:"}}') {{stats.owner.name || '&#60;claim this server!&#62;'}}
+      .stats-owner Server Owner: {{(stats.owner.name) && " " || "anonymous "}}
+        //- a(ng-href='{{(stats.owner.numericid) && "/player/"+stats.owner.numericid || "javascript:"}}') {{stats.owner.name || '&#60;claim this server&#62;'}}
+        a(ng-href='{{(stats.owner.numericid) && "/player/"+stats.owner.numericid || "javascript:"}}') {{stats.owner.name}}
       .stats-edit-button(ng-show='stats.iHaveOwnership')
-        a.button(href='/stats/{{stats._id}}/edit') Edit these stats
+        a.button.small(href='/stats/{{stats._id}}/edit') Edit these stats
     table.score-table
       thead
         tr

@@ -27,11 +27,17 @@ var ssCreateStats = function(req, res) {
   console.log('createStats body:', util.inspect(req.body, false, null, false));
 
   // 1. Check header for api version
-  if (!req.body.stats || req.headers.sizzlingstats !== 'v0.1') { return res.end('false\n'); }
+  if (!req.body.stats || req.headers.sizzlingstats !== 'v0.1') {
+    return res.end('false\n');
+  }
 
   // 2. Check if POST body contains the necessary info
-  if (Object.keys(req.body).length === 0) { return res.end('false\n'); }
-  if (!req.body.stats || !req.body.stats.players || !req.body.stats.players.length) { return res.end('false\n'); }
+  if (Object.keys(req.body).length === 0) {
+    return res.end('false\n');
+  }
+  if (!req.body.stats || !req.body.stats.players || !req.body.stats.players.length) {
+    return res.end('false\n');
+  }
   
   // 3. Generate sessionid.
   var sessionId
@@ -43,13 +49,30 @@ var ssCreateStats = function(req, res) {
 
   // 4. Then save stats to database.
   async.waterfall([
-      // Get matchId (matchCounter.next)
+      // Check for valid API Key
       function(callback) {
+        if (!req.headers.apikey) { return callback(null); }
+        Player.findOne({apikey: req.headers.apikey}, 'name numericid'
+                                                   , function(err, player) {
+          if (err) {
+            // TODO: do something
+          }
+          if (player) {
+            req.body.stats.owner = player.toObject();
+          } else {
+            req.body.stats.owner = {};
+          }
+          callback(null);
+        });
+      }
+      // Get matchId (matchCounter.next)
+    , function(callback) {
         Counter.findOneAndUpdate({ "counter" : "matches" }, { $inc: {next:1} }, callback);
       }
       // Create new session document
     , function(matchCounter, callback) {
         if (!matchCounter) { return callback(new Error('createStats() -- No matchCounter')); }
+        req.body.stats._id = matchCounter.next;
         new Session({
           _id: sessionId
         , matchId: matchCounter.next

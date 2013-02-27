@@ -32,6 +32,7 @@ module.exports = {
 
   statsHeaders1: {
     "sizzlingstats": "v0.1"
+  , "apikey": "05c5a8c9-75af-4761-9329-2ebddab41f15"
   }
 
 , statsBody1: {"stats": {

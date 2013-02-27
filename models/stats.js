@@ -117,7 +117,7 @@ statsSchema.post('remove', function(stats) {
   statsEmitter.emit('removeStats', stats._id);
 });
 
-statsSchema.statics.createStats = function(statsData, session) {
+statsSchema.statics.createStats = function(statsData) {
   var callback = arguments[arguments.length-1];
 
   // statsData is the the POST body data (req.body.stats), so massage it
@@ -137,7 +137,6 @@ statsSchema.statics.createStats = function(statsData, session) {
   statsData.bluscore = 0;
   statsData.teamfirstcap = 0;
   statsData.roundduration = 0;
-  statsData._id = session.matchId;
   statsData.isLive = true;
   statsData.created = statsData.updated = new Date();
   statsData.viewCount = 0;
