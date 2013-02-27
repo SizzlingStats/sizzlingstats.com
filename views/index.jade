@@ -37,7 +37,7 @@ block body
               ul.dropdown
                 li.divider
                 li
-                  a(href='/player/' + user.numericid) Profile
+                  a(href='/profile') Profile
                 li.divider
                 li
                   a(href='/logout/', target='_self') Sign Out
@@ -50,14 +50,14 @@ block body
       ul
         li.name
           h1
-            a(href='javascript:') SizzlingStats.com
+            a(href='javascript:') SizzlingStats.com Beta
   #loading(ng-cloak, ng-show='loading')
     .alert-box.loading
       | Loading...
   //- Main Content
   .row
     if (typeof(query.ingame) == 'undefined')
-      .three.columns(ng-show='showSideBar')
+      .three.columns(ng-hide='hideSideBar')
         //- listmatches
         section(ng-controller='SideBarCtrl')
           ul.tabs.vertical.sidebar-nav
@@ -72,7 +72,7 @@ block body
                 | {{match.redname}} vs 
                 img.flag.size-16(ng-show="match.bluCountry", ng-src="/img/flags/16/{{match.bluCountry}}.png")
                 | {{match.bluname}}
-      .columns(ng-class='{true:"nine", false:"twelve"}[showSideBar]', ng-view)
+      .columns(class='{{(hideSideBar) && "twelve" || "nine"}}', ng-view)
         //- content
     else
       .ingame(ng-view)

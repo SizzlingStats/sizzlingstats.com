@@ -193,7 +193,7 @@ app.configure(function() {
       , 'controllers.js'
       , 'controller-stats.js'
       , 'controller-player.js'
-      // , 'controller-profile.js'
+      , 'controller-profile.js'
       // , 'filters.js'
       , 'directives.js'
       // , '*'

@@ -21,8 +21,10 @@ function MainCtrl($scope, $rootScope, $route, $location, me) {
   });
   $rootScope.$on('$routeChangeSuccess', function() {
     $rootScope.loading = false;
-    $scope.showSideBar = !$route.current.$route ||
-                         ($route.current.$route.templateUrl !== 'partials/player');
+    // TODO: FIXME
+    $scope.hideSideBar = !$route.current.$route ||
+                  ($route.current.$route.templateUrl === 'partials/player') ||
+                  ($route.current.$route.templateUrl === 'partials/profile');
   });
 }
 

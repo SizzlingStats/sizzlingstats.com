@@ -1,7 +1,7 @@
 .five.columns
   h2 {{player.name}}
   .panel.center
-    img(ng-src='{{player.avatarFull}}')
+    img(ng-src='{{player.avatar.slice(0, -4) + "_full.jpg"}}')
     span.align-left(style='margin:0 auto;display:inline-block;line-height:1.5') {{player._id}}
       br
       a(href='http://steamcommunity.com/profiles/{{player.numericid}}') Steam Profile

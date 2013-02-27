@@ -35,6 +35,13 @@ var app = angular.module('myApp', ['myApp.services', 'myApp.directives']).
       , resolve: PlayerCtrl.resolve
       , reloadOnSearch: true
       })
+      .when('/profile', {
+        templateUrl: 'partials/profile'
+      , controller: 'ProfileCtrl'
+      , resolve: {
+          resolveData: 'ProfileCtrlResolveData'
+        }
+      })
       .when('/about', {
         templateUrl: 'partials/about'
       , reloadOnSearch: true

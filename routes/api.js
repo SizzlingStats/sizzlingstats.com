@@ -6,7 +6,7 @@
 // var util = require('util');
 // var async = require('async');
 // var cfg = require('../cfg/cfg');
-// var STATS_SECRET = process.env.STATS_SECRET || require('../cfg/secrets').stats_secret;
+var uuid = require('node-uuid');
 var Stats = require('../models/stats');
 // var Counter = require('../models/counter');
 // var Session = require('../models/session');
@@ -20,6 +20,9 @@ module.exports = function(app) {
   app.get('/api/matches', matches);
   app.get('/api/player/:id', player);
   app.get('/api/player/:id/matches', playerMatches);
+  app.get('/api/profile', isLoggedIn, profileShow);
+
+  app.get('/api/generateKey', isLoggedIn, generateKey);
 
   app.put('/api/stats/:id', isLoggedIn, statsUpdate);
   app.del('/api/stats/:id', isLoggedIn, statsDestroy);
@@ -140,6 +143,38 @@ var playerMatches = function(req, res) {
   }
 };
 
+var profileShow = function(req, res) {
+  Player.findById(req.user._id, function(err, player) {
+    if (err) {
+      console.log(err);
+      console.trace(err);
+    }
+    if (err || !player) {
+      return res.send(404);
+    }
+
+    // Don't hide apikey since we are showing this user his own apikey
+    return res.send( player.toJSON({ transform: true, showFields: ['apikey'] }) );
+
+  });
+};
+
+var generateKey = function(req, res) {
+  var newKey = uuid.v4();
+
+  Player.findByIdAndUpdate(req.user._id, {$set: {apikey: newKey}}
+                                       , function(err, player, numupdated) {
+    if (err) {
+      console.log(err);
+      console.trace(err);
+    }
+    if (err || !player) {
+      return res.send(500);
+    }
+
+    return res.send(player.apikey);
+  });
+};
 
 // PUT
 

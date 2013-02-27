@@ -17,7 +17,8 @@
       //- .playable-time Playable Time: {{secondsToHMS(playableTime)}}
       .stats-owner Server Owner: {{(stats.owner.id) && "" || "anonymous "}}
         a(ng-href='{{(stats.owner.id) && "/player/"+stats.owner.id || "javascript:"}}') {{stats.owner.name || '&#60;claim this server!&#62;'}}
-        a.button(href='/stats/{{stats._id}}/edit', ng-show='stats.iHaveOwnership') Edit these stats
+      .stats-edit-button(ng-show='stats.iHaveOwnership')
+        a.button(href='/stats/{{stats._id}}/edit') Edit these stats
     table.score-table
       thead
         tr

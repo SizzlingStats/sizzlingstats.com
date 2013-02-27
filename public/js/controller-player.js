@@ -8,7 +8,6 @@ function PlayerCtrl($scope, $rootScope, $location, $http, socket, resolvedData) 
   var MAX_NUM_PAGES = 9;
 
   $scope.player = resolvedData.player;
-  $scope.player.avatarFull = $scope.player.avatar.slice(0, -4) + '_full.jpg';
   $scope.matches = resolvedData.matches;
   
   $scope.count = resolvedData.count;

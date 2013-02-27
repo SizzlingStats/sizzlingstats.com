@@ -20,8 +20,25 @@ var playerSchema = new mongoose.Schema({
 playerSchema.options.toJSON = {
   // remove private data when serializing
   transform: function removePrivateFields(doc, ret, options) {
-    delete ret.privileges;
-    delete ret.apikey;
+    options = options || {};
+    // By default hide privileges and apikey
+    options.hideFields = options.hideFields || ['privileges', 'apikey'];
+
+    if (options.showFields) {
+      // For each string in options.showFields, remove all instances of it
+      //  from options.hideFields.
+      for (var i=0, ilen=options.showFields.length; i<ilen; i++) {
+        for (var j=options.hideFields.length-1; j>=0; j--) {
+          if (options.showFields[i] === options.hideFields[j]) {
+            options.hideFields.splice(j,1);
+          }
+        }
+      }
+    }
+    // For each string in options.hideFields, delete that field from player obj.
+    for (var k=0, klen=options.hideFields.length; k<klen; k++) {
+      delete ret[ options.hideFields[k] ];
+    }
   }
 };
 
