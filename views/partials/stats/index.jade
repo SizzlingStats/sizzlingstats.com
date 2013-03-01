@@ -1,14 +1,18 @@
 .stats
   .center
     h3.no-marg
-      img.flag.size-32(ng-show="stats.redCountry", ng-src="/img/flags/32/{{stats.redCountry}}.png")
+      img.flag.size-32(ng-show="stats.redCountry"
+                     , ng-src="/img/flags/32/{{stats.redCountry}}.png")
       span.redname {{stats.redname}}
       |  {{scoreComparison}} 
-      img.flag.size-32(ng-show="stats.bluCountry", ng-src="/img/flags/32/{{stats.bluCountry}}.png")
+      img.flag.size-32(ng-show="stats.bluCountry"
+                     , ng-src="/img/flags/32/{{stats.bluCountry}}.png")
       span.bluname {{stats.bluname}}
       |  {{redScore}} - {{bluScore}}
     .stats-details
-      .stats-description {{stats.created | date:'M/d/yy h:mma' | lowercase}} // {{secondsToHMS(playableTime)}} // {{stats.map}} 
+      .stats-description
+        | {{stats.created | date:'M/d/yy h:mma' | lowercase}} //
+        | {{secondsToHMS(playableTime)}} // {{stats.map}}
         span.label(ng-show='stats.isLive') Live
       .stats-hostname Server Name: {{stats.hostname}}
       //- .mapname Map: {{stats.map}}
@@ -17,14 +21,18 @@
       //- .playable-time Playable Time: {{secondsToHMS(playableTime)}}
       .stats-owner Server Owner: {{(stats.owner.name) && " " || "anonymous "}}
         //- a(ng-href='{{(stats.owner.numericid) && "/player/"+stats.owner.numericid || "javascript:"}}') {{stats.owner.name || '&#60;claim this server&#62;'}}
-        a(ng-href='{{(stats.owner.numericid) && "/player/"+stats.owner.numericid || "javascript:"}}') {{stats.owner.name}}
+        a(ng-href='{{(stats.owner.numericid) && "/player/"+stats.owner.numericid||"javascript:"}}')
+          | {{stats.owner.name}}
       .stats-edit-button(ng-show='stats.iHaveOwnership')
         a.button.small(href='/stats/{{stats._id}}/edit') Edit these stats
     table.score-table
       thead
         tr
           th
-          th.score-table-round-header(ng-repeat='n in stats.redscore', ng-click='clickRoundHeader($index)', ng-class='{"deselected-round":selectedRounds.indexOf($index)==-1}')
+          th.score-table-round-header(
+            ng-repeat='n in stats.redscore'
+          , ng-click='clickRoundHeader($index)'
+          , ng-class='{"deselected-round":selectedRounds.indexOf($index)==-1}')
             acronym R{{$index + 1}}
           th(title='Total Score', class='has-tip tip-top'): abbr T
           th(title='Total Damage', class='has-tip tip-top'): abbr DMG
@@ -36,14 +44,21 @@
   .overall-stats
     stats-table(data='overallStatsTableData', split-teams='')
   .class-stats
-    stats-table(data='medicStatsTableData', filter='classFilter(6)', ng-show='hasBeenPlayed(6)')
-    stats-table(data='sniperStatsTableData', filter='classFilter(7)', ng-show='hasBeenPlayed(7)')
-    stats-table(data='spyStatsTableData', filter='classFilter(8)', ng-show='hasBeenPlayed(8)')
+    stats-table(data='medicStatsTableData'
+              , filter='classFilter(6)'
+              , ng-show='hasBeenPlayed(6)')
+    stats-table(data='sniperStatsTableData'
+              , filter='classFilter(7)'
+              , ng-show='hasBeenPlayed(7)')
+    stats-table(data='spyStatsTableData'
+              , filter='classFilter(8)'
+              , ng-show='hasBeenPlayed(8)')
   .chat-log
     ul
       li(ng-repeat='chat in stats.chats | filter:bindFilter')
         span.chat-time {{secondsToHMS(chat.time)}}&nbsp;
-        span.chat-name(ng-class='{true:"team-message"}[chat.isTeam]', class='team{{players[chat.steamid].team}}')
+        span.chat-name(ng-class='{true:"team-message"}[chat.isTeam]'
+                     , class='team{{players[chat.steamid].team}}')
           b {{players[chat.steamid].name || "spectator"}}
         span.chat-message : {{chat.message}}
     dl.sub-nav.no-marg

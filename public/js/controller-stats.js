@@ -8,7 +8,8 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
   var lastRoute = $route.current;
   $scope.$on('$locationChangeSuccess', function(event) {
     // Only do it for the stats path.
-    if ($route.current.$route && $route.current.$route.templateUrl === 'partials/stats') {
+    if ($route.current.$route &&
+        $route.current.$route.templateUrl === 'partials/stats') {
     // if (lastRoute && $route.current.$route.templateUrl === 'partials/stats') {
       // Grab the new matchid before we stop the routechange
       var matchId = $route.current.params.id;
@@ -55,9 +56,10 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
       //  for the according tf2class in the "mostplayedclass" array.
       var totals = [0,0,0,0,0,0,0,0,0,0];
       for (var i=0, ilen=$scope.selectedRounds.length; i<ilen; i++) {
-        // mostplayedclass[r] is the id (1-9) of the tf2class that the player played
-        //  the most in the ith round. The index of the max value in totals[] is
-        //  the id of the tf2class that the player played the most in the match.
+        // mostplayedclass[r] is the id (1-9) of the tf2class
+        //  that the player played the most in the ith round.
+        // The index of the max value in totals[] is the id of the tf2class
+        //  that the player played the most in the match.
         var r = $scope.selectedRounds[i];
         totals[ this.mostplayedclass[r] ] += $scope.stats.roundduration[r];
       }
@@ -72,7 +74,8 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
       return theClass;
   };
   Player.prototype.playedClasses = function() {
-    return filterBySelectedRounds(this.playedclasses).reduce(function(a,b) { return a | b; },0);
+    return filterBySelectedRounds(this.playedclasses)
+             .reduce(function(a,b) { return a | b; },0);
   };
 
   $scope.overallStatsTableData = [
@@ -116,26 +119,26 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
 
 
   var parseStats = function(data, reinitializeSelectedRounds) {
-    // Stupid hack -- need to keep both a hash and and array of players, because
-    //  AngularJS's orderBy function doesn't work on a hash.
+    // Stupid hack -- need to keep both a hash and and array of players,
+    //  because AngularJS's orderBy function doesn't work on a hash.
     $scope.playersArr = [];
     $scope.players = {};
 
     // Stupid placeholder object for when things go wrong
     if (!data  || typeof data !== 'object') {
       data = { stats: {
-        redname: 'RED',
-        bluname: 'BLU',
-        redscore: [],
-        bluscore: [],
-        players: {}
+        redname: 'RED'
+      , bluname: 'BLU'
+      , redscore: []
+      , bluscore: []
+      , players: {}
       }};
     }
     var stats = $scope.stats = data.stats;
 
 
-    // If redscore.length is greater than the current number of rounds, then that
-    //  means a new round just started -- add it to $scope.selectedRounds.
+    // If redscore.length is greater than the current number of rounds, then
+    //  that means a new round just started -- add it to $scope.selectedRounds.
     if (stats.redscore.length > $scope.numRounds) {
       $scope.selectedRounds.push(stats.redscore.length-1);
     }
@@ -144,9 +147,16 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
 
     if (reinitializeSelectedRounds) { $scope.initializeSelectedRoundsArray(); }
 
-    var redScore = $scope.redScore = stats.redscore.reduce(function(a,b) { return a + b; },0);
-    var bluScore = $scope.bluScore = stats.bluscore.reduce(function(a,b) { return a + b; },0);
-    $scope.scoreComparison = redScore > bluScore ? '>' : redScore < bluScore ? '<' : '==';
+    var redScore = $scope.redScore =
+                   stats.redscore.reduce(function(a,b) { return a + b; },0);
+    var bluScore = $scope.bluScore =
+                   stats.bluscore.reduce(function(a,b) { return a + b; },0);
+    // Score Comparison
+    $scope.scoreComparison = redScore > bluScore ?
+                             '>' :
+                             redScore < bluScore ?
+                             '<' :
+                             '==';
 
     // Total playable time
     var playableTime = $scope.playableTime = sumArray(stats.roundduration);
@@ -174,8 +184,12 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
     });
 
     // Assemble score overview table rows
-    var redRoundScores = stats.redscore.concat(redScore,totalDamage[2],totalFrags[2],totalMidfightsWon[2]);
-    var bluRoundScores = stats.bluscore.concat(bluScore,totalDamage[3],totalFrags[3],totalMidfightsWon[3]);
+    var redRoundScores = stats.redscore.concat(redScore,totalDamage[2]
+                                             , totalFrags[2]
+                                             , totalMidfightsWon[2]);
+    var bluRoundScores = stats.bluscore.concat(bluScore,totalDamage[3]
+                                             , totalFrags[3]
+                                             , totalMidfightsWon[3]);
     $scope.redtr = '<td class="red">' + escapeHtml(stats.redname) +
                    '</td><td>' + redRoundScores.join('</td><td>') + '</td>';
     $scope.blutr = '<td class="blu">' + escapeHtml(stats.bluname) +
@@ -198,7 +212,8 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
   $scope.clickRoundHeader = function(round) {
     if ($scope.selectedRounds.length === 0) {
       $scope.selectedRounds.push(round);
-    } else if ($scope.selectedRounds.length === 1 && $scope.selectedRounds[0] === round && !$scope.ctrl) {
+    } else if ($scope.selectedRounds.length === 1 &&
+               $scope.selectedRounds[0] === round && !$scope.ctrl) {
       $scope.initializeSelectedRoundsArray();
     } else if ($scope.ctrl) {
       if ($scope.selectedRounds.indexOf(round) > -1) {

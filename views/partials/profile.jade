@@ -4,10 +4,11 @@ h2 My Profile
     .panel.center
       img(ng-src='{{player.avatar.slice(0, -4) + "_full.jpg"}}')
       br
-      span.align-left(
-        style='margin:0 auto;display:inline-block;line-height:1.5') {{player._id}}
+      span.align-left(style='margin:0 auto;display:inline-block;line-height:1.5')
+        | {{player._id}}
         br
-        a(href='http://steamcommunity.com/profiles/{{player.numericid}}') Steam Profile
+        a(href='http://steamcommunity.com/profiles/{{player.numericid}}')
+          | Steam Profile
   .seven.columns
     h3 My API Key
     p {{player.apikey}}

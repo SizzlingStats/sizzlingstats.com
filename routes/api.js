@@ -1,18 +1,10 @@
-/*
+/**
  * Serve JSON to our AngularJS client
  */
 
-// var crypto = require('crypto');
-// var util = require('util');
-// var async = require('async');
-// var cfg = require('../cfg/cfg');
 var uuid = require('node-uuid');
 var Stats = require('../models/stats');
-// var Counter = require('../models/counter');
-// var Session = require('../models/session');
 var Player = require('../models/player');
-// var statsEmitter = require('../emitters').statsEmitter;
-
 
 module.exports = function(app) {
   // JSON API
@@ -63,15 +55,17 @@ var statsShow = function(req, res) {
 
       // Transform stats with playerData
       var statsObj = stats.toObject({ transform: true, playerData: playerData });
-      
+
       // Determine if the requester has ownership privileges on this document
-      if (req.user && (stats.owner.numericid === req.user.numericid || req.user.privileges > 10) ) {
+      if (req.user &&
+          (stats.owner.numericid === req.user.numericid ||
+              req.user.privileges > 10) ) {
         statsObj.iHaveOwnership = true;
       }
 
       res.json({ stats: statsObj });
     });
-    
+
 
   });
 };
@@ -121,7 +115,8 @@ var playerMatches = function(req, res) {
   var skip = parseInt(req.query['skip'], 10);
 
   if (skip < 0) {
-    Stats.findMatchesBySteamIdRanged(steamid, {$gt: current}, 1, -skip-10, 10, function(err, matches) {
+    Stats.findMatchesBySteamIdRanged(steamid, {$gt: current}, 1, -skip-10, 10
+                                   , function(err, matches) {
       if (err) {
         console.log(err);
         console.trace(err);
@@ -131,7 +126,8 @@ var playerMatches = function(req, res) {
       res.json({ matches: matches.reverse() });
     });
   } else {
-    Stats.findMatchesBySteamIdRanged(steamid, {$lt: current}, -1, skip-1, 10, function(err, matches) {
+    Stats.findMatchesBySteamIdRanged(steamid, {$lt: current}, -1, skip-1, 10
+                                   , function(err, matches) {
       if (err) {
         console.log(err);
         console.trace(err);
@@ -205,7 +201,7 @@ var statsDestroy = function(req, res) {
     if (stats.owner.numericid !== req.user.numericid && req.user.privileges <= 10) {
       return res.send(401);
     }
-    
+
     stats.remove(function(err) {
       if (err) {return res.send(500); }
       res.send(200);

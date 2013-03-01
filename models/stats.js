@@ -117,30 +117,31 @@ statsSchema.post('remove', function(stats) {
   statsEmitter.emit('removeStats', stats._id);
 });
 
-statsSchema.statics.createStats = function(statsData) {
+statsSchema.statics.createStats = function(stats) {
   var callback = arguments[arguments.length-1];
 
-  // statsData is the the POST body data (req.body.stats), so massage it
-  for (var i=statsData.players.length-1; i>=0; i--) {
+  // 'stats' is the the POST body data (req.body.stats), so massage it
+  for (var i=stats.players.length-1; i>=0; i--) {
     // Remove spectators from players array
-    if (statsData.players[i].team < 2) {
-      statsData.players.splice(i,1);
+    if (stats.players[i].team < 2) {
+      stats.players.splice(i,1);
     } else {
       // Remap playerclass data
-      statsData.players[i].mostplayedclass = remapMostPlayedClass(statsData.players[i].mostplayedclass);
+      stats.players[i].mostplayedclass = remapMostPlayedClass(
+                                            stats.players[i].mostplayedclass );
     }
   }
 
   // Set initial values for a new stats document
-  statsData.round = 0;
-  statsData.redscore = 0;
-  statsData.bluscore = 0;
-  statsData.teamfirstcap = 0;
-  statsData.roundduration = 0;
-  statsData.isLive = true;
-  statsData.created = statsData.updated = new Date();
-  statsData.viewCount = 0;
-  new Stats(statsData).save(callback);
+  stats.round = 0;
+  stats.redscore = 0;
+  stats.bluscore = 0;
+  stats.teamfirstcap = 0;
+  stats.roundduration = 0;
+  stats.isLive = true;
+  stats.created = stats.updated = new Date();
+  stats.viewCount = 0;
+  new Stats(stats).save(callback);
 };
 
 statsSchema.statics.appendStats = function(newStats, matchId, isEndOfRound, cb) {
@@ -174,13 +175,14 @@ statsSchema.statics.appendStats = function(newStats, matchId, isEndOfRound, cb) 
 
         if (oldPlayer.steamid === player.steamid) {
           isNewPlayer = false;
-          
+
           for (var field in player) {
             if (field === "mostplayedclass" || field === "playedclasses") {
               if (oldPlayer[field]) {
                 oldPlayer[field][round] = player[field];
               }
-            } else if (field !== "steamid" && field !== "team" && field !== "name") {
+            } else if (field !== "steamid" && field !== "team" &&
+                                              field !== "name") {
               if (oldPlayer[field]) {
                 if (oldPlayer[field][round]) {
                   oldPlayer[field][round] += player[field];
@@ -198,7 +200,7 @@ statsSchema.statics.appendStats = function(newStats, matchId, isEndOfRound, cb) 
       // If a matching oldPlayer can't be found, then
       //  add newPlayer to the players array
       if (isNewPlayer) {
-        
+
         var newPlayer = {
           steamid: player.steamid
         , team: player.team
@@ -234,7 +236,7 @@ statsSchema.statics.appendStats = function(newStats, matchId, isEndOfRound, cb) 
     if (isEndOfRound) { stats.round += 1; }
 
     stats.updated = new Date();
-    
+
     // Use Save instead of Update in order to run the
     //  pre 'save' middleware.
     stats.save(cb);
@@ -330,7 +332,7 @@ statsSchema.statics.findMatchesBySteamId = function(steamId, skip, limit, cb) {
   .select('hostname redname bluname redCountry bluCountry created')
   .exec(function(err, matches) {
     if (err) { return cb(err); }
-    
+
     query.count(function(err, count) {
       return cb(err, matches, count);
     });
@@ -338,7 +340,8 @@ statsSchema.statics.findMatchesBySteamId = function(steamId, skip, limit, cb) {
   });
 };
 
-statsSchema.statics.findMatchesBySteamIdRanged = function(steamId, comparator, sort, skip, limit, cb) {
+statsSchema.statics.findMatchesBySteamIdRanged = function(steamId, comparator
+                                                        , sort, skip, limit, cb) {
   // Stats.find( { '_id': {$lt: current} } )
   // Stats.find({ 'players.steamid': steamId })
   Stats.find({ 'players.steamid': steamId, _id: comparator })
@@ -354,7 +357,8 @@ var appendChats = function(newChats, oldChats) {
   // Strip the beginning/end quotations from new chat messages
   if (Array.isArray(newChats)) {
     newChats.forEach(function(chat) {
-      if (chat.message && chat.message[0] === '"' && chat.message[chat.message.length-1] === '"') {
+      if (chat.message && chat.message[0] === '"' &&
+          chat.message[chat.message.length-1] === '"') {
         chat.message = chat.message.slice(1,-1);
       } else {
         chat.isBind = true;

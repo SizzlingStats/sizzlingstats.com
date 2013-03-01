@@ -6,11 +6,14 @@ var mongoose = require('mongoose')
   , steamapi = process.env.STEAM_API || secrets.steamapi;
 
 var playerSchema = new mongoose.Schema({
-  _id: { type: String, required: true } // steamid
-, numericid: { type: String, required: true, index: { unique: true } } // numeric 64-bit steamid
+// steamid
+  _id: { type: String, required: true }
+// numeric 64-bit steamid
+, numericid: { type: String, required: true, index: { unique: true } }
 , name: String
 , avatar: { type: String }
-, country: { type: String } // Some players don't have this
+// Some players don't have country set
+, country: { type: String }
 , apikey: { type: String }
 // privilege greater than 10 is admin I guess
 , privileges: { type: Number, default: 1 }
@@ -51,7 +54,6 @@ var steamIdToNumericId = function(steamid) {
   var parts = steamid.split(":");
   var iServer = Number(parts[1]);
   var iAuthID = Number(parts[2]);
-  
   var converted = "76561197960265728";
 
   lastIndex = converted.length - 1;
@@ -67,9 +69,10 @@ var steamIdToNumericId = function(steamid) {
     do {
       var num2 = Number(converted.charAt(j));
       var sum = num + num2;
-              
-      converted = converted.substr(0,j) + (sum % 10).toString() + converted.substr(j+1);
-  
+
+      converted = converted.substr(0,j) + (sum % 10).toString() +
+                                          converted.substr(j+1);
+
       num = Math.floor(sum / 10);
       j--;
     }
@@ -81,28 +84,29 @@ var steamIdToNumericId = function(steamid) {
 playerSchema.statics.numericIdToSteamId = function(profile) {
   var base = "7960265728";
   var profile = profile.substr(7);
-  
+
   var subtract = 0;
   var lastIndex = base.length - 1;
-  
+
   for(var i=0;i<base.length;i++) {
     var value = profile.charAt(lastIndex - i) - base.charAt(lastIndex - i);
-    
+
     if(value < 0) {
       var index = lastIndex - i - 1;
-      
-      base = base.substr(0,index) + (Number(base.charAt(index)) + 1) + base.substr(index+1);
-      
+
+      base = base.substr(0,index) + (Number(base.charAt(index)) + 1) +
+                                    base.substr(index+1);
+
       if(index) {
         value += 10;
       } else {
         break;
       }
     }
-    
+
     subtract += value * Math.pow(10,i);
   }
-  
+
   return "STEAM_0:" + (subtract%2) + ":" + Math.floor(subtract/2);
 };
 
@@ -134,9 +138,10 @@ playerSchema.statics.getSteamApiInfo = function(numericIds, callback) {
   }); // End request
 };
 
-// Lookup the players in database, which were last updated less than one hour
+// Lookup the players in database, which were last updated less than n hours
 //  ago. For the players that aren't found in database, poll the steam API.
-playerSchema.statics.findOrUpsertPlayerInfoBySteamIds = function(steamids, callback) {
+playerSchema.statics.findOrUpsertPlayerInfoBySteamIds = function(steamids
+                                                               , callback) {
   var steamIdRegex = /STEAM_0\:(0|1)\:\d{1,15}$/;
 
   var playerData = {};
@@ -144,80 +149,81 @@ playerSchema.statics.findOrUpsertPlayerInfoBySteamIds = function(steamids, callb
   var currentDate = new Date();
   var cacheThreshold = new Date(currentDate.getTime() - cfg.player_metadata_cache_length);
 
-  Player.find( { _id: { $in : steamids }, updated: { $gt : cacheThreshold } } ).exec(function(err, players) {
-    if (err) { return callback(err); }
+  Player
+    .find( { _id: { $in : steamids }, updated: { $gt : cacheThreshold } } )
+    .exec(function(err, players) {
+      if (err) { return callback(err); }
 
-    var slen = steamids.length;
-    var plen = players.length;
+      var slen = steamids.length;
+      var plen = players.length;
 
-    for (var i=0; i<plen; i++) {
-      playerData[players[i]._id] = {
-        avatar: players[i].avatar
-      , numericid: players[i].numericid
-      , country: players[i].country
-      };
-    }
-    // Exit early if we don't need to hit the Steam API
-    if (plen === slen) {
-      return callback(null, playerData);
-    }
-
-    // For the players who we didn't get cached data for,
-    //  convert their steamids to 64-bit and then hit the Steam API.
-    var playersNotFound = [];
-    for (var j=0; j<slen; j++) {
-      if ( !playerData[ steamids[j] ] && steamIdRegex.test( steamids[j] ) ) {
-        playersNotFound.push(steamIdToNumericId( steamids[j] ));
+      for (var i=0; i<plen; i++) {
+        playerData[players[i]._id] = {
+          avatar: players[i].avatar
+        , numericid: players[i].numericid
+        , country: players[i].country
+        };
       }
-    }
-
-    // If there aren't any players left to get fresh Steam API info for,
-    //  i.e. they all failed the regex test, then return.
-    if (playersNotFound.length === 0) {
-      return callback(null, playerData);
-    }
-
-    Player.getSteamApiInfo(playersNotFound, function(err, players) {
-      if (err) {
-        return callback(err);
+      // Exit early if we don't need to hit the Steam API
+      if (plen === slen) {
+        return callback(null, playerData);
       }
 
-      // Update all the players in DB, using new Steam API info.
-      async.forEach(players, function(player, aCallback) {
-        var steamid = Player.numericIdToSteamId(player.steamid);
-        var newPlayer = {
-          numericid: player.steamid
-        , name: player.personaname
-        , avatar: player.avatar
-        , updated: currentDate
-        };
+      // For the players who we didn't get cached data for,
+      //  convert their steamids to 64-bit and then hit the Steam API.
+      var playersNotFound = [];
+      for (var j=0; j<slen; j++) {
+        if ( !playerData[ steamids[j] ] && steamIdRegex.test( steamids[j] ) ) {
+          playersNotFound.push(steamIdToNumericId( steamids[j] ));
+        }
+      }
 
-        playerData[steamid] = {
-          avatar: player.avatar
-        , numericid: player.numericid
-        };
+      // If there aren't any players left to get fresh Steam API info for,
+      //  i.e. they all failed the regex test, then return.
+      if (playersNotFound.length === 0) {
+        return callback(null, playerData);
+      }
 
-        if (player.loccountrycode) {
-          newPlayer.country = player.loccountrycode;
-          playerData[steamid] = player.loccountrycode;
+      Player.getSteamApiInfo(playersNotFound, function(err, players) {
+        if (err) {
+          return callback(err);
         }
 
-        Player.update({ _id: steamid }, newPlayer, { upsert: true }, function(err) {
-          if (err) { aCallback(err); }
-          else { aCallback(); }
+        // Update all the players in DB, using new Steam API info.
+        async.forEach(players, function(player, aCallback) {
+          var steamid = Player.numericIdToSteamId(player.steamid);
+          var newPlayer = {
+            numericid: player.steamid
+          , name: player.personaname
+          , avatar: player.avatar
+          , updated: currentDate
+          };
+
+          playerData[steamid] = {
+            avatar: player.avatar
+          , numericid: player.numericid
+          };
+
+          if (player.loccountrycode) {
+            newPlayer.country = player.loccountrycode;
+            playerData[steamid] = player.loccountrycode;
+          }
+
+          Player.update({ _id: steamid }, newPlayer, { upsert: true }, function(err) {
+            if (err) { aCallback(err); }
+            else { aCallback(); }
+          });
+        },
+        // Callback for when all the players are iterated over
+        function(error) {
+          if (error) { return callback(error); }
+          // Return a hash of the player data
+          return callback(null, playerData);
         });
-      },
-      // Callback for when all the players are iterated over
-      function(error) {
-        if (error) { return callback(error); }
-        // Return a hash of the player data
-        return callback(null, playerData);
-      });
 
-    }); // End Player.getSteamApiInfo
+      }); // End Player.getSteamApiInfo
 
-  }); // End Player.find
-
+  });
 };
 
 

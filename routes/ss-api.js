@@ -5,7 +5,6 @@ var crypto = require('crypto');
 var util = require('util');
 var async = require('async');
 var cfg = require('../cfg/cfg');
-// var STATS_SECRET = process.env.STATS_SECRET || require('../cfg/secrets').stats_secret;
 var Stats = require('../models/stats');
 var Counter = require('../models/counter');
 var Session = require('../models/session');
@@ -38,7 +37,7 @@ var ssCreateStats = function(req, res) {
   if (!req.body.stats || !req.body.stats.players || !req.body.stats.players.length) {
     return res.end('false\n');
   }
-  
+
   // 3. Generate sessionid.
   var sessionId
     , date = Date.now()
@@ -67,11 +66,14 @@ var ssCreateStats = function(req, res) {
       }
       // Get matchId (matchCounter.next)
     , function(callback) {
-        Counter.findOneAndUpdate({ "counter" : "matches" }, { $inc: {next:1} }, callback);
+        Counter.findOneAndUpdate({ "counter" : "matches" }, { $inc: {next:1} }
+                                                          , callback);
       }
       // Create new session document
     , function(matchCounter, callback) {
-        if (!matchCounter) { return callback(new Error('createStats() -- No matchCounter')); }
+        if (!matchCounter) {
+          return callback(new Error('createStats() -- No matchCounter'));
+        }
         req.body.stats._id = matchCounter.next;
         new Session({
           _id: sessionId
@@ -116,7 +118,9 @@ var ssUpdateStats = function(req, res) {
   var ip = req.header('x-forwarded-for') || req.connection.remoteAddress;
 
   // Validate sessionid and update the timeout
-  Session.findByIdAndUpdate(sessionId, {$set:{timeout: Date.now()+cfg.stats_session_timeout}}, function(err, session) {
+  Session.findByIdAndUpdate(sessionId
+                          , { timeout: Date.now()+cfg.stats_session_timeout }
+                          , function(err, session) {
     if (err) {
       console.log(err);
       console.trace(err);
@@ -134,7 +138,7 @@ var ssUpdateStats = function(req, res) {
       }
       res.end('true\n');
     });
-    
+
   }); // end Session.findById()
 };
 
@@ -149,7 +153,7 @@ var ssGameOver = function(req, res) {
 
   var newChats = [];
   if (req.body.chats) { newChats = req.body.chats; }
-  
+
   var sessionId = req.headers.sessionid;
   var matchDuration = parseInt(req.headers.matchduration, 10);
   var ip = req.header('x-forwarded-for') || req.connection.remoteAddress;
@@ -183,6 +187,6 @@ var ssGameOver = function(req, res) {
         res.end('true\n');
       });
     });
-    
+
   }); // end Session.findById()
 };

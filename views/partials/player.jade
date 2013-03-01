@@ -2,9 +2,11 @@
   h2 {{player.name}}
   .panel.center
     img(ng-src='{{player.avatar.slice(0, -4) + "_full.jpg"}}')
-    span.align-left(style='margin:0 auto;display:inline-block;line-height:1.5') {{player._id}}
+    span.align-left(style='margin:0 auto;display:inline-block;line-height:1.5') 
+      | {{player._id}}
       br
-      a(href='http://steamcommunity.com/profiles/{{player.numericid}}') Steam Profile
+      a(href='http://steamcommunity.com/profiles/{{player.numericid}}')
+        | Steam Profile
       br
       | Country: {{player.country}}
       br
@@ -16,9 +18,11 @@
       a(href='/stats/{{match._id}}')
         | {{match.hostname}}
         br
-        img.flag.size-16(ng-show="match.redCountry", ng-src="/img/flags/16/{{match.redCountry}}.png")
+        img.flag.size-16(ng-show="match.redCountry"
+                       , ng-src="/img/flags/16/{{match.redCountry}}.png")
         | {{match.redname}} vs 
-        img.flag.size-16(ng-show="match.bluCountry", ng-src="/img/flags/16/{{match.bluCountry}}.png")
+        img.flag.size-16(ng-show="match.bluCountry"
+                       , ng-src="/img/flags/16/{{match.bluCountry}}.png")
         | {{match.bluname}}
         br
         | {{match.created | date:'M/d/yy h:mma' | lowercase}}
@@ -26,7 +30,8 @@
     ul.pagination
       li.arrow(ng-class="{'unavailable': pageNumCurrent==1}")
         a(href="javascript:", ng-click='clickPageLeft()') &laquo;
-      li(ng-cloak, ng-repeat='page in pages', ng-class="{'current': page.isCurrent()}")
+      li(ng-cloak, ng-repeat='page in pages'
+                 , ng-class="{'current': page.isCurrent()}")
         a(href="javascript:", ng-click='clickPageNumber($index)') {{page.num}}
       //- li.unavailable: a(href="javascript:") &hellip;
       li.arrow(ng-class="{'unavailable': pageNumCurrent==pageNumLast}")

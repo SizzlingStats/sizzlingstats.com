@@ -4,8 +4,8 @@ html(lang="en", ng-app="myApp")
     meta(charset='utf8')
     base(href='/')
     title Sizzling Stats
-    //- link( rel='stylesheet', href='//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap.min.css' )
-    link( rel='stylesheet', href='/css/all-'+(assetManager.cacheHashes.css || '0')+'.css' )
+    link( rel='stylesheet'
+        , href='/css/all-'+(assetManager.cacheHashes.css || '0')+'.css' )
   body.off-canvas(ng-controller='MainCtrl')
     block body
     - if (process.env.NODE_ENV === 'production')

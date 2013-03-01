@@ -1,7 +1,8 @@
 var cfg = {
   hostname: (process.env.HOSTNAME || 'http://sizzlingstats.com')
 , port: parseInt(process.env.PORT, 10) || 8001
-, mongo_url: process.env.MONGO_URL || process.env.MONGOHQ_URL || 'mongodb://localhost/sizzlingstats'
+, mongo_url: process.env.MONGO_URL || process.env.MONGOHQ_URL ||
+                                      'mongodb://localhost/sizzlingstats'
   // Redis Info
 , redis_host: process.env.REDIS_HOST || '127.0.0.1'
 , redis_port: parseInt(process.env.REDIS_PORT, 10) || 6379

@@ -9,8 +9,8 @@ function MainCtrl($scope, $rootScope, $route, $location, me) {
 
   $rootScope.loading = false;
   $scope.showSideBar = true;
-  $rootScope.$on('$routeChangeError', function(event, current, previous, rejection) {
-    if (!previous) {
+  $rootScope.$on('$routeChangeError', function(event, curr, prev, rejection) {
+    if (!prev) {
       $location.path('/');
     } else {
       window.history.back();
@@ -53,7 +53,7 @@ function SideBarCtrl($scope, $http, $route, socket) {
     .success(function(data, status, headers, config) {
       $scope.matches = data.matches;
     });
-  
+
   $scope.isActive = function() {
     return this.match._id === parseInt($route.current.params.id,10);
   };

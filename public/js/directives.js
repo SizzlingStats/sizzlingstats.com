@@ -20,7 +20,8 @@ angular.module('myApp.directives', [])
         $scope.sortBy = function(col) {
           // If previously sorting by name (column 0), and clicking a different
           //  column, then set reverse to true.
-          if (col === $scope.sort.col || ($scope.sort.col === 0 && !$scope.sort.reverse) ) {
+          if (col === $scope.sort.col ||
+              ($scope.sort.col === 0 && !$scope.sort.reverse) ) {
             $scope.sort.reverse = !$scope.sort.reverse;
           }
             $scope.sort.col = col;
@@ -32,7 +33,8 @@ angular.module('myApp.directives', [])
           return '';
         };
         $scope.sortPredicate = function() {
-          return ($scope.sort.reverse ? '-' : '+') + $scope.data()[$scope.sort.col][2];
+          return ($scope.sort.reverse ? '-' : '+') +
+                 $scope.data()[$scope.sort.col][2];
         };
         $scope.classFilter = function(classId) {
           return function(player) {
@@ -54,7 +56,7 @@ angular.module('myApp.directives', [])
         var data = scope.data(), criteria = scope.criteria(), showClassIcons;
         if (data[1][0] === 'C') { showClassIcons = true; }
         var $table = angular.element('<table class="stats-table">');
-        
+
         // Table Header
         var $thead = angular.element('<thead>');
 
@@ -103,7 +105,8 @@ angular.module('myApp.directives', [])
                   scope.player.team + '-avatar" src="' +
                   (scope.player.avatar || '') + '" /><span><a href="/player/' +
                   (scope.player.numericid || '') + '">' +
-                  scope.$parent.$parent.escapeHtml(scope.player.name) + '</a></span></td>';
+                  scope.$parent.$parent.escapeHtml(scope.player.name) +
+                  '</a></span></td>';
         var i = 1;
         if (showClassIcons) {
           i = 2;

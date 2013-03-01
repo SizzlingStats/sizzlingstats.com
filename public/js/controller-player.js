@@ -9,7 +9,6 @@ function PlayerCtrl($scope, $rootScope, $location, $http, socket, resolvedData) 
 
   $scope.player = resolvedData.player;
   $scope.matches = resolvedData.matches;
-  
   $scope.count = resolvedData.count;
   $scope.pageNumCurrent = 1;
   $scope.pageNumLast = Math.floor( $scope.count / PAGE_SIZE + 1);
@@ -39,18 +38,21 @@ function PlayerCtrl($scope, $rootScope, $location, $http, socket, resolvedData) 
       // $scope.pages.push(new Page('&hellip;'));
       $scope.pages.push(new Page('…'));
       $scope.pages.push(new Page($scope.pageNumLast));
-    } else if ($scope.pageNumLast - $scope.pageNumCurrent + 1 + NUM_ADJACENT_PAGES <= MAX_NUM_PAGES - 2) {
+    } else if ($scope.pageNumLast - $scope.pageNumCurrent +
+                   1 + NUM_ADJACENT_PAGES <= MAX_NUM_PAGES - 2) {
       // Close to end; only hide earlier pages
       $scope.pages.push(new Page(1));
       $scope.pages.push(new Page('…'));
-      for (var i=$scope.pageNumLast - (MAX_NUM_PAGES - NUM_ADJACENT_PAGES*2 + 1); i<=$scope.pageNumLast; i++) {
+      for (var i=$scope.pageNumLast - (MAX_NUM_PAGES - NUM_ADJACENT_PAGES*2 + 1);
+               i<=$scope.pageNumLast; i++) {
         $scope.pages.push(new Page(i));
       }
     } else {
       // In the middle; hide earlier and later pages
       $scope.pages.push(new Page(1));
       $scope.pages.push(new Page('…'));
-      for (var i=$scope.pageNumCurrent-NUM_ADJACENT_PAGES; i<=$scope.pageNumCurrent+NUM_ADJACENT_PAGES; i++) {
+      for (var i=$scope.pageNumCurrent-NUM_ADJACENT_PAGES;
+               i<=$scope.pageNumCurrent+NUM_ADJACENT_PAGES; i++) {
         $scope.pages.push(new Page(i));
       }
       $scope.pages.push(new Page('…'));
@@ -63,7 +65,8 @@ function PlayerCtrl($scope, $rootScope, $location, $http, socket, resolvedData) 
     if (this.page.isCurrent()) { return; }
     if (this.page.num === '…') {
       // BINARY SEARCH WOOOOO
-      goToPage(Math.floor( ( $scope.pages[index+1].num + $scope.pages[index-1].num ) / 2 ));
+      goToPage(Math.floor(
+                  ($scope.pages[index+1].num + $scope.pages[index-1].num) / 2) );
     } else {
       goToPage(this.page.num);
     }
@@ -78,7 +81,8 @@ function PlayerCtrl($scope, $rootScope, $location, $http, socket, resolvedData) 
   var goToPage = function(pageNum) {
     if (pageNum < 1 || pageNum > $scope.pageNumLast) { return false; }
     $http.get('/api/player/' + $scope.player._id + '/matches?currentmatch=' +
-              $scope.matches[0]._id + '&skip=' + (pageNum - $scope.pageNumCurrent) * PAGE_SIZE )
+              $scope.matches[0]._id + '&skip=' +
+              (pageNum - $scope.pageNumCurrent) * PAGE_SIZE )
     .success(function(data, status, headers, config) {
         $scope.matches = data.matches;
         $scope.pageNumCurrent = pageNum;

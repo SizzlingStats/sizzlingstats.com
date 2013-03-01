@@ -21,7 +21,8 @@ var app = module.exports = express.createServer();
  * Everyauth Configuration
  */
 
-everyauth.everymodule.moduleTimeout(8000); // Wait 8 seconds per step before timing out (default 10)
+// Wait 8 seconds per step before timing out (default 10)
+everyauth.everymodule.moduleTimeout(8000);
 everyauth.everymodule.findUserById( function (req, userId, callback) {
   Player.findById(userId, callback);
   // callback has the signature, function (err, user) {...}
@@ -120,7 +121,8 @@ app.configure('development', function() {
 
 app.configure(function() {
   app.use(express.limit('200kb'));
-  app.use(express.favicon(__dirname + '/public/img/favicon.png', { maxAge: 48 * 60 * 60 * 1000 } ));
+  app.use(express.favicon(__dirname + '/public/img/favicon.png'
+                        , { maxAge: 48 * 60 * 60 * 1000 } ));
 
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
@@ -238,7 +240,7 @@ app.configure('development', function() {
 });
 
 app.configure('production', function() {
-  app.use(express.static(__dirname + '/public', { maxAge: 24 * 60 * 60 * 1000 }));
+  app.use(express.static(__dirname + '/public', {maxAge: 24 * 60 * 60 * 1000}));
 });
 
 app.configure(function() {
@@ -274,5 +276,6 @@ var socket = require('./routes/socket')(app);
 // Start server
 
 app.listen(cfg.port, function() {
-  console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
+  console.log("Express server listening on port %d in %s mode"
+            , app.address().port, app.settings.env);
 });
