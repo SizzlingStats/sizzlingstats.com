@@ -11,6 +11,10 @@ var playerSchema = new mongoose.Schema({
 // numeric 64-bit steamid
 , numericid: { type: String, required: true, index: { unique: true } }
 , name: String
+, previousNames: [{
+    _id: String
+  , frequency: Number
+  }]
 , avatar: { type: String }
 // Some players don't have country set
 , country: { type: String }
@@ -44,6 +48,20 @@ playerSchema.options.toJSON = {
     }
   }
 };
+
+playerSchema.pre('save', function(next) {
+  var player = this;
+  // Update the frequency of whatever name this guy has & move to front of array
+  var foundName = player.previousNames.id(player.name);
+  if (foundName) {
+    foundName = foundName.remove();
+    foundName.frequency++;
+  } else {
+    foundName = { _id: player.name, frequency: 1 };
+  }
+  player.previousNames.unshift(foundName);
+  next();
+});
 
 // playerSchema.pre('validate', function(next) {
 //   console.log(this);
@@ -209,9 +227,12 @@ playerSchema.statics.findOrUpsertPlayerInfoBySteamIds = function(steamids
             playerData[steamid] = player.loccountrycode;
           }
 
-          Player.update({ _id: steamid }, newPlayer, { upsert: true }, function(err) {
-            if (err) { aCallback(err); }
-            else { aCallback(); }
+          Player.findByIdAndUpdate(steamid, newPlayer, { upsert: true }
+                                                     , function(err, player) {
+            if (err) { return aCallback(err); }
+            // Call .save() to hit the middleware -- can be done async.
+            player.save();
+            aCallback();
           });
         },
         // Callback for when all the players are iterated over
