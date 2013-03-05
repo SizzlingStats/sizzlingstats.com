@@ -222,7 +222,7 @@ playerSchema.statics.findOrUpsertPlayerInfoBySteamIds = function(steamids
         }
 
         // Update all the players in DB, using new Steam API info.
-        async.forEach(players, function(player, aCallback) {
+        async.each(players, function(player, aCallback) {
           var steamid = Player.numericIdToSteamId(player.steamid);
           var newPlayer = {
             numericid: player.steamid

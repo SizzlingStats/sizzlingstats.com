@@ -1,19 +1,30 @@
-// var request = require('request');
-var Player = require('../../models/player');
+var mongoose = require('mongoose')
+  , async = require('async')
+  , cfg = require('../../cfg/cfg')
+  , Player = require('../../models/player');
+mongoose.connect(cfg.mongo_url);
 
 // This is a really lazy way to do it, using the pre-save middleware!
 
 Player.find({}, function(err, players) {
-  var cb = function(err) {
+  if (err) {
+    console.log(err);
+    console.trace(err);
+    return false;
+  }
+
+  var savePlayer = function(player, callback) {
+    player.save(callback);
+  };
+
+  async.each(players, savePlayer, function(err) {
+    mongoose.disconnect();
+
     if (err) {
       console.log(err);
       console.trace(err);
       return false;
     }
-    return true;
-  };
-  if ( !cb(err) ) { return false; }
-  for (var i=0, len=players.length; i<len; i++) {
-    player.save(cb);
-  }
+    console.log('Done.');
+  });
 });

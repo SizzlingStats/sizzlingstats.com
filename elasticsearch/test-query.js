@@ -20,7 +20,7 @@ request(options, function(err, res, body) {
   if (err) {
     return console.log(err);
   }
-  if (body.hits.hits.length) {
+  if (body.hits && body.hits.hits.length) {
     for (var i=0; i<body.hits.hits.length; i++) {
       console.log(body.hits.hits[i]._source.previousNames);
     }

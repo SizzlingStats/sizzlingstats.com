@@ -6,7 +6,7 @@
     "node": "0.8.x"
   }
 , "dependencies": {
-    "async": "0.1.x"
+    "async": "0.2.x"
   , "colors": "*"
   , "connect-assetmanager": "*"
   , "connect-redis": "1.4.x"
