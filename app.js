@@ -4,6 +4,9 @@
  */
 
 var express = require('express')
+  , app = module.exports = express()
+  , http = require('http')
+  , server = http.createServer(app)
   , mongoose = require('mongoose')
   , everyauth = require('everyauth')
   , request = require('request')
@@ -13,9 +16,6 @@ var express = require('express')
 require('colors');
 // var db = mongoose.createConnection('localhost', 'sizzlingstats');
 mongoose.connect(cfg.mongo_url);
-
-var app = module.exports = express.createServer();
-
 
 
 /**
@@ -30,7 +30,10 @@ everyauth.everymodule.findUserById( function (req, userId, callback) {
 });
 everyauth.everymodule.handleLogout( function (req, res) {
   delete req.session.auth; // This is what req.logout() does
-  this.redirect(res, this.logoutRedirectPath());
+  var that = this;
+  req.session.destroy(function() {
+    that.redirect(res, that.logoutRedirectPath());
+  });
 });
 everyauth.steam
   .myHostname( cfg.hostname )
@@ -133,9 +136,7 @@ app.configure(function() {
   app.use(express.bodyParser());
   app.use(express.methodOverride());
 
-  // Trust proxy -- so req.ip gets mapped to X-Forwarded-For
-  // OOPS! This doesn't exist in express 2.x. TODO: Upgrade to express 3
-  // app.enable('trust proxy');
+  app.enable('trust proxy');
 
 
   // Sessions
@@ -152,8 +153,15 @@ app.configure(function() {
 
   app.use(express.cookieParser());
   app.use(express.session({
-    secret: secrets.session
+    proxy: true
   , store: app.store
+  , secret: secrets.session
+  , cookie: {
+      path: '/'
+    , httpOnly: true
+    // , maxAge: null
+    , maxAge: 60*60*24
+    }
   }));
   app.use(everyauth.middleware());
 
@@ -233,7 +241,8 @@ app.configure(function() {
     }
   });
   app.use(assetManager);
-  app.helpers({ assetManager: assetManager });
+  // app.helpers({ assetManager: assetManager });
+  app.locals.assetManager = assetManager;
   app.use(express.staticCache());
 });
 
@@ -261,7 +270,7 @@ app.configure('production', function() {
 require('./routes')(app);
 
 // Hook Socket.io into Express
-app.io = require('socket.io').listen(app);
+app.io = require('socket.io').listen(server);
 app.io.enable('browser client minification');
 app.io.enable('browser client etag');
 app.io.enable('browser client gzip');
@@ -286,7 +295,6 @@ request.get('http://localhost:9200/sizzlingstats/_status', function(err, res, bo
 });
 
 // Start server
-app.listen(cfg.port, function() {
-  console.log("Express server listening on port %d in %s mode"
-            , app.address().port, app.settings.env);
-});
+server.listen(cfg.port);
+console.log("Express server listening on port %d in %s mode"
+            , server.address().port, app.settings.env);

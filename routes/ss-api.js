@@ -26,7 +26,7 @@ var ssCreateStats = function(req, res) {
   // console.log('createStats body:', util.inspect(req.body, false, null, false));
 
   // 1. Check header for api version
-  if (!req.body.stats || req.headers.sizzlingstats !== 'v0.1') {
+  if (!req.body.stats || req.get('sizzlingstats') !== 'v0.1') {
     return res.end('false\n');
   }
 
@@ -41,7 +41,7 @@ var ssCreateStats = function(req, res) {
   // 3. Generate sessionid.
   var sessionId
     , date = Date.now()
-    , ip = req.header('x-forwarded-for') || req.connection.remoteAddress;
+    , ip = req.ip;
   crypto.randomBytes(32, function(ex, buf) {
     sessionId = buf.toString('base64');
   });
@@ -50,9 +50,9 @@ var ssCreateStats = function(req, res) {
   async.waterfall([
       // Check for valid API Key
       function(callback) {
-        if (!req.headers.apikey) { return callback(null); }
-        Player.findOne({apikey: req.headers.apikey}, 'name numericid'
-                                                   , function(err, player) {
+        if (!req.get('apikey')) { return callback(null); }
+        Player.findOne({apikey: req.get('apikey')}, 'name numericid'
+                                                  , function(err, player) {
           if (err) {
             // TODO: do something
           }
@@ -93,8 +93,8 @@ var ssCreateStats = function(req, res) {
         return res.end('false\n');
       }
       // Success! Respond to the gameserver with relevant info
-      res.setHeader('matchurl', cfg.hostname + '/stats/' + stats._id + '?ingame');
-      res.setHeader('sessionid', sessionId);
+      res.set('matchurl', cfg.hostname + '/stats/' + stats._id + '?ingame');
+      res.set('sessionid', sessionId);
       res.end('true\n');
     });
 };
@@ -104,18 +104,18 @@ var ssUpdateStats = function(req, res) {
   // console.log('updateStats headers:', req.headers);
   // console.log('updateStats body:', util.inspect(req.body, false, null, false));
 
-  if (!req.body.stats || req.headers.sizzlingstats !== 'v0.1') {
+  if (!req.body.stats || req.get('sizzlingstats') !== 'v0.1') {
     return res.end('false\n');
   }
 
-  var sessionId = req.headers.sessionid;
+  var sessionId = req.get('sessionid');
   if (!sessionId) {
     return res.end('false\n');
   }
 
-  var isEndOfRound = (req.headers.endofround === 'true');
+  var isEndOfRound = (req.get('endofround') === 'true');
   var matchId;
-  var ip = req.header('x-forwarded-for') || req.connection.remoteAddress;
+  var ip = req.ip;
 
   // Validate sessionid and update the timeout
   Session.findByIdAndUpdate(sessionId
@@ -147,16 +147,16 @@ var ssGameOver = function(req, res) {
   // console.log/('gameOver headers:', req.headers);
   // console.log('gameOver body:', util.inspect(req.body, false, null, true));
 
-  if (!req.headers.matchduration || req.headers.sizzlingstats !== 'v0.1') {
+  if (!req.get('matchduration') || req.get('sizzlingstats') !== 'v0.1') {
     return res.end('false\n');
   }
 
   var newChats = [];
   if (req.body.chats) { newChats = req.body.chats; }
 
-  var sessionId = req.headers.sessionid;
-  var matchDuration = parseInt(req.headers.matchduration, 10);
-  var ip = req.header('x-forwarded-for') || req.connection.remoteAddress;
+  var sessionId = req.get('sessionid');
+  var matchDuration = parseInt(req.get('matchduration'), 10);
+  var ip = req.ip;
 
   // Validate sessionid
   Session.findById(sessionId, function(err, session) {
