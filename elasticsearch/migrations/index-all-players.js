@@ -1,10 +1,11 @@
 var mongoose = require('mongoose')
+  , request = require('request')
   , async = require('async')
   , cfg = require('../../cfg/cfg')
   , Player = require('../../models/player');
 mongoose.connect(cfg.mongo_url);
 
-// This is a really lazy way to do it, using the pre-save middleware!
+// This is not a very good way to do it
 
 Player.find({}, function(err, players) {
   if (err) {
@@ -13,11 +14,24 @@ Player.find({}, function(err, players) {
     return false;
   }
 
-  var savePlayer = function(player, callback) {
-    player.save(callback);
+  var indexPlayer = function(player, callback) {
+    var options = {
+      uri: 'http://localhost:9200/sizzlingstats/player/' + player._id
+    , method: 'PUT'
+    , timeout: 10000 // 10s
+    , json: player
+    };
+    request(options, function(err, res, body) {
+      if (err) { return callback(err); }
+      if (res.statusCode >= 200 && res.statusCode <300) {
+        callback(null);
+      } else {
+        callback(res.statusCode);
+      }
+    });
   };
 
-  async.each(players, savePlayer, function(err) {
+  async.eachLimit(players, 10, indexPlayer, function(err) {
     mongoose.disconnect();
 
     if (err) {

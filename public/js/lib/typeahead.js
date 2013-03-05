@@ -492,10 +492,11 @@
                             value: remoteItem
                         } : remoteItem;
                         utils.each(matchedItems, function(i, localItem) {
-                            if (remoteItem.value === localItem.value) {
-                                isDuplicate = true;
-                                return false;
-                            }
+                            // OVERRIDDEN
+                            // if (remoteItem.value === localItem.value) {
+                            //     isDuplicate = true;
+                            //     return false;
+                            // }
                         });
                         !isDuplicate && matchedItems.push(remoteItem);
                         return matchedItems.length < that.limit;
@@ -786,7 +787,7 @@
                             return parentTemplate.replace("%body",
                                 '<a class="FUCK-CSS" href=/player/' + context.numericid + '>' +
                                     '<img class="left" src="' + context.avatar + '" />' +
-                                    '<span>' + context.names.join(', ') + '</span>' +
+                                    '<span>' + context.names.join('; ') + '</span>' +
                                 '</a>'
                                                                 );
                         }
