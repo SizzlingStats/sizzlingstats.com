@@ -803,6 +803,11 @@
             });
             this.dropdownView.on("select", this._handleSelection).on("cursorOn", this._clearHint).on("cursorOn", this._setInputValueToSuggestionUnderCursor).on("cursorOff", this._setInputValueToQuery).on("cursorOff", this._updateHint).on("suggestionsRender", this._updateHint).on("show", this._updateHint).on("hide", this._clearHint);
             this.inputView.on("focus", this._showDropdown).on("blur", this._hideDropdown).on("blur", this._setInputValueToQuery).on("enter", this._handleSelection).on("queryChange", this._clearHint).on("queryChange", this._clearSuggestions).on("queryChange", this._getSuggestions).on("whitespaceChange", this._updateHint).on("queryChange whitespaceChange", this._showDropdown).on("queryChange whitespaceChange", this._setLanguageDirection).on("esc", this._hideDropdown).on("esc", this._setInputValueToQuery).on("tab up down", this._managePreventDefault).on("up down", this._moveDropdownCursor).on("up down", this._showDropdown).on("tab left right", this._autocomplete);
+            // OVERRIDDEN
+            var that = this;
+            $(window).blur(function(){
+              that.inputView.blur();
+            });
         }
         utils.mixin(TypeaheadView.prototype, EventTarget, {
             _managePreventDefault: function(e) {
