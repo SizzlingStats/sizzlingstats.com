@@ -145,20 +145,4 @@ angular.module('myApp.directives', [])
         };
       }
     };
-  })
-  .directive('typeahead', function() {
-    return {
-      restrict: 'A'
-    , link: function(scope, element, attrs) {
-        $(element).typeahead({
-          name: 'sample'
-        , local: [
-            {
-              value: 'There is nothing here yet.'
-            , tokens: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
-            }
-          ]
-        });
-      }
-    };
   });

@@ -60,6 +60,20 @@ playerSchema.pre('save', function(next) {
     foundName = { _id: player.name, frequency: 1 };
   }
   player.previousNames.unshift(foundName);
+
+  // Ship this off to elasticsearch
+  var options = {
+    uri: 'http://localhost:9200/sizzlingstats/player/' + player._id
+  , method: 'PUT'
+  , timeout: 7000
+  , json: player
+  };
+  request(options, function(err, res, body) {
+    // I don't care.
+    if (err) { console.log(err); }
+    // else { console.log(body); }
+  });
+
   next();
 });
 

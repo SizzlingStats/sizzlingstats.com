@@ -6,6 +6,7 @@
 var express = require('express')
   , mongoose = require('mongoose')
   , everyauth = require('everyauth')
+  , request = require('request')
   , cfg = require('./cfg/cfg')
   , secrets = require('./cfg/secrets')
   , Player = require('./models/player');
@@ -198,6 +199,7 @@ app.configure(function() {
       , 'controller-profile.js'
       // , 'filters.js'
       , 'directives.js'
+      , 'directive-typeahead.js'
       // , '*'
       ]
     },
@@ -273,8 +275,17 @@ app.io.set('transports', [
 ]);
 var socket = require('./routes/socket')(app);
 
-// Start server
+/**
+ * Check status of Elasticsearch server
+ */
+request.get('http://localhost:9200/sizzlingstats/_status', function(err, res, body) {
+  if (err || res.statusCode !== 200) {
+    return console.log('WARNING: Elasticsearch index "sizzlingstats" not found.');
+  }
+  console.log('Elasticsearch index "sizzlingstats" found.');
+});
 
+// Start server
 app.listen(cfg.port, function() {
   console.log("Express server listening on port %d in %s mode"
             , app.address().port, app.settings.env);

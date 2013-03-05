@@ -879,7 +879,9 @@ div.progress.round .meter { -webkit-border-radius: 1000px; -moz-border-radius: 1
 .top-bar ul > li { float: left; /* Dividers between navigation */ /* Put a button in an <li> but give is a class */ /* Put a search bar or text input in the bar */ /* Put login bar in the top bar */ /* Hide the triangle for breakpoint menu */ /* li.has-dropdown */ }
 .top-bar ul > li a:not(.button) { color: white; display: block; font-size: 13px; font-weight: bold; height: 45px; line-height: 45px; padding: 0 15px; }
 .top-bar ul > li:not(.name):hover, .top-bar ul > li:not(.name).active, .top-bar ul > li:not(.name):focus { background: black; }
-.top-bar ul > li:not(.name):hover a, .top-bar ul > li:not(.name).active a, .top-bar ul > li:not(.name):focus a { color: #d9d9d9; }
+/*overridden*/
+/*.top-bar ul > li:not(.name):hover a, .top-bar ul > li:not(.name).active a, .top-bar ul > li:not(.name):focus a { color: #d9d9d9; }*/
+.top-bar ul > li:not(.name, .tt-suggestion):hover a, .top-bar ul > li:not(.name).active a, .top-bar ul > li:not(.name):focus a { color: #d9d9d9; }
 .top-bar ul > li.divider { background: black; -webkit-box-shadow: 1px 0 0 rgba(255, 255, 255, 0.1); -moz-box-shadow: 1px 0 0 rgba(255, 255, 255, 0.1); box-shadow: 1px 0 0 rgba(255, 255, 255, 0.1); height: 100%; margin-right: 1px; width: 1px; }
 .top-bar ul > li.has-button a.button { margin: 0 11.25px; }
 .top-bar ul > li.has-button:hover, .top-bar ul > li.has-button:focus { background: #222222; }

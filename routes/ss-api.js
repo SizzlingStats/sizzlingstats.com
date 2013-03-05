@@ -22,8 +22,8 @@ module.exports = function(app) {
 
 var ssCreateStats = function(req, res) {
   // For debugging
-  console.log('createStats headers:', req.headers);
-  console.log('createStats body:', util.inspect(req.body, false, null, false));
+  // console.log('createStats headers:', req.headers);
+  // console.log('createStats body:', util.inspect(req.body, false, null, false));
 
   // 1. Check header for api version
   if (!req.body.stats || req.headers.sizzlingstats !== 'v0.1') {
@@ -101,8 +101,8 @@ var ssCreateStats = function(req, res) {
 
 var ssUpdateStats = function(req, res) {
   // For debugging
-  console.log('updateStats headers:', req.headers);
-  console.log('updateStats body:', util.inspect(req.body, false, null, false));
+  // console.log('updateStats headers:', req.headers);
+  // console.log('updateStats body:', util.inspect(req.body, false, null, false));
 
   if (!req.body.stats || req.headers.sizzlingstats !== 'v0.1') {
     return res.end('false\n');
@@ -144,8 +144,8 @@ var ssUpdateStats = function(req, res) {
 
 var ssGameOver = function(req, res) {
   // For debugging
-  console.log('gameOver headers:', req.headers);
-  console.log('gameOver body:', util.inspect(req.body, false, null, true));
+  // console.log/('gameOver headers:', req.headers);
+  // console.log('gameOver body:', util.inspect(req.body, false, null, true));
 
   if (!req.headers.matchduration || req.headers.sizzlingstats !== 'v0.1') {
     return res.end('false\n');

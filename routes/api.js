@@ -3,6 +3,7 @@
  */
 
 var uuid = require('node-uuid');
+var request = require('request');
 var Stats = require('../models/stats');
 var Player = require('../models/player');
 
@@ -12,8 +13,9 @@ module.exports = function(app) {
   app.get('/api/matches', matches);
   app.get('/api/player/:id', player);
   app.get('/api/player/:id/matches', playerMatches);
-  app.get('/api/profile', isLoggedIn, profileShow);
+  app.get('/api/playersearch', playerSearch);
 
+  app.get('/api/profile', isLoggedIn, profileShow);
   app.get('/api/generateKey', isLoggedIn, generateKey);
 
   app.put('/api/stats/:id', isLoggedIn, statsUpdate);
@@ -137,6 +139,51 @@ var playerMatches = function(req, res) {
       res.json({ matches: matches });
     });
   }
+};
+
+var playerSearch = function(req, res) {
+  var query = req.query.q;
+
+  var options = {
+    uri: 'http://localhost:9200/sizzlingstats/player/_search'
+  , method: 'GET'
+  , qs: {pretty: 'true'}
+  , json: {
+      query: {
+        match: {
+          'previousNames._id': {
+            query: query
+          }
+        }
+      }
+    }
+  };
+
+  request(options, function(err, resp, body) {
+    if (err) {
+      console.log('playerSearch Error: ', err);
+      return res.json([]);
+    }
+    if (!body.hits) {
+      return res.json([]);
+    }
+    var dataset = [];
+    for (var i=0; i<body.hits.hits.length; i++) {
+
+      dataset.push({
+        value: body.hits.hits[i]._source.name
+      , numericid: body.hits.hits[i]._source.numericid
+      // , tokens: ['some', 'thing']
+      // , name: body.hits.hits[i]._source.name
+      , names: body.hits.hits[i]._source.previousNames.reduce(function(a,b) {
+                                                a.push(b._id); return a; }, [])
+      , avatar: body.hits.hits[i]._source.avatar
+      });
+      // console.log(body.hits.hits[i]._source.previousNames);
+    }
+
+    return res.json(dataset);
+  });
 };
 
 var profileShow = function(req, res) {

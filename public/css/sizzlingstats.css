@@ -70,17 +70,24 @@
      -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
           box-shadow: 0 5px 10px rgba(0,0,0,.2);
 }
-.tt-suggestion {
-  padding: 3px 20px;
-  font-size: 18px !important;
-  line-height: 24px !important;
-}
-.tt-suggestion.tt-is-under-cursor {
-  color: #fff;
+.tt-is-under-cursor {
   background-color: #0097cf;
 }
-.tt-suggestion p {
+.tt-is-under-cursor span {
+  color: #fff;
+}
+.FUCK-CSS {
   margin: 0;
+  padding: 3px 16px !important;
+  color: #222 !important;
+  height: 38px !important;
+  line-height: 32px !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.FUCK-CSS span {
+  margin-left: 8px;
 }
 
 /*Foundation Dropdown Menu Hacks*/

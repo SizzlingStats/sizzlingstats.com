@@ -1,11 +1,12 @@
 /*!
- * Twitter Typeahead 0.8.0
+ * typeahead.js 0.8.1
+ * with justindarc's selection callback
  * https://github.com/twitter/typeahead
  * Copyright 2013 Twitter, Inc. and other contributors; Licensed MIT
  */
 
 (function() {
-    var VERSION = "0.8.0";
+    var VERSION = "0.8.1";
     var utils = {
         isMsie: function() {
             return /msie [\w.]+/i.test(navigator.userAgent);
@@ -19,7 +20,7 @@
         isArray: $.isArray,
         isFunction: $.isFunction,
         isObject: function(obj) {
-            return obj !== Object(obj);
+            return obj === Object(obj);
         },
         isUndefined: function(obj) {
             return typeof obj === "undefined";
@@ -61,14 +62,6 @@
                 }
             });
             return !!result;
-        },
-        keys: function(obj) {
-            if (!utils.isObject(obj)) {
-                throw new TypeError("invalid object");
-            }
-            return $.map(obj, function(val, key) {
-                return key;
-            });
         },
         mixin: $.extend,
         getUniqueId: function() {
@@ -130,6 +123,9 @@
             }
             return a;
         },
+        tokenizeQuery: function(str) {
+            return $.trim(str).toLowerCase().split(/[\s]+/);
+        },
         tokenizeText: function(str) {
             return $.trim(str).toLowerCase().split(/[\s\-_]+/);
         },
@@ -183,40 +179,45 @@
         }
         if (window.localStorage && window.JSON) {
             methods = {
+                _prefix: function(key) {
+                    return this.prefix + key;
+                },
+                _ttlKey: function(key) {
+                    return this._prefix(key) + this.ttlKey;
+                },
                 get: function(key) {
-                    var ttl = decode(ls.getItem(this.prefix + key));
-                    if (utils.isNumber(ttl) && now() > ttl) {
-                        ls.removeItem(this.prefix + key + this.ttlKey);
+                    if (this.isExpired(key)) {
+                        this.remove(key);
                     }
-                    return decode(ls.getItem(this.prefix + key));
+                    return decode(ls.getItem(this._prefix(key)));
                 },
                 set: function(key, val, ttl) {
                     if (utils.isNumber(ttl)) {
-                        ls.setItem(this.prefix + key + this.ttlKey, encode(now() + ttl));
+                        ls.setItem(this._ttlKey(key), encode(now() + ttl));
                     } else {
-                        ls.removeItem(this.prefix + key + this.ttlKey);
+                        ls.removeItem(this._ttlKey(key));
                     }
-                    return ls.setItem(this.prefix + key, encode(val));
+                    return ls.setItem(this._prefix(key), encode(val));
                 },
                 remove: function(key) {
-                    ls.removeItem(this.prefix + key + this.ttlKey);
-                    ls.removeItem(this.prefix + key);
+                    ls.removeItem(this._ttlKey(key));
+                    ls.removeItem(this._prefix(key));
                     return this;
                 },
                 clear: function() {
-                    var i, key, len = ls.length;
-                    for (i = 0; i < len; i += 1) {
-                        key = ls.key(i);
-                        if (key.match(this.keyMatcher)) {
-                            i -= 1;
-                            len -= 1;
-                            this.remove(key.replace(this.keyMatcher, ""));
+                    var i, key, keys = [], len = ls.length;
+                    for (i = 0; i < len; i++) {
+                        if ((key = ls.key(i)).match(this.keyMatcher)) {
+                            keys.push(key.replace(this.keyMatcher, ""));
                         }
+                    }
+                    for (i = keys.length; i--; ) {
+                        this.remove(keys[i]);
                     }
                     return this;
                 },
                 isExpired: function(key) {
-                    var ttl = decode(ls.getItem(this.prefix + key + this.ttlKey));
+                    var ttl = decode(ls.getItem(this._ttlKey(key)));
                     return utils.isNumber(ttl) && now() > ttl ? true : false;
                 }
             };
@@ -235,10 +236,10 @@
             return new Date().getTime();
         }
         function encode(val) {
-            return JSON.stringify(val);
+            return JSON.stringify(utils.isUndefined(val) ? null : val);
         }
         function decode(val) {
-            return utils.isUndefined(val) ? undefined : JSON.parse(val);
+            return JSON.parse(val);
         }
     }();
     var RequestCache = function() {
@@ -329,40 +330,75 @@
             this.itemHash = {};
             this.name = o.name;
             this.resetDataOnProtocolSwitch = o.resetDataOnProtocolSwitch || false;
-            this.prefetchUrl = o.prefetch;
             this.queryUrl = o.remote;
-            this.rawData = o.local;
             this.transport = o.transport;
             this.limit = o.limit || 10;
             this._customMatcher = o.matcher || null;
             this._customRanker = o.ranker || null;
             this._ttl_ms = o.ttl_ms || 3 * 24 * 60 * 60 * 1e3;
-            this.storageAdjacencyList = "adjacencyList";
-            this.storageHash = "itemHash";
-            this.storageProtocol = "protocol";
-            this.storageVersion = "version";
-            this._loadData();
+            this.keys = {
+                version: "version",
+                protocol: "protocol",
+                itemHash: "itemHash",
+                adjacencyList: "adjacencyList"
+            };
+            o.local && this._processLocalData(o.local);
+            o.prefetch && this._loadPrefetchData(o.prefetch);
         }
         utils.mixin(Dataset.prototype, {
-            _isMetadataExpired: function() {
-                var isExpired = this.storage.isExpired(this.storageProtocol);
-                var isCacheStale = this.storage.isExpired(this.storageAdjacencyList) || this.storage.isExpired(this.storageHash);
-                var resetForProtocolSwitch = this.resetDataOnProtocolSwitch && this.storage.get(this.storageProtocol) != utils.getProtocol();
-                if (VERSION == this.storage.get(this.storageVersion) && !resetForProtocolSwitch && !isExpired && !isCacheStale) {
-                    return false;
-                }
-                return true;
+            _processLocalData: function(data) {
+                data && this._mergeProcessedData(this._processData(data));
             },
-            _loadData: function() {
-                this.rawData && this._processRawData(this.rawData);
-                this._getDataFromLocalStorage();
-                if (this._isMetadataExpired() || this.itemHash === {}) {
-                    this.prefetchUrl && this._prefetch(this.prefetchUrl);
+            _loadPrefetchData: function(url) {
+                var that = this, itemHash = this.storage.get(this.keys.itemHash), adjacencyList = this.storage.get(this.keys.adjacencyList), protocol = this.storage.get(this.keys.protocol), version = this.storage.get(this.keys.version), isExpired = version !== VERSION || protocol !== utils.getProtocol();
+                if (itemHash && adjacencyList && !isExpired) {
+                    this._mergeProcessedData({
+                        itemHash: itemHash,
+                        adjacencyList: adjacencyList
+                    });
+                } else {
+                    $.getJSON(url).done(processPrefetchData);
+                }
+                function processPrefetchData(data) {
+                    var processedData = that._processData(data), itemHash = processedData.itemHash, adjacencyList = processedData.adjacencyList;
+                    that.storage.set(that.keys.itemHash, itemHash, that._ttl_ms);
+                    that.storage.set(that.keys.adjacencyList, adjacencyList, that._ttl_ms);
+                    that.storage.set(that.keys.version, VERSION, that._ttl_ms);
+                    that.storage.set(that.keys.protocol, utils.getProtocol(), that._ttl_ms);
+                    that._mergeProcessedData(processedData);
                 }
             },
-            _getDataFromLocalStorage: function() {
-                this.itemHash = this.storage.get(this.storageHash) || this.itemHash;
-                this.adjacencyList = this.storage.get(this.storageAdjacencyList) || this.adjacencyList;
+            _processData: function(data) {
+                var itemHash = {}, adjacencyList = {};
+                utils.each(data, function(i, item) {
+                    var id;
+                    if (utils.isString(item)) {
+                        item = {
+                            value: item,
+                            tokens: utils.tokenizeText(item)
+                        };
+                    }
+                    item.tokens = utils.map(item.tokens || [], function(token) {
+                        return token.toLowerCase();
+                    });
+                    itemHash[id = utils.getUniqueId(item.value)] = item;
+                    utils.each(item.tokens, function(i, token) {
+                        var char = token.charAt(0), adjacency = adjacencyList[char] || (adjacencyList[char] = [ id ]);
+                        !~utils.indexOf(adjacency, id) && adjacency.push(id);
+                    });
+                });
+                return {
+                    itemHash: itemHash,
+                    adjacencyList: adjacencyList
+                };
+            },
+            _mergeProcessedData: function(processedData) {
+                var that = this;
+                utils.mixin(this.itemHash, processedData.itemHash);
+                utils.each(processedData.adjacencyList, function(char, adjacency) {
+                    var masterAdjacency = that.adjacencyList[char];
+                    that.adjacencyList[char] = masterAdjacency ? masterAdjacency.concat(adjacency) : adjacency;
+                });
             },
             _getPotentiallyMatchingIds: function(terms) {
                 var potentiallyMatchingIds = [];
@@ -447,99 +483,28 @@
                     }
                 }
             },
-            _processRawData: function(data) {
-                this.itemHash = {};
-                this.adjacencyList = {};
-                utils.map(data, utils.bind(function(item) {
-                    var tokens;
-                    if (item.tokens) {
-                        tokens = item.tokens;
-                    } else {
-                        item = {
-                            tokens: utils.tokenizeText(item),
-                            value: item
-                        };
-                        tokens = item.tokens;
-                    }
-                    item.id = utils.getUniqueId(item.value);
-                    utils.map(tokens, utils.bind(function(token) {
-                        var firstChar = token.charAt(0);
-                        if (!this.adjacencyList[firstChar]) {
-                            this.adjacencyList[firstChar] = [ item.id ];
-                        } else {
-                            if (utils.indexOf(this.adjacencyList[firstChar], item.id) === -1) {
-                                this.adjacencyList[firstChar].push(item.id);
-                            }
-                        }
-                    }, this));
-                    this.itemHash[item.id] = item;
-                }, this));
-                this.storage.set(this.storageHash, this.itemHash, this._ttl_ms);
-                this.storage.set(this.storageAdjacencyList, this.adjacencyList, this._ttl_ms);
-                this.storage.set(this.storageVersion, VERSION, this._ttl_ms);
-                this.storage.set(this.storageProtocol, utils.getProtocol(), this._ttl_ms);
-            },
-            _prefetch: function(url) {
-                var processPrefetchSuccess = function(data) {
-                    if (!data) {
-                        return;
-                    }
-                    utils.map(data, function(item) {
-                        if (utils.isString(item)) {
-                            return {
-                                value: item,
-                                tokens: utils.tokenizeText(item.toLowerCase())
-                            };
-                        } else {
-                            utils.map(item.tokens, function(token, i) {
-                                item.tokens[i] = token.toLowerCase();
-                            });
-                            return item;
-                        }
-                    });
-                    this._processRawData(data);
-                };
-                var processPrefetchError = function() {
-                    this._getDataFromLocalStorage();
-                };
-                $.ajax({
-                    url: url,
-                    success: utils.bind(processPrefetchSuccess, this),
-                    error: utils.bind(processPrefetchError, this)
-                });
-            },
             _processRemoteSuggestions: function(callback, matchedItems) {
+                var that = this;
                 return function(data) {
-                    var remoteAndLocalSuggestions = {}, dedupedSuggestions = [];
-                    utils.each(data, function(index, item) {
-                        if (utils.isString(item)) {
-                            remoteAndLocalSuggestions[item] = {
-                                value: item
-                            };
-                        } else {
-                            remoteAndLocalSuggestions[item.value] = item;
-                        }
+                    utils.each(data, function(i, remoteItem) {
+                        var isDuplicate = false;
+                        remoteItem = utils.isString(remoteItem) ? {
+                            value: remoteItem
+                        } : remoteItem;
+                        utils.each(matchedItems, function(i, localItem) {
+                            if (remoteItem.value === localItem.value) {
+                                isDuplicate = true;
+                                return false;
+                            }
+                        });
+                        !isDuplicate && matchedItems.push(remoteItem);
+                        return matchedItems.length < that.limit;
                     });
-                    utils.each(matchedItems, function(index, item) {
-                        if (remoteAndLocalSuggestions[item.value]) {
-                            return true;
-                        }
-                        if (utils.isString(item)) {
-                            remoteAndLocalSuggestions[item] = {
-                                value: item
-                            };
-                        } else {
-                            remoteAndLocalSuggestions[item.value] = item;
-                        }
-                    });
-                    utils.each(remoteAndLocalSuggestions, function(index, item) {
-                        dedupedSuggestions.push(item);
-                    });
-                    callback && callback(dedupedSuggestions);
+                    callback && callback(matchedItems);
                 };
             },
             getSuggestions: function(query, callback) {
-                var terms = utils.tokenizeText(query);
+                var terms = utils.tokenizeQuery(query);
                 var potentiallyMatchingIds = this._getPotentiallyMatchingIds(terms);
                 var potentiallyMatchingItems = this._getItemsFromIds(potentiallyMatchingIds);
                 var matchedItems = utils.filter(potentiallyMatchingItems, this._matcher(terms));
@@ -557,29 +522,13 @@
             var that = this;
             utils.bindAll(this);
             this.specialKeyCodeMap = {
-                9: {
-                    event: "tab"
-                },
-                27: {
-                    event: "esc"
-                },
-                37: {
-                    event: "left"
-                },
-                39: {
-                    event: "right"
-                },
-                13: {
-                    event: "enter"
-                },
-                38: {
-                    event: "up",
-                    preventDefault: true
-                },
-                40: {
-                    event: "down",
-                    preventDefault: true
-                }
+                9: "tab",
+                27: "esc",
+                37: "left",
+                39: "right",
+                13: "enter",
+                38: "up",
+                40: "down"
             };
             this.query = "";
             this.$hint = $(o.hint);
@@ -594,6 +543,7 @@
                     setTimeout(that._compareQueryToInputValue, 0);
                 });
             }
+            this.$overflowHelper = buildOverflowHelper(this.$input);
         }
         utils.mixin(InputView.prototype, EventTarget, {
             _handleFocus: function() {
@@ -602,12 +552,9 @@
             _handleBlur: function() {
                 this.trigger("blur");
             },
-            _handleSpecialKeyEvent: function(e) {
-                var keyCode = this.specialKeyCodeMap[e.which || e.keyCode];
-                if (keyCode) {
-                    this.trigger(keyCode.event, e);
-                    keyCode.preventDefault && e.preventDefault();
-                }
+            _handleSpecialKeyEvent: function($e) {
+                var keyName = this.specialKeyCodeMap[$e.which || $e.keyCode];
+                keyName && this.trigger(keyName, $e);
             },
             _compareQueryToInputValue: function() {
                 var inputValue = this.getInputValue(), isSameQuery = compareQueries(this.query, inputValue), isSameQueryExceptWhitespace = isSameQuery ? this.query.length !== inputValue.length : false;
@@ -627,17 +574,18 @@
             blur: function() {
                 this.$input.blur();
             },
-            setPreventDefaultValueForKey: function(key, value) {
-                this.specialKeyCodeMap[key].preventDefault = !!value;
-            },
             getQuery: function() {
                 return this.query;
             },
             getInputValue: function() {
                 return this.$input.val();
             },
-            setInputValue: function(value, silent) {
+            setInputValue: function(value, silent, playerId) {
                 this.$input.val(value);
+                // overridden
+                if (playerId) {
+                    this.$input.attr(playerId);
+                }
                 if (silent !== true) {
                     this._compareQueryToInputValue();
                 }
@@ -651,9 +599,13 @@
             getLanguageDirection: function() {
                 return (this.$input.css("direction") || "ltr").toLowerCase();
             },
+            isOverflow: function() {
+                this.$overflowHelper.text(this.getInputValue());
+                return this.$overflowHelper.width() > this.$input.width();
+            },
             isCursorAtEnd: function() {
                 var valueLength = this.$input.val().length, selectionStart = this.$input[0].selectionStart, range;
-                if (selectionStart) {
+                if (utils.isNumber(selectionStart)) {
                     return selectionStart === valueLength;
                 } else if (document.selection) {
                     range = document.selection.createRange();
@@ -664,6 +616,24 @@
             }
         });
         return InputView;
+        function buildOverflowHelper($input) {
+            return $("<span></span>").css({
+                position: "absolute",
+                left: "-9999px",
+                visibility: "hidden",
+                whiteSpace: "nowrap",
+                fontFamily: $input.css("font-family"),
+                fontSize: $input.css("font-size"),
+                fontStyle: $input.css("font-style"),
+                fontVariant: $input.css("font-variant"),
+                fontWeight: $input.css("font-weight"),
+                wordSpacing: $input.css("word-spacing"),
+                letterSpacing: $input.css("letter-spacing"),
+                textIndent: $input.css("text-indent"),
+                textRendering: $input.css("text-rendering"),
+                textTransform: $input.css("text-transform")
+            }).insertAfter($input);
+        }
         function compareQueries(a, b) {
             a = (a || "").replace(/^\s*/g, "").replace(/\s{2,}/g, " ").toLowerCase();
             b = (b || "").replace(/^\s*/g, "").replace(/\s{2,}/g, " ").toLowerCase();
@@ -683,12 +653,12 @@
             _handleMouseleave: function() {
                 this.isMouseOverDropdown = false;
             },
-            _handleMouseover: function(e) {
+            _handleMouseover: function($e) {
                 this._getSuggestions().removeClass("tt-is-under-cursor");
-                $(e.currentTarget).addClass("tt-is-under-cursor");
+                $($e.currentTarget).addClass("tt-is-under-cursor");
             },
-            _handleSelection: function(e) {
-                this.trigger("select", formatDataForSuggestion($(e.currentTarget)));
+            _handleSelection: function($e) {
+                this.trigger("select", formatDataForSuggestion($($e.currentTarget)));
             },
             _moveCursor: function(increment) {
                 var $suggestions, $cur, nextIndex, $underCursor;
@@ -762,6 +732,7 @@
                         elBuilder.innerHTML = dataset.template.render(suggestion);
                         el = elBuilder.firstChild;
                         el.setAttribute("data-value", suggestion.value);
+                        el.setAttribute("data-numericid", suggestion.numericid);
                         fragment.appendChild(el);
                     });
                 }
@@ -781,20 +752,24 @@
         function formatDataForSuggestion($suggestion) {
             var $suggestions = $suggestion.parents(".tt-suggestions").first();
             return {
+                // overridden
+                numericid: $suggestion.data("numericid"),
                 value: $suggestion.data("value"),
                 query: $suggestions.data("query"),
-                dataset: $suggestions.data("dataset")
+                dataset: $suggestions.data("dataset"),
+                index: $suggestions.children().index($suggestion)
             };
         }
     }();
     var TypeaheadView = function() {
         var html = {
             wrapper: '<span class="twitter-typeahead"></span>',
-            // overridden by dy/dx
-            // hint: '<input class="tt-hint" type="text" autocomplete="false" spellcheck="false" disabled>',
-            hint: '<input class="tt-hint" type="search" autocomplete="false" spellcheck="false" disabled>',
+            // OVERRIDDEN
+            // hint: '<input class="tt-hint" type="text" autocomplete="off" spellcheck="false" disabled>',
+            hint: '<input class="tt-hint" type="search" autocomplete="off" spellcheck="false" disabled>',
             dropdown: '<ol class="tt-dropdown-menu tt-is-empty"></ol>'
         };
+        // var renderedSuggestions = [];
         function TypeaheadView(o) {
             utils.bindAll(this);
             this.$node = wrapInput(o.input);
@@ -806,7 +781,14 @@
                 } else {
                     dataset.template = {
                         render: function(context) {
-                            return parentTemplate.replace("%body", "<p>" + context.value + "</p>");
+                            // OVERRIDDEN
+                            // return parentTemplate.replace("%body", "<p>" + context.value + "</p>");
+                            return parentTemplate.replace("%body",
+                                '<a class="FUCK-CSS" href=/player/' + context.numericid + '>' +
+                                    '<img class="left" src="' + context.avatar + '" />' +
+                                    '<span>' + context.names.join(', ') + '</span>' +
+                                '</a>'
+                                                                );
                         }
                     };
                 }
@@ -819,12 +801,24 @@
                 menu: this.$node.find(".tt-dropdown-menu")
             });
             this.dropdownView.on("select", this._handleSelection).on("cursorOn", this._clearHint).on("cursorOn", this._setInputValueToSuggestionUnderCursor).on("cursorOff", this._setInputValueToQuery).on("cursorOff", this._updateHint).on("suggestionsRender", this._updateHint).on("show", this._updateHint).on("hide", this._clearHint);
-            this.inputView.on("focus", this._showDropdown).on("blur", this._hideDropdown).on("blur", this._setInputValueToQuery).on("enter", this._handleSelection).on("queryChange", this._clearHint).on("queryChange", this._clearSuggestions).on("queryChange", this._getSuggestions).on("whitespaceChange", this._updateHint).on("queryChange whitespaceChange", this._showDropdown).on("queryChange whitespaceChange", this._setLanguageDirection).on("esc", this._hideDropdown).on("esc", this._setInputValueToQuery).on("up down", this._moveDropdownCursor).on("up down", this._showDropdown).on("tab", this._setPreventDefaultValueForTab).on("tab left right", this._autocomplete);
+            this.inputView.on("focus", this._showDropdown).on("blur", this._hideDropdown).on("blur", this._setInputValueToQuery).on("enter", this._handleSelection).on("queryChange", this._clearHint).on("queryChange", this._clearSuggestions).on("queryChange", this._getSuggestions).on("whitespaceChange", this._updateHint).on("queryChange whitespaceChange", this._showDropdown).on("queryChange whitespaceChange", this._setLanguageDirection).on("esc", this._hideDropdown).on("esc", this._setInputValueToQuery).on("tab up down", this._managePreventDefault).on("up down", this._moveDropdownCursor).on("up down", this._showDropdown).on("tab left right", this._autocomplete);
         }
         utils.mixin(TypeaheadView.prototype, EventTarget, {
-            _setPreventDefaultValueForTab: function(e) {
-                var hint = this.inputView.getHintValue(), inputValue = this.inputView.getInputValue(), preventDefault = hint && hint !== inputValue;
-                this.inputView.setPreventDefaultValueForKey("9", preventDefault);
+            _managePreventDefault: function(e) {
+                var $e = e.data, hint, inputValue, preventDefault = false;
+                switch (e.type) {
+                  case "tab":
+                    hint = this.inputView.getHintValue();
+                    inputValue = this.inputView.getInputValue();
+                    preventDefault = hint && hint !== inputValue;
+                    break;
+
+                  case "up":
+                  case "down":
+                    preventDefault = !$e.shiftKey && !$e.ctrlKey && !$e.metaKey;
+                    break;
+                }
+                preventDefault && $e.preventDefault();
             },
             _setLanguageDirection: function() {
                 var dirClassName = "tt-" + this.inputView.getLanguageDirection();
@@ -834,7 +828,7 @@
             },
             _updateHint: function() {
                 var dataForFirstSuggestion = this.dropdownView.getFirstSuggestion(), hint = dataForFirstSuggestion ? dataForFirstSuggestion.value : null, inputValue, query, beginsWithQuery, match;
-                if (hint && this.dropdownView.isOpen()) {
+                if (hint && this.dropdownView.isOpen() && !this.inputView.isOverflow()) {
                     inputValue = this.inputView.getInputValue();
                     query = inputValue.replace(/\s{2,}/g, " ").replace(/^\s+/g, "");
                     beginsWithQuery = new RegExp("^(?:" + query + ")(.*$)", "i");
@@ -852,7 +846,8 @@
                 this.inputView.setInputValue(this.inputView.getQuery());
             },
             _setInputValueToSuggestionUnderCursor: function(e) {
-                this.inputView.setInputValue(e.data.value, true);
+                var suggestion = e.data;
+                this.inputView.setInputValue(suggestion.value, true);
             },
             _showDropdown: function() {
                 this.dropdownView.show();
@@ -861,14 +856,32 @@
                 this.dropdownView[e.type === "blur" ? "hideUnlessMouseIsOverDropdown" : "hide"]();
             },
             _moveDropdownCursor: function(e) {
-                this.dropdownView[e.type === "up" ? "moveCursorUp" : "moveCursorDown"]();
+                var $e = e.data;
+                if (!$e.shiftKey && !$e.ctrlKey && !$e.metaKey) {
+                    this.dropdownView[e.type === "up" ? "moveCursorUp" : "moveCursorDown"]();
+                }
             },
             _handleSelection: function(e) {
+                var query, selectedItem, dataset, selectionCallback;
                 var byClick = e.type === "select", suggestionData = byClick ? e.data : this.dropdownView.getSuggestionUnderCursor();
                 if (suggestionData) {
-                    this.inputView.setInputValue(suggestionData.value);
-                    byClick ? this.inputView.focus() : e.data.preventDefault();
+                    // this.inputView.setInputValue(suggestionData.value);
+                    this.inputView.setInputValue("");
+                    byClick || this.inputView.blur();
+                    // byClick ? this.inputView.focus() : e.data.preventDefault();
+                    byClick || e.data.preventDefault();
                     byClick && utils.isMsie() ? setTimeout(this.dropdownView.hide, 0) : this.dropdownView.hide();
+                    query = suggestionData.query;
+                    // selectedItem = renderedSuggestions[suggestionData.index] || renderedSuggestions[0];
+                    selectionCallback = this.datasets[suggestionData.dataset].selectionCallback;
+                    // if (selectionCallback && typeof selectionCallback === "function") {
+                    if (! byClick) {
+                        selectionCallback(query, suggestionData.numericid);
+                    }
+                    // this.inputView.$input.trigger(jQuery.Event("selection", {
+                    //     query: query,
+                    //     numericid: suggestionData.numericid
+                    // }));
                 }
             },
             _getSuggestions: function() {
@@ -883,6 +896,8 @@
                 if (query !== this.inputView.getQuery()) {
                     return;
                 }
+                // overridden
+                // suggestions = renderedSuggestions = suggestions.slice(0, dataset.limit);
                 suggestions = suggestions.slice(0, dataset.limit);
                 this.dropdownView.renderSuggestions(query, dataset, suggestions);
             },
@@ -914,7 +929,7 @@
                 !$input.attr("dir") && $input.attr("dir", "auto");
             } catch (e) {}
             return $input.attr({
-                autocomplete: false,
+                autocomplete: "off",
                 spellcheck: false
             }).addClass("tt-query").wrap(html.wrapper).parent().prepend($hint).append(html.dropdown);
         }
@@ -948,6 +963,7 @@
                             limit: datasetDef.limit,
                             local: datasetDef.local,
                             prefetch: datasetDef.prefetch,
+                            ttl_ms: datasetDef.ttl_ms,
                             remote: datasetDef.remote,
                             matcher: datasetDef.matcher,
                             ranker: datasetDef.ranker,
@@ -959,7 +975,8 @@
                         limit: datasetDef.limit,
                         template: datasetDef.template,
                         engine: datasetDef.engine,
-                        getSuggestions: dataset.getSuggestions
+                        getSuggestions: dataset.getSuggestions,
+                        selectionCallback: datasetDef.selectionCallback
                     };
                 });
                 return this.each(function() {
@@ -974,9 +991,9 @@
         };
         function typeahead(method) {
             if (methods[method]) {
-                methods[method].apply(this, [].slice.call(arguments, 1));
+                return methods[method].apply(this, [].slice.call(arguments, 1));
             } else {
-                methods.initialize.apply(this, arguments);
+                return methods.initialize.apply(this, arguments);
             }
         }
         function configureTransport(o) {
