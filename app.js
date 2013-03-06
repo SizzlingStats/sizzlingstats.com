@@ -126,7 +126,7 @@ app.configure('development', function() {
 app.configure(function() {
   app.use(express.limit('200kb'));
   app.use(express.favicon(__dirname + '/public/img/favicon.png'
-                        , { maxAge: 48 * 60 * 60 * 1000 } ));
+                        , { maxAge: 14 * 24 * 60 * 60 * 1000 } ));
 
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
@@ -159,8 +159,8 @@ app.configure(function() {
   , cookie: {
       path: '/'
     , httpOnly: true
-    // , maxAge: null
-    , maxAge: 60*60*24
+    // cookies expire every 14 days
+    , maxAge: 14 * 24 * 60 * 60 * 1000
     }
   }));
   app.use(everyauth.middleware());
