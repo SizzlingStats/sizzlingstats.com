@@ -27,15 +27,15 @@ var ssCreateStats = function(req, res) {
 
   // 1. Check header for api version
   if (!req.body.stats || req.get('sizzlingstats') !== 'v0.1') {
-    return res.end('false\n');
+    return res.send('false\n');
   }
 
   // 2. Check if POST body contains the necessary info
   if (Object.keys(req.body).length === 0) {
-    return res.end('false\n');
+    return res.send('false\n');
   }
   if (!req.body.stats || !req.body.stats.players || !req.body.stats.players.length) {
-    return res.end('false\n');
+    return res.send('false\n');
   }
 
   // 3. Generate sessionid.
@@ -90,12 +90,12 @@ var ssCreateStats = function(req, res) {
       if (err) {
         console.log(err);
         console.trace(err);
-        return res.end('false\n');
+        return res.send('false\n');
       }
       // Success! Respond to the gameserver with relevant info
       res.set('matchurl', cfg.hostname + '/stats/' + stats._id + '?ingame');
       res.set('sessionid', sessionId);
-      res.end('true\n');
+      res.send('true\n');
     });
 };
 
@@ -105,12 +105,12 @@ var ssUpdateStats = function(req, res) {
   // console.log('updateStats body:', util.inspect(req.body, false, null, false));
 
   if (!req.body.stats || req.get('sizzlingstats') !== 'v0.1') {
-    return res.end('false\n');
+    return res.send('false\n');
   }
 
   var sessionId = req.get('sessionid');
   if (!sessionId) {
-    return res.end('false\n');
+    return res.send('false\n');
   }
 
   var isEndOfRound = (req.get('endofround') === 'true');
@@ -124,9 +124,9 @@ var ssUpdateStats = function(req, res) {
     if (err) {
       console.log(err);
       console.trace(err);
-      return res.end('false\n');
+      return res.send('false\n');
     }
-    if (!session || ip !== session.ip) return res.end('false\n');
+    if (!session || ip !== session.ip) return res.send('false\n');
 
     // The request is validated, now we have to append the new data to the old
     matchId = session.matchId;
@@ -134,9 +134,9 @@ var ssUpdateStats = function(req, res) {
       if (err) {
         console.log(err);
         console.trace(err);
-        return res.end('false\n');
+        return res.send('false\n');
       }
-      res.end('true\n');
+      res.send('true\n');
     });
 
   }); // end Session.findById()
@@ -148,7 +148,7 @@ var ssGameOver = function(req, res) {
   // console.log('gameOver body:', util.inspect(req.body, false, null, true));
 
   if (!req.get('matchduration') || req.get('sizzlingstats') !== 'v0.1') {
-    return res.end('false\n');
+    return res.send('false\n');
   }
 
   var newChats = [];
@@ -163,9 +163,9 @@ var ssGameOver = function(req, res) {
     if (err) {
       console.log(err);
       console.trace(err);
-      return res.end('false\n');
+      return res.send('false\n');
     }
-    if (!session || ip !== session.ip) return res.end('false\n');
+    if (!session || ip !== session.ip) return res.send('false\n');
 
     // The request is validated, now set game over
     var matchId = session.matchId;
@@ -174,7 +174,7 @@ var ssGameOver = function(req, res) {
       if (err) {
         console.log(err);
         console.trace(err);
-        return res.end('false\n');
+        return res.send('false\n');
       }
 
       // If all went well, expire the sessionkey and send HTTP response
@@ -182,9 +182,9 @@ var ssGameOver = function(req, res) {
         if (err) {
           console.log(err);
           console.trace(err);
-          return res.end('false\n');
+          return res.send('false\n');
         }
-        res.end('true\n');
+        res.send('true\n');
       });
     });
 
