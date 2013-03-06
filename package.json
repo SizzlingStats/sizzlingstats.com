@@ -6,7 +6,8 @@
     "node": "0.8.x"
   }
 , "dependencies": {
-    "async": "0.2.x"
+    "airbrake": "git://github.com/dy-dx/node-airbrake.git#errbit"
+  , "async": "0.2.x"
   , "colors": "*"
   , "connect-assetmanager": "*"
   , "connect-redis": "1.4.x"

@@ -12,6 +12,7 @@ var express = require('express')
   , request = require('request')
   , cfg = require('./cfg/cfg')
   , secrets = require('./cfg/secrets')
+  , airbrake = require('airbrake').createClient(secrets.airbrake_key, null, cfg.airbrake_host)
   , Player = require('./models/player');
 require('colors');
 // var db = mongoose.createConnection('localhost', 'sizzlingstats');
@@ -263,7 +264,15 @@ app.configure('development', function() {
 });
 
 app.configure('production', function() {
-  app.use(express.errorHandler());
+  // Airbrake
+  app.use(function(err, req, res, next) {
+    airbrake.expressHandler().apply(this, arguments);
+  });
+  // Error handler
+  app.use(function(err, req, res, next) {
+    res.set('Content-Type', 'text/plain');
+    res.send(500, "that's a meatshot" );
+  });
 });
 
 // Routes
