@@ -26,6 +26,9 @@ function MainCtrl($scope, $rootScope, $route, $location, me) {
                   ($route.current.$route.templateUrl === 'partials/player') ||
                   ($route.current.$route.templateUrl === 'partials/profile');
   });
+  $scope.isCurrentPath = function(path) {
+    return path === $location.path();
+  };
 }
 
 function SideBarCtrl($scope, $http, $route, socket) {

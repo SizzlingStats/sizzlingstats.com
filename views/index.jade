@@ -6,21 +6,18 @@ block body
       ul
         li.name
           h1
-            a(href='/') SizzlingStats Beta
+            a(href='/') SizzlingStats Alpha
         li.toggle-topbar
           a(href='javascript:')
       section
         //- Left Nav Section
         ul.left
           li.divider
-          li(class='home', ng-class='{active:path()=="/"}')
-            a(href='/') Home
-          li.divider
-          li(class='about', ng-class='{active:path()=="/about"}')
+          li(class='about', ng-class='{active:isCurrentPath("/about")}')
             a(href='/about') About
           li.divider
-          li(class='download', ng-class='{active:path()=="/download"}')
-            a(href='/download') Download (coming soon)
+          li(class='download', ng-class='{active:isCurrentPath("/download")}')
+            a(href='/download') Download
           li.divider
         //- Right Nav Section
         ul.right
@@ -50,7 +47,7 @@ block body
       ul
         li.name
           h1
-            a(href='javascript:') SizzlingStats.com Beta
+            a(href='javascript:') SizzlingStats.com Alpha
   #loading(ng-cloak, ng-show='loading')
     .alert-box.loading
       | Loading...
