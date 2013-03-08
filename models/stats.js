@@ -12,6 +12,10 @@ var statsSchema = new mongoose.Schema({
 , redCountry: String
 , bluCountry: String
 , hostname: String
+// These next 3 are for debugging only, shouldn't be used for anything
+, hostip: String
+, ip: String
+, hostport: Number
   // The team that wins the midfight (first to cap a cp). Can be 0, 2 (red), 3 (blu)
 , teamfirstcap: [Number]
   // Duration of round, in seconds. Playable time only (humiliation time doesn't count)
