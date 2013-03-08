@@ -22,8 +22,8 @@ module.exports = function(app) {
 
 var ssCreateStats = function(req, res) {
   // For debugging
-  // console.log('createStats headers:', req.headers);
-  // console.log('createStats body:', util.inspect(req.body, false, null, false));
+  console.log('createStats headers:', req.headers);
+  console.log('createStats body:', util.inspect(req.body, false, null, false));
 
   // 1. Check header for api version
   if (!req.body.stats || req.get('sizzlingstats') !== 'v0.1') {
