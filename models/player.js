@@ -203,59 +203,74 @@ playerSchema.statics.findOrUpsertPlayerInfoBySteamIds = function(steamids
 
       // For the players who we didn't get cached data for,
       //  convert their steamids to 64-bit and then hit the Steam API.
-      var playersNotFound = [];
+      var stalePlayerIds = [];
       for (var j=0; j<slen; j++) {
         if ( !playerData[ steamids[j] ] && steamIdRegex.test( steamids[j] ) ) {
-          playersNotFound.push(steamIdToNumericId( steamids[j] ));
+          stalePlayerIds.push(steamIdToNumericId( steamids[j] ));
         }
       }
 
       // If there aren't any players left to get fresh Steam API info for,
       //  i.e. they all failed the regex test, then return.
-      if (playersNotFound.length === 0) {
+      if (stalePlayerIds.length === 0) {
         return callback(null, playerData);
       }
 
-      Player.getSteamApiInfo(playersNotFound, function(err, players) {
+      Player.getSteamApiInfo(stalePlayerIds, function(err, players) {
         if (err) {
-          return callback(err);
-        }
-
-        // Update all the players in DB, using new Steam API info.
-        async.each(players, function(player, aCallback) {
-          var steamid = Player.numericIdToSteamId(player.steamid);
-          var newPlayer = {
-            numericid: player.steamid
-          , name: player.personaname
-          , avatar: player.avatar
-          , updated: currentDate
-          };
-
-          playerData[steamid] = {
-            avatar: player.avatar
-          , numericid: player.numericid
-          };
-
-          if (player.loccountrycode) {
-            newPlayer.country = player.loccountrycode;
-            playerData[steamid] = player.loccountrycode;
-          }
-
-          Player.findByIdAndUpdate(steamid, newPlayer, { upsert: true }
-                                                     , function(err, player) {
-            if (err) { return aCallback(err); }
-            // Call .save() to hit the middleware -- can be done async.
-            player.save();
-            aCallback();
+          // Looks like steam timed out AGAIN. In this case go BACK to our own
+          //  database and get whatever info we can find.
+          Player.find( {numericid: { $in : stalePlayerIds }}, function(err, stalePlayers) {
+            if (err) {
+              console.log(err);
+              console.trace(err);
+              return callback(null, playerData);
+            }
+            for (var i=0, splen=stalePlayers.length; i<splen; i++) {
+              playerData[stalePlayers[i]._id] = {
+                avatar: stalePlayers[i].avatar
+              , numericid: stalePlayers[i].numericid
+              , country: stalePlayers[i].country
+              };
+            }
+            return callback(null, playerData);
           });
-        },
-        // Callback for when all the players are iterated over
-        function(error) {
-          if (error) { return callback(error); }
-          // Return a hash of the player data
-          return callback(null, playerData);
-        });
+        } else {
+          // Update all the players in DB, using new Steam API info.
+          async.each(players, function(player, aCallback) {
+            var steamid = Player.numericIdToSteamId(player.steamid);
+            var newPlayer = {
+              numericid: player.steamid
+            , name: player.personaname
+            , avatar: player.avatar
+            , updated: currentDate
+            };
 
+            playerData[steamid] = {
+              avatar: player.avatar
+            , numericid: player.numericid
+            };
+
+            if (player.loccountrycode) {
+              newPlayer.country = player.loccountrycode;
+              playerData[steamid] = player.loccountrycode;
+            }
+
+            Player.findByIdAndUpdate(steamid, newPlayer, { upsert: true }
+                                                       , function(err, player) {
+              if (err) { return aCallback(err); }
+              // Call .save() to hit the middleware -- can be done async.
+              player.save();
+              aCallback();
+            });
+          },
+          // Callback for when all the players are iterated over
+          function(error) {
+            if (error) { return callback(error); }
+            // Return a hash of the player data
+            return callback(null, playerData);
+          });
+        }
       }); // End Player.getSteamApiInfo
 
   });

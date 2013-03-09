@@ -104,15 +104,14 @@ statsSchema.pre('save', function(next) {
     if (err) {
       console.log(err);
       console.trace(err);
-      next();
     } else {
       stats.setCountryFlags(playerData);
-      // Transform stats with playaerData and push to subscribed clients on websockets.
+      // Transform stats with playerData and push to subscribed clients on websockets.
       var statsObj = stats.toObject({ transform: true, playerData: playerData });
 
       statsEmitter.emit('updateStats', statsObj);
-      next();
     }
+    next();
   });
 
 });
