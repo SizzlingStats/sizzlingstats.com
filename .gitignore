@@ -2,3 +2,4 @@
 node_modules
 cfg/secrets.js
 *.log
+/*.txt

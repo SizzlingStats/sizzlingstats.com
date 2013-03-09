@@ -32,12 +32,12 @@ module.exports = {
 
   statsHeaders1: {
     "sizzlingstats": "v0.1"
-  , "apikey": "05c5a8c9-75af-4761-9329-2ebddab41f15"
   }
 
 , statsBody1: {"stats": {
     "map": "cp_badlands"
   , "hostname": "mocks r0"
+  , "apikey": "e04c22ef-a86b-4511-a47f-e136c38c10da"
   , "bluname": "BluName"
   , "redname": "RedName"
   , "players": [

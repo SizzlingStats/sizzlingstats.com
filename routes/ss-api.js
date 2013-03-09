@@ -50,9 +50,9 @@ var ssCreateStats = function(req, res) {
   async.waterfall([
       // Check for valid API Key
       function(callback) {
-        if (!req.get('apikey')) { return callback(null); }
-        Player.findOne({apikey: req.get('apikey')}, 'name numericid'
-                                                  , function(err, player) {
+        var apikey = req.body.stats.apikey;
+        if (!apikey) { return callback(null); }
+        Player.findOne({apikey: apikey}, 'name numericid', function(err, player) {
           if (err) {
             // TODO: do something
           }
