@@ -37,7 +37,7 @@ var isLoggedIn = function(req, res, next) {
 // GET
 
 var statsShow = function(req, res) {
-  var id = req.params.id;
+  var id = parseInt(req.params.id,10);
   Stats.findByIdAndUpdate(id, {$inc: {viewCount: 1}}, function(err, stats) {
     if (err) {
       console.log(err);
