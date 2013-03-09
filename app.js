@@ -9,6 +9,7 @@ var express = require('express')
   , server = http.createServer(app)
   , mongoose = require('mongoose')
   , everyauth = require('everyauth')
+  , analytics = require('no-js-analytics')
   , request = require('request')
   , cfg = require('./cfg/cfg')
   , secrets = require('./cfg/secrets')
@@ -125,6 +126,7 @@ app.configure('development', function() {
 });
 
 app.configure(function() {
+  app.enable('trust proxy');
   app.use(express.limit('200kb'));
   app.use(express.favicon(__dirname + '/public/img/favicon.png'
                         , { maxAge: 14 * 24 * 60 * 60 * 1000 } ));
@@ -137,8 +139,7 @@ app.configure(function() {
   app.use(express.bodyParser());
   app.use(express.methodOverride());
 
-  app.enable('trust proxy');
-
+  app.use(analytics);
 
   // Sessions
 
