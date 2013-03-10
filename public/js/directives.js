@@ -102,7 +102,7 @@ angular.module('myApp.directives', [])
         if (data[1][0] === 'C') { showClassIcons = true; }
 
         var playerRow = '<td class="player-name"><img class="team' +
-                  scope.player.team + '-avatar" src="' +
+                  scope.player.team + ' avatar" src="' +
                   (scope.player.avatar || '') + '" /><span><a href="/player/' +
                   (scope.player.numericid || '') + '">' +
                   scope.$parent.$parent.escapeHtml(scope.player.name) +
