@@ -126,7 +126,7 @@ statsSchema.statics.createStats = function(stats) {
   // 'stats' is the the POST body data (req.body.stats), so massage it
   for (var i=stats.players.length-1; i>=0; i--) {
     // Remove spectators from players array
-    if (stats.players[i].team < 2) {
+    if (!stats.players[i].playedclasses) {
       stats.players.splice(i,1);
     } else {
       // Remap playerclass data
@@ -167,7 +167,7 @@ statsSchema.statics.appendStats = function(newStats, matchId, isEndOfRound, cb) 
 
     for (var i=newStats.players.length-1; i>=0; i--) {
       // Remove spectators from players array
-      if (newStats.players[i].team < 2) {
+      if (!stats.players[i].playedclasses) {
         newStats.players.splice(i,1);
       } else {
         // Remap playerclass data
