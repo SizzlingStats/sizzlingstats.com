@@ -232,7 +232,7 @@ playerSchema.statics.findOrUpsertPlayerInfoBySteamIds = function(steamids
 
             if (player.loccountrycode) {
               newPlayer.country = player.loccountrycode;
-              playerData[steamid] = player.loccountrycode;
+              playerData[steamid].country = player.loccountrycode;
             }
 
             Player.findByIdAndUpdate(steamid, newPlayer, { upsert: true }
