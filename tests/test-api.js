@@ -43,7 +43,7 @@ var test1 = function(callback) {
     if (err) {
       return callback(err);
     }
-    if (res.statusCode < 200 || res.statusCode > 299) {
+    if (res.statusCode > 202) {
       return callback(new Error('tests/test-api.js -API Error: ' + res.statusCode));
     }
 
@@ -69,7 +69,7 @@ var test2 = function(callback) {
     if (err) {
       return callback(err);
     }
-    if (res.statusCode < 200 || res.statusCode > 299) {
+    if (res.statusCode > 202) {
       return callback(new Error('tests/test-api.js -API Error: ' + res.statusCode));
     }
 
@@ -92,7 +92,7 @@ var test3 = function(callback) {
     if (err) {
       return callback(err);
     }
-    if (res.statusCode < 200 || res.statusCode > 299) {
+    if (res.statusCode > 202) {
       return callback(new Error('tests/test-api.js -API Error: ' + res.statusCode));
     }
 
@@ -115,7 +115,7 @@ var test4 = function(callback) {
     if (err) {
       return callback(err);
     }
-    if (res.statusCode < 200 || res.statusCode > 299) {
+    if (res.statusCode > 202) {
       return callback(new Error('tests/test-api.js -API Error: ' + res.statusCode));
     }
 
@@ -138,7 +138,7 @@ var test5 = function(callback) {
     if (err) {
       return callback(err);
     }
-    if (res.statusCode < 200 || res.statusCode > 299) {
+    if (res.statusCode > 202) {
       return callback(new Error('tests/test-api.js -API Error: ' + res.statusCode));
     }
 
@@ -161,7 +161,7 @@ var test6 = function(callback) {
     if (err) {
       return callback(err);
     }
-    if (res.statusCode < 200 || res.statusCode > 299) {
+    if (res.statusCode > 202) {
       return callback(new Error('tests/test-api.js -API Error: ' + res.statusCode));
     }
 
@@ -184,7 +184,7 @@ var test7 = function(callback) {
     if (err) {
       return callback(err);
     }
-    if (res.statusCode < 200 || res.statusCode > 299) {
+    if (res.statusCode > 202) {
       return callback(new Error('tests/test-api.js -API Error: ' + res.statusCode));
     }
 
