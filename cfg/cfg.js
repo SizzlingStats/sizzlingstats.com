@@ -1,5 +1,5 @@
 var cfg = {
-  hostname: (process.env.HOSTNAME || 'http://sizzlingstats.com')
+  hostname: process.env.HOSTNAME
 , port: parseInt(process.env.PORT, 10) || 8001
 , mongo_url: process.env.MONGO_URL || process.env.MONGOHQ_URL ||
                                       'mongodb://localhost/sizzlingstats'
@@ -18,4 +18,12 @@ var cfg = {
 , player_metadata_cache_length: 3*60*60*1000
 };
 
+if (!cfg.hostname) {
+  if (process.env.NODE_ENV === 'production') {
+    cfg.hostname = 'http://sizzlingstats.com';
+  } else {
+    cfg.hostname = 'http://localhost:' + cfg.port;
+  }
+}
+console.log(cfg.hostname);
 module.exports = cfg;
