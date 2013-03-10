@@ -43,7 +43,7 @@ var test1 = function(callback) {
     if (err) {
       return callback(err);
     }
-    if (res.statusCode !== 200) {
+    if (res.statusCode < 200 || res.statusCode > 299) {
       return callback(new Error('tests/test-api.js -API Error: ' + res.statusCode));
     }
 
@@ -69,7 +69,7 @@ var test2 = function(callback) {
     if (err) {
       return callback(err);
     }
-    if (res.statusCode !== 200) {
+    if (res.statusCode < 200 || res.statusCode > 299) {
       return callback(new Error('tests/test-api.js -API Error: ' + res.statusCode));
     }
 
@@ -92,7 +92,7 @@ var test3 = function(callback) {
     if (err) {
       return callback(err);
     }
-    if (res.statusCode !== 200) {
+    if (res.statusCode < 200 || res.statusCode > 299) {
       return callback(new Error('tests/test-api.js -API Error: ' + res.statusCode));
     }
 
@@ -115,7 +115,7 @@ var test4 = function(callback) {
     if (err) {
       return callback(err);
     }
-    if (res.statusCode !== 200) {
+    if (res.statusCode < 200 || res.statusCode > 299) {
       return callback(new Error('tests/test-api.js -API Error: ' + res.statusCode));
     }
 
@@ -138,7 +138,7 @@ var test5 = function(callback) {
     if (err) {
       return callback(err);
     }
-    if (res.statusCode !== 200) {
+    if (res.statusCode < 200 || res.statusCode > 299) {
       return callback(new Error('tests/test-api.js -API Error: ' + res.statusCode));
     }
 
@@ -161,7 +161,7 @@ var test6 = function(callback) {
     if (err) {
       return callback(err);
     }
-    if (res.statusCode !== 200) {
+    if (res.statusCode < 200 || res.statusCode > 299) {
       return callback(new Error('tests/test-api.js -API Error: ' + res.statusCode));
     }
 
@@ -184,7 +184,7 @@ var test7 = function(callback) {
     if (err) {
       return callback(err);
     }
-    if (res.statusCode !== 200) {
+    if (res.statusCode < 200 || res.statusCode > 299) {
       return callback(new Error('tests/test-api.js -API Error: ' + res.statusCode));
     }
 
@@ -193,22 +193,27 @@ var test7 = function(callback) {
 };
 
 
+var printErrIfExists = function(err) {
+  if (err) console.log(err);
+};
 
 // Run tests
 async.series([
   function(callback) {
     test1(function(err, res, body) {
+      printErrIfExists(err);
       assert.ok(body, 'body should return true');
       assert.ok(res.headers.matchurl, 'matchurl should be present');
-      console.log(res.headers.matchurl);
       assert.ok(res.headers.sessionid, 'sessionid should be present');
-      console.log(res.headers.sessionid);
+      console.log('test-api.js: matchurl:', res.headers.matchurl);
+      console.log('test-api.js: sessionid:', res.headers.sessionid);
       callback(err);
     });
   }
 
 , function(callback) {
     test2(function(err, res, body) {
+      printErrIfExists(err);
       assert.ok(body, 'body should return true');
       assert.ok(!res.headers.matchurl, 'matchurl should not be present');
       assert.ok(!res.headers.sessionid, 'sessionid should not be present');
@@ -218,6 +223,7 @@ async.series([
 
 , function(callback) {
     test3(function(err, res, body) {
+      printErrIfExists(err);
       assert.ok(body, 'body should return true');
       assert.ok(!res.headers.matchurl, 'matchurl should not be present');
       assert.ok(!res.headers.sessionid, 'sessionid should not be present');
@@ -227,6 +233,7 @@ async.series([
 
 , function(callback) {
     test4(function(err, res, body) {
+      printErrIfExists(err);
       assert.ok(body, 'body should return true');
       assert.ok(!res.headers.matchurl, 'matchurl should not be present');
       assert.ok(!res.headers.sessionid, 'sessionid should not be present');
@@ -236,6 +243,7 @@ async.series([
 
 , function(callback) {
     test5(function(err, res, body) {
+      printErrIfExists(err);
       assert.ok(body, 'body should return true');
       assert.ok(!res.headers.matchurl, 'matchurl should not be present');
       assert.ok(!res.headers.sessionid, 'sessionid should not be present');
@@ -245,6 +253,7 @@ async.series([
 
 , function(callback) {
     test6(function(err, res, body) {
+      printErrIfExists(err);
       assert.ok(body, 'body should return true');
       assert.ok(!res.headers.matchurl, 'matchurl should not be present');
       assert.ok(!res.headers.sessionid, 'sessionid should not be present');
@@ -254,6 +263,7 @@ async.series([
 
   , function(callback) {
     test7(function(err, res, body) {
+      printErrIfExists(err);
       assert.ok(body, 'body should return true');
       assert.ok(!res.headers.matchurl, 'matchurl should not be present');
       assert.ok(!res.headers.sessionid, 'sessionid should not be present');
@@ -264,7 +274,7 @@ async.series([
 ], function(err, results) {
   if (err) {
     console.log(err);
-    console.trace(err);
+    assert.ok(!err, 'err should not be present (duh)');
   } else {
     console.log('test-api.js successfully completed.');
   }
