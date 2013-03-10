@@ -82,7 +82,7 @@ playerSchema.pre('save', function(next) {
 //   next();
 // });
 
-var steamIdToNumericId = function(steamid) {
+playerSchema.statics.steamIdToNumericId = function(steamid) {
   var parts = steamid.split(":");
   var iServer = Number(parts[1]);
   var iAuthID = Number(parts[2]);
@@ -113,33 +113,12 @@ var steamIdToNumericId = function(steamid) {
   return converted;
 };
 
-playerSchema.statics.numericIdToSteamId = function(profile) {
-  var base = "7960265728";
-  var profile = profile.substr(7);
-
-  var subtract = 0;
-  var lastIndex = base.length - 1;
-
-  for(var i=0;i<base.length;i++) {
-    var value = profile.charAt(lastIndex - i) - base.charAt(lastIndex - i);
-
-    if(value < 0) {
-      var index = lastIndex - i - 1;
-
-      base = base.substr(0,index) + (Number(base.charAt(index)) + 1) +
-                                    base.substr(index+1);
-
-      if(index) {
-        value += 10;
-      } else {
-        break;
-      }
-    }
-
-    subtract += value * Math.pow(10,i);
-  }
-
-  return "STEAM_0:" + (subtract%2) + ":" + Math.floor(subtract/2);
+playerSchema.statics.numericIdToSteamId = function(numericId) {
+  // Unfortunately this limits us to the max steamId 0:1:999999999
+  var scid = parseInt(numericId.substr(-10),10);
+  var srv = scid % 2;
+  var auth = ((scid - srv) - 7960265728) / 2;
+  return "STEAM_0:" + srv + ":" + auth;
 };
 
 // This takes in an array of already validated numericIds
@@ -206,7 +185,7 @@ playerSchema.statics.findOrUpsertPlayerInfoBySteamIds = function(steamids
       var stalePlayerIds = [];
       for (var j=0; j<slen; j++) {
         if ( !playerData[ steamids[j] ] && steamIdRegex.test( steamids[j] ) ) {
-          stalePlayerIds.push(steamIdToNumericId( steamids[j] ));
+          stalePlayerIds.push(Player.steamIdToNumericId( steamids[j] ));
         }
       }
 
