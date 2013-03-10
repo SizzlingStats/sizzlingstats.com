@@ -165,12 +165,21 @@ statsSchema.statics.appendStats = function(newStats, matchId, isEndOfRound, cb) 
     stats.teamfirstcap[round] = newStats.teamfirstcap || 0;
     stats.markModified('teamfirstcap');
 
+    for (var i=newStats.players.length-1; i>=0; i--) {
+      // Remove spectators from players array
+      if (newStats.players[i].team < 2) {
+        newStats.players.splice(i,1);
+      } else {
+        // Remap playerclass data
+        newStats.players[i].mostplayedclass = remapMostPlayedClass(
+                                              newStats.players[i].mostplayedclass );
+        newStats.players[i].playedclasses = remapPlayedClasses(
+                                              newStats.players[i].playedclasses );
+      }
+    }
+
     newStats.players.forEach(function(player) {
       var isNewPlayer = true;
-
-      // Remap playerclass data
-      player.mostplayedclass = remapMostPlayedClass(player.mostplayedclass);
-      player.playedclasses = remapPlayedClasses(player.playedclasses);
 
       // look for the oldPlayer with a matching steamid
       // and add new values to the stat arrays

@@ -54,6 +54,7 @@ module.exports = {
     , {"steamid": "STEAM_0:0:9038326",  "team": 2, "name": "Trekkie",     "mostplayedclass": 5}
     , {"steamid": "STEAM_0:0:5486374",  "team": 3, "name": "eXtine",      "mostplayedclass": 5}
     // , {"steamid": "STEAM_0:1:19550627", "team": 3, "name": "Jay",         "mostplayedclass": 5}
+    , {"steamid": "STEAM_0:0:29061686",  "team": 1, "name": "DontSeeMe",  "mostplayedclass": 5}
     ]
   }}
 
@@ -198,6 +199,7 @@ module.exports = {
     , {"steamid": "STEAM_0:0:5486374",  "team": 3, "name": "eXtine",      "mostplayedclass": 5, "playedclasses": 16,  "kills": 7, "deaths":1}
     // , {"steamid": "STEAM_0:1:19550627", "team": 3, "name": "Jay",         "mostplayedclass": 5, "playedclasses": 16,  "kills": 3, "deaths":0}
     , {"steamid": "STEAM_0:1:5201690",  "team": 2, "name": "b4nny",       "mostplayedclass": 4, "playedclasses": 8,   "kills": 9, "deaths":1}
+    , {"steamid": "STEAM_0:0:29061686", "team": 1, "name": "DontSeeMe",   "mostplayedclass": 5}
     ]
   }}
 
