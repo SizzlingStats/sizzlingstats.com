@@ -49,6 +49,7 @@ var hasValidSessionId = function(req, res, next) {
       return res.send(401, 'false\n');
     }
     req.matchId = session.matchId;
+    req.statsSession = session;
     next();
   });
 };
@@ -153,7 +154,7 @@ var ssGameOver = function(req, res) {
     }
 
     // If all went well, expire the sessionkey and send HTTP response
-    session.expireSessionKey(function(err) {
+    req.statsSession.expireSessionKey(function(err) {
       if (err) {
         console.log(err);
         console.trace(err);

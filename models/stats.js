@@ -167,7 +167,7 @@ statsSchema.statics.appendStats = function(newStats, matchId, isEndOfRound, cb) 
 
     for (var i=newStats.players.length-1; i>=0; i--) {
       // Remove spectators from players array
-      if (!stats.players[i].playedclasses) {
+      if (!newStats.players[i].playedclasses) {
         newStats.players.splice(i,1);
       } else {
         // Remap playerclass data
