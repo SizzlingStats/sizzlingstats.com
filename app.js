@@ -1,3 +1,15 @@
+var cluster = require('cluster');
+if (cluster.isMaster) {
+  // Run 3 workers, unless there are fewer than 3 cores on the cpu.
+  var numWorkers = 3;
+  var cpuCount = require('os').cpus().length;
+  var numWorkers = cpuCount < numWorkers ? cpuCount : numWorkers;
+  for (var i=0; i<numWorkers; i++) {
+    cluster.fork();
+  }
+  return;
+}
+
 
 /**
  * Module dependencies.
@@ -7,6 +19,7 @@ var express = require('express')
   , app = module.exports = express()
   , http = require('http')
   , server = http.createServer(app)
+  , async = require('async')
   , mongoose = require('mongoose')
   , everyauth = require('everyauth')
   , analytics = require('no-js-analytics')
@@ -119,6 +132,11 @@ everyauth.debug = false;
 /**
  * Express Configuration
  */
+
+// app.use(function(req, res, next) {
+//   console.log('Worker' + cluster.worker.id + 'is doing something');
+//   next();
+// });
 
 app.enable('trust proxy');
 app.use(express.limit('200kb'));
@@ -279,7 +297,29 @@ app.io.set('transports', [
 , 'xhr-polling'
 , 'jsonp-polling'
 ]);
-var socket = require('./routes/socket')(app);
+// Redis store for socket.io
+var socketRedisStore = require('socket.io/lib/stores/redis')
+  , socketRedis = require('socket.io/node_modules/redis')
+  , socketPub = socketRedis.createClient(cfg.redis_port, cfg.redis_host)
+  , socketSub = socketRedis.createClient(cfg.redis_port, cfg.redis_host)
+  , socketClient = socketRedis.createClient(cfg.redis_port, cfg.redis_host);
+async.applyEach([ socketPub.select.bind(socketPub)
+                , socketSub.select.bind(socketSub)
+                , socketClient.select.bind(socketClient)
+                ], cfg.redis_db, function(err) {
+  if (err) {
+    console.log(err);
+    console.trace(err);
+    return false;
+  }
+  app.io.set('store', new socketRedisStore({
+    redisPub: socketPub
+  , redisSub: socketSub
+  , redisClient: socketClient
+  }));
+
+  var socket = require('./routes/socket')(app);
+});
 
 /**
  * Check status of Elasticsearch server
@@ -294,4 +334,4 @@ request.get('http://localhost:9200/sizzlingstats/_status', function(err, res, bo
 // Start server
 server.listen(cfg.port);
 console.log("Express server listening on port %d in %s mode"
-            , server.address().port, app.settings.env);
+            , cfg.port, app.settings.env);
