@@ -53,6 +53,9 @@
     stats-table(data='spyStatsTableData'
               , filter='classFilter(8)'
               , ng-show='hasBeenPlayed(8)')
+    stats-table(data='engineerStatsTableData'
+              , filter='classFilter(5)'
+              , ng-show='hasBeenPlayed(5)')
   .chat-log
     ul
       li(ng-repeat='chat in stats.chats | filter:bindFilter')
@@ -62,7 +65,7 @@
           b {{players[chat.steamid].name || "spectator"}}
         span.chat-message : {{chat.message}}
     dl.sub-nav.no-marg
+      dd(ng-class='{active:filterBinds}')
+        a(href="javascript:", ng-click="filterBinds=true") No Spam
       dd(ng-class='{active:!filterBinds}')
         a(href="javascript:", ng-click="filterBinds=false") All
-      dd(ng-class='{active:filterBinds}')
-        a(href="javascript:", ng-click="filterBinds=true") No Binds

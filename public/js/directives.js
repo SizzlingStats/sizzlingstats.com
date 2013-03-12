@@ -87,7 +87,15 @@ angular.module('myApp.directives', [])
                     ' | orderBy:sortPredicate()" stats-tr></tr>';
           return $compile( row )(scope);
         };
-        $tbody.append( scope.rows(attrs.filter) );
+        if (attrs.filter) {
+          $tbody.append( scope.rows(attrs.filter) );
+        } else {
+          // If no attrs.filter, assume this is the main stats table,
+          //  which we "split" by default.
+          scope.$tbody.append( scope.rows('{team:2}') );
+          scope.$tbody.append( scope.header() );
+          scope.$tbody.append( scope.rows('{team:3}') );
+        }
 
         $table.append( $tbody );
         element.prepend( $table );
@@ -123,13 +131,13 @@ angular.module('myApp.directives', [])
   .directive('splitTeams', function() {
     return {
       restrict: 'A'
-    , template: '<dl class="sub-nav no-marg", ng-init="split=false">' +
-                  '<dd ng-class="{active:!split}">' +
-                    '<a href="javascript:" ng-click="splitTeams(false)">' +
-                      'All</a></dd>' +
+    , template: '<dl class="sub-nav no-marg", ng-init="split=true">' +
                   '<dd ng-class="{active:split}">' +
                     '<a href="javascript:" ng-click="splitTeams(true)">' +
-                      'Teams</a></dd></dl>'
+                      'Teams</a></dd>' +
+                  '<dd ng-class="{active:!split}">' +
+                    '<a href="javascript:" ng-click="splitTeams(false)">' +
+                      'All</a></dd></dl>'
     , link: function(scope, element, attrs) {
         scope.splitTeams = function(split) {
           if (split === scope.split) { return; }

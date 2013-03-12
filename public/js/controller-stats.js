@@ -90,12 +90,11 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
   , ['DPM', 'Damage Per Minute', 'perMinute("damagedone")']
   , ['DMG', 'Damage', 'sumOf("damagedone")']
   , ['MP', 'Medic Picks', 'sumOf("medpicks")']
-  , ['HR', 'Heals Received', 'sumOf("healsreceived")']
+  , ['HR', 'Heals Received (Excl Buffs)', 'sumOf("healsreceived")']
   , ['CPC', 'Capture Points Captured', 'sumOf("captures")']
   , ['CPB', 'Capture Points Blocked', 'sumOf("defenses")']
   , ['DOM', 'Dominations', 'sumOf("dominations")']
   , ['REV', 'Revenges', 'sumOf("revenge")']
-  // , ['', '', 'sumOf("buildingsbuilt")']
   // , ['', '', 'sumOf("buildingsdestroyed")']
   // , ['', '', 'sumOf("crits")']
   // , ['', '', 'sumOf("teleports")']
@@ -104,17 +103,21 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
   ];
   $scope.medicStatsTableData = [
     ['Medics', null, 'name']
-  , ['H', 'Heals Given', 'sumOf("healpoints")']
+  , ['H', 'Heals Given (Incl Buffs)', 'sumOf("healpoints")']
   , ['U', 'Ubers', 'sumOf("invulns")']
   , ['UD', 'Ubers Dropped', 'sumOf("ubersdropped")']
   ];
   $scope.sniperStatsTableData = [
     ['Snipers', null, 'name']
-  , ['HS', 'Headshots', 'sumOf("headshots")']
+  , ['HS', 'Headshot Kills', 'sumOf("headshots")']
   ];
   $scope.spyStatsTableData = [
     ['Spies', null, 'name']
   , ['BS', 'Backstabs', 'sumOf("backstabs")']
+  ];
+  $scope.engineerStatsTableData = [
+    ['Engineers', null, 'name']
+  , ['BB', 'Buildings Built', 'sumOf("buildingsbuilt")']
   ];
 
 
