@@ -6,19 +6,22 @@ block body
       ul
         li.name
           h1
-            a(href='/') SizzlingStats Alpha
+            a(href='/') SizzlingStats
         li.toggle-topbar
           a(href='javascript:')
       section
         //- Left Nav Section
         ul.left
           li.divider
-          li(class='about', ng-class='{active:isCurrentPath("/about")}')
+          li(ng-class='{active:isCurrentPath("/about")}')
             a(href='/about') About
           li.divider
-          li(class='download', ng-class='{active:isCurrentPath("/download")}')
+          li(ng-class='{active:isCurrentPath("/download")}')
             a(href='/download') Download
           li.divider
+          //- li(ng-class='{active:isCurrentPath("/usagestats")}')
+          //-   a(href='/download') Usage Stats
+          //- li.divider
         //- Right Nav Section
         ul.right
           li.search
@@ -60,15 +63,16 @@ block body
           ul.tabs.vertical.sidebar-nav
             li.nav-header.center
               h5 Recent Matches
-            li(ng-cloak, ng-repeat='match in matches | orderBy:"-_id"', ng-class="{active: isActive(), 'live-match': match.isLive}")
+            li(ng-cloak, ng-repeat='match in matches | orderBy:"-_id" | limitTo: 12', ng-class="{active: isActive(), 'live-match': match.isLive}")
               a(href='/stats/{{match._id}}')
-                | {{match.hostname}} 
-                //- span.label(ng-show='match.isLive') Live
-                br
+                .nowrap
+                  span.label.right(ng-show='match.isLive') Live
+                  .nowrap
+                    span {{match.hostname}}
                 img.flag.size-16(ng-show="match.redCountry", ng-src="/img/flags/16/{{match.redCountry}}.png")
-                | {{match.redname}} vs 
+                span {{match.redname}} vs 
                 img.flag.size-16(ng-show="match.bluCountry", ng-src="/img/flags/16/{{match.bluCountry}}.png")
-                | {{match.bluname}}
+                span {{match.bluname}}
       .columns(class='{{(hideSideBar) && "twelve" || "nine"}}', ng-view)
         //- content
     else

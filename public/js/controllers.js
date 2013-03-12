@@ -60,4 +60,18 @@ function SideBarCtrl($scope, $http, $route, socket) {
   $scope.isActive = function() {
     return this.match._id === parseInt($route.current.params.id,10);
   };
+  $scope.scoreComparison = function(redScore, bluScore) {
+    return redScore > bluScore ?
+                           '>' :
+                           redScore < bluScore ?
+                           '<' :
+                           '==';
+  };
+  $scope.score = function(match) {
+    return sumArray(match.redscore) + '-' + sumArray(match.bluscore);
+  };
+  var sumArray = function(array) {
+    if (!array || !array.length) return 0;
+    return array.reduce(function(a,b) { return a + b; },0);
+  };
 }

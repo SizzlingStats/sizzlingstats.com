@@ -12,7 +12,7 @@
     .stats-details
       .stats-description
         | {{stats.created | date:'M/d/yy h:mma' | lowercase}} //
-        | {{secondsToHMS(playableTime)}} // {{stats.map}}
+        | {{secondsToHMS(playableTime)}} // {{stats.map}} 
         span.label(ng-show='stats.isLive') Live
       .stats-hostname Server Name: {{stats.hostname}}
       //- .mapname Map: {{stats.map}}

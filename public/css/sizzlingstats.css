@@ -33,12 +33,27 @@
 .no-marg-bottom {
   margin-bottom: 0;
 }
+.nowrap {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.inline-block {
+  display: inline-block;
+}
 
 .sits {
   padding: 0 13px !important;
 }
 .sits img {
   margin-top: 10px;
+}
+.top-bar:not(.expanded) .has-dropdown span {
+  display: inline-block;
+  max-width: 155px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Twitter typeahead.js suggestion styling */
@@ -121,18 +136,19 @@
 }
 
 .sidebar-nav a {
-  padding: 8px 6px 8px 10px !important;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  padding: 7px 5px 7px 8px !important;
 }
 .sidebar-nav li:not(.active) a:hover {
   background: #ebebeb !important;
 }
+.hostname {
+  display: inline;
+  margin-right: 20px;
+}
 
 /* Animation for live matches in sidebar */
 
-.live-match:not(.active) {
+/*.live-match {
   border-left: 3px solid #2ba6cb !important;
   -webkit-animation: livePulse 2s;
   -moz-animation: livePulse 2s;
@@ -148,7 +164,7 @@
   0% {border-left-color: #2ba6cb;}
   50% {border-left-color: #a5cfdd;}
   100% {border-left-color: #2ba6cb;}
-}
+}*/
 
 .nav-header {
   border-left: none !important;
@@ -320,9 +336,12 @@ td:first-child, th:first-child {
   line-height: 1.5;
 }
 
+.class-stats table {
+  margin-bottom: 12px;
+}
 
 .chat-log ul {
-  margin: 12px 0 0;
+  margin: 0;
   list-style: none;
   font-size: 13px;
 }
@@ -370,9 +389,9 @@ footer {
   margin: -10px auto 0;
   text-align: center;
 }
-.ingame .class-stats, .ingame .chat-log {
+.class-stats, .chat-log {
   text-align: left;
 }
-.ingame .stats {
+.stats {
   display: inline-block;
 }
