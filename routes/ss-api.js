@@ -13,7 +13,7 @@ var statsEmitter = require('../emitters').statsEmitter;
 
 
 module.exports = function(app) {
-  app.post('/api/stats/new', isValidVersion, hasValidStats, ssCreateStats);
+  app.post('/api/stats/new', isValidVersion, hasValidStats, hasValidGameMode, ssCreateStats);
   app.post('/api/stats/update', isValidVersion, hasValidStats, hasValidSessionId, ssUpdateStats);
   app.post('/api/stats/gameover', isValidVersion, hasValidSessionId, ssGameOver);
 };
@@ -26,7 +26,7 @@ var isValidVersion = function(req, res, next) {
   console.log('SS-API body:', util.inspect(req.body, false, null, false));
   // Check header for api version
   if (req.get('sizzlingstats') !== 'v0.1') {
-    return res.send(401, 'false\n');
+    return res.send(403, 'false\n');
   }
   next();
 };
@@ -59,7 +59,15 @@ var hasValidStats = function(req, res, next) {
   if (req.body.stats && req.body.stats.players && req.body.stats.players.length) {
     return next();
   }
-  res.send(401, 'false\n');
+  res.send(403, 'false\n');
+};
+
+var hasValidGameMode = function(req, res, next) {
+  // Reject MVM
+  if (typeof req.body.stats.map === 'string' && req.body.stats.map.toLowerCase().split('_')[0] !== 'mvm') {
+    return next();
+  }
+  res.send(403, 'false\n');
 };
 
 // POST
@@ -141,7 +149,7 @@ var ssUpdateStats = function(req, res) {
 
 var ssGameOver = function(req, res) {
   if ( !req.get('matchduration') ) {
-    return res.send(400, 'false\n');
+    return res.send(403, 'false\n');
   }
   var matchDuration = parseInt(req.get('matchduration'), 10);
   var newChats = req.body.chats || [];
