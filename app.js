@@ -1,24 +1,14 @@
-var cluster = require('cluster');
-if (cluster.isMaster) {
-  // Run 3 workers, unless there are fewer than 3 cores on the cpu.
-  var numWorkers = 3;
-  var cpuCount = require('os').cpus().length;
-  var numWorkers = cpuCount < numWorkers ? cpuCount : numWorkers;
-  for (var i=0; i<numWorkers; i++) {
-    cluster.fork();
-  }
-  return;
-}
-
 
 /**
  * Module dependencies.
  */
 
-var express = require('express')
+var cluster = require('cluster')
+  , express = require('express')
   , app = module.exports = express()
   , http = require('http')
   , server = http.createServer(app)
+  , npid = require('./lib/pid')
   , async = require('async')
   , mongoose = require('mongoose')
   , everyauth = require('everyauth')
@@ -31,6 +21,70 @@ var express = require('express')
 require('colors');
 // var db = mongoose.createConnection('localhost', 'sizzlingstats');
 mongoose.connect(cfg.mongo_url);
+
+/**
+ * Exit cleanup stuff.
+ */
+var gracefullyExiting = false;
+
+// Create a pidfile with the worker's ID and pid
+try {
+  npid.create(__dirname + '/worker' +
+            (cluster.isWorker ? cluster.worker.id : '') +
+            '-' + process.pid + '.pid', true);
+} catch (err) {
+  console.log(err);
+  process.exit(1);
+}
+
+// If gracefully exiting, prevent http keep-alive
+app.use(function (req, res, next) {
+  if (gracefullyExiting) {
+    res.set('Connection', 'close');
+  }
+  next();
+  // res.send(502, 'The server is in the process of restarting.');
+});
+
+if (cluster.isWorker) {
+  process.on('message', function (message) {
+    if (message !== 'shutdown') { return; }
+    console.log('Worker', cluster.worker.id, 'is gracefully exiting...');
+    gracefulExit();
+  });
+}
+process.on('SIGTERM', gracefulExit);
+process.on('SIGINT', exit);
+process.on('SIGKILL', exit);
+
+function gracefulExit () {
+  gracefullyExiting = true;
+
+  // TODO: Close socket.io connections gracefully, somehow
+
+  // Timeout idle connections after 3 seconds
+  // server.on('connection', function(socket) {
+  //   socket.setTimeout(3*1000);
+  // });
+
+  server.close(function() {
+    mongoose.disconnect(function() {
+      exit(0);
+    });
+  });
+
+  // Forcefully shutdown after 6 seconds
+  setTimeout(function () {
+    console.error("Could not close connections in time, forcefully shutting down");
+    exit(1);
+  }, 6*1000);
+}
+
+function exit (code) {
+  process.nextTick(function() {
+    process.exit(code || 0);
+  });
+}
 
 
 /**
@@ -332,6 +386,8 @@ request.get('http://localhost:9200/sizzlingstats/_status', function(err, res, bo
 });
 
 // Start server
-server.listen(cfg.port);
-console.log("Express server listening on port %d in %s mode"
+server.listen(cfg.port, function () {
+  cluster.isWorker && process.send('online');
+  console.log("Express server listening on port %d in %s mode"
             , cfg.port, app.settings.env);
+});
