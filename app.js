@@ -105,7 +105,7 @@ everyauth.everymodule.handleLogout( function (req, res) {
   });
 });
 everyauth.steam
-  .myHostname( cfg.hostname )
+  .myHostname( cfg.address )
   .findOrCreateUser( function (session, openIdUserAttributes) {
     var promise = this.Promise();
     var steamId, numericId;

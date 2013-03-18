@@ -128,7 +128,7 @@ var ssCreateStats = function(req, res) {
         return res.send(500, 'false\n');
       }
       // Success! Respond to the gameserver with relevant info
-      res.set('matchurl', cfg.hostname + '/stats/' + stats._id + '?ingame');
+      res.set('matchurl', cfg.address + '/stats/' + stats._id + '?ingame');
       res.set('sessionid', sessionId);
       res.send(201, 'true\n');
     });
