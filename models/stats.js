@@ -189,11 +189,16 @@ statsSchema.statics.appendStats = function(newStats, matchId, isEndOfRound, cb) 
           isNewPlayer = false;
 
           for (var field in player) {
-            if (field === "mostplayedclass" || field === "playedclasses") {
+            if (field === "team") {
+              // We set the team to the first non-spectator team that the player joins
+              if (oldPlayer.team < 2 && player.team >= 2) {
+                oldPlayer.team = player.team;
+              }
+            } else if (field === "mostplayedclass" || field === "playedclasses") {
               if (oldPlayer[field]) {
                 oldPlayer[field][round] = player[field];
               }
-            } else if (field !== "steamid" && field !== "team" && field !== "name") {
+            } else if (field !== "steamid" && field !== "name") {
 
               if (oldPlayer[field]) {
                 if (oldPlayer[field][round]) {
