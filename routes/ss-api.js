@@ -26,14 +26,14 @@ var isValidVersion = function(req, res, next) {
   console.log('SS-API body:', util.inspect(req.body, false, null, false));
   // Check header for api version
   if (req.get('sizzlingstats') !== 'v0.1') {
-    return res.send(403, 'false\n');
+    return res.send(403, '\nsizzlingstats.com - Error: Unsupported plugin version.\n\n');
   }
   next();
 };
 
 var hasValidSessionId = function(req, res, next) {
   if ( !req.get('sessionid') ) {
-    return res.send(401, 'false\n');
+    return res.send(401, '\nsizzlingstats.com - Error: No sessionid.\n');
   }
 
   // Validate sessionid and update the timeout
@@ -43,10 +43,10 @@ var hasValidSessionId = function(req, res, next) {
     if (err) {
       console.log(err);
       console.trace(err);
-      return res.send(500, 'false\n');
+      return res.send(500, '\nsizzlingstats.com - Error: Unable to find sessionid\n');
     }
     if (!session || req.ip !== session.ip) {
-      return res.send(401, 'false\n');
+      return res.send(401, '\nsizzlingstats.com - Error: Invalid sessionid.\n');
     }
     req.matchId = session.matchId;
     req.statsSession = session;
@@ -59,7 +59,7 @@ var hasValidStats = function(req, res, next) {
   if (req.body.stats && req.body.stats.players && req.body.stats.players.length) {
     return next();
   }
-  res.send(403, 'false\n');
+  res.send(403, '\nsizzlingstats.com - Error: No stats received.\n');
 };
 
 var hasValidGameMode = function(req, res, next) {
@@ -67,7 +67,7 @@ var hasValidGameMode = function(req, res, next) {
   if (typeof req.body.stats.map === 'string' && req.body.stats.map.toLowerCase().split('_')[0] !== 'mvm') {
     return next();
   }
-  res.send(403, 'false\n');
+  res.send(403, '\nsizzlingstats.com - Error: Unsupported gamemode.\n');
 };
 
 // POST
@@ -125,7 +125,7 @@ var ssCreateStats = function(req, res) {
       if (err) {
         console.log(err);
         console.trace(err);
-        return res.send(500, 'false\n');
+        return res.send(500, '\nsizzlingstats.com - Error: Unable to save stats.\n');
       }
       // Success! Respond to the gameserver with relevant info
       res.set('matchurl', cfg.address + '/stats/' + stats._id + '?ingame');
@@ -141,7 +141,7 @@ var ssUpdateStats = function(req, res) {
     if (err) {
       console.log(err);
       console.trace(err);
-      return res.send(500, 'false\n');
+      return res.send(500, '\nsizzlingstats.com - Error: Unable to update stats.\n');
     }
     res.send(202, 'true\n');
   });
@@ -149,7 +149,7 @@ var ssUpdateStats = function(req, res) {
 
 var ssGameOver = function(req, res) {
   if ( !req.get('matchduration') ) {
-    return res.send(403, 'false\n');
+    return res.send(403, '\nsizzlingstats.com - Error: Missing matchduration.\n');
   }
   var matchDuration = parseInt(req.get('matchduration'), 10);
   var newChats = req.body.chats || [];
@@ -158,7 +158,7 @@ var ssGameOver = function(req, res) {
     if (err) {
       console.log(err);
       console.trace(err);
-      return res.send(500, 'false\n');
+      return res.send(500, '\nsizzlingstats.com - Error: Unable to set gameover.\n');
     }
 
     // If all went well, expire the sessionkey and send HTTP response
