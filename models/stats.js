@@ -193,12 +193,16 @@ statsSchema.statics.appendStats = function(newStats, matchId, isEndOfRound, cb) 
               if (oldPlayer[field]) {
                 oldPlayer[field][round] = player[field];
               }
-            } else if (field !== "steamid" && field !== "team" &&
-                                              field !== "name") {
+            } else if (field !== "steamid" && field !== "team" && field !== "name") {
+
               if (oldPlayer[field]) {
                 if (oldPlayer[field][round]) {
                   oldPlayer[field][round] += player[field];
                 } else {
+                  // Mongoose doesn't like 'undefined' in number arrays, so push 'null'
+                  for (var i=oldPlayer[field].length; i<round; i++) {
+                    oldPlayer[field].push(null);
+                  }
                   oldPlayer[field][round] = player[field];
                 }
               }
