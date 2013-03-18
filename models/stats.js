@@ -202,7 +202,9 @@ statsSchema.statics.appendStats = function(newStats, matchId, isEndOfRound, cb) 
 
               if (oldPlayer[field]) {
                 if (oldPlayer[field][round]) {
-                  oldPlayer[field][round] += player[field];
+                  // Undecided about this one.
+                  // oldPlayer[field][round] += player[field];
+                  oldPlayer[field][round] = player[field];
                 } else {
                   // Mongoose doesn't like 'undefined' in number arrays, so push 'null'
                   for (var i=oldPlayer[field].length; i<round; i++) {

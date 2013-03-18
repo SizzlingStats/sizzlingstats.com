@@ -22,8 +22,8 @@ module.exports = function(app) {
 
 var isValidVersion = function(req, res, next) {
   // For debugging
-  console.log('SS-API headers:', req.headers);
-  console.log('SS-API body:', util.inspect(req.body, false, null, false));
+  // console.log('SS-API headers:', req.headers);
+  // console.log('SS-API body:', util.inspect(req.body, false, null, false));
   // Check header for api version
   if (req.get('sizzlingstats') !== 'v0.1') {
     return res.send(403, '\nsizzlingstats.com - Error: Unsupported plugin version.\n\n');
