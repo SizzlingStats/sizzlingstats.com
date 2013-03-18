@@ -3,6 +3,8 @@ var cfg = {
 , port: parseInt(process.env.PORT, 10) || 8001
 , mongo_url: process.env.MONGO_URL || process.env.MONGOHQ_URL ||
                                       'mongodb://localhost/sizzlingstats'
+, elasticsearch_url: process.env.ELASTICSEARCH_URL ||
+                     'http://localhost:9200/sizzlingstats'
 , airbrake_host: 'sizzlingerrbit.herokuapp.com'
   // Redis Info
 , redis_host: process.env.REDIS_HOST || '127.0.0.1'

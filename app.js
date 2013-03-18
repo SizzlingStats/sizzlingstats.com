@@ -378,7 +378,7 @@ async.applyEach([ socketPub.select.bind(socketPub)
 /**
  * Check status of Elasticsearch server
  */
-request.get('http://localhost:9200/sizzlingstats/_status', function(err, res, body) {
+request.get(cfg.elasticsearch_url + '/_status', function(err, res, body) {
   if (err || res.statusCode !== 200) {
     return console.log('WARNING: Elasticsearch index "sizzlingstats" not found.');
   }

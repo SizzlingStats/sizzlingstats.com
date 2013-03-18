@@ -63,7 +63,7 @@ playerSchema.pre('save', function(next) {
 
   // Ship this off to elasticsearch
   var options = {
-    uri: 'http://localhost:9200/sizzlingstats/player/' + player._id
+    uri: cfg.elasticsearch_url + '/player/' + player._id
   , method: 'PUT'
   , timeout: 7000
   , json: player

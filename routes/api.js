@@ -2,10 +2,11 @@
  * Serve JSON to our AngularJS client
  */
 
-var uuid = require('node-uuid');
-var request = require('request');
-var Stats = require('../models/stats');
-var Player = require('../models/player');
+var uuid = require('node-uuid')
+  , request = require('request')
+  , cfg = require('../cfg/cfg')
+  , Stats = require('../models/stats')
+  , Player = require('../models/player');
 
 module.exports = function(app) {
   // JSON API
@@ -145,7 +146,7 @@ var playerSearch = function(req, res) {
   var query = req.query.q;
 
   var options = {
-    uri: 'http://localhost:9200/sizzlingstats/player/_search'
+    uri: cfg.elasticsearch_url + '/player/_search'
   , method: 'GET'
   , qs: {pretty: 'true'}
   , json: {
