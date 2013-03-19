@@ -278,6 +278,8 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
 
   // The very first time you load the controller, use the resolvedData.
   parseStats(resolvedData, true);
+  // And subscribe to the socket.io room.
+  socket.emit('stats:subscribe', $route.current.params.id);
 
   // hack. FIXME
   $rootScope.statsCtrlIsLoadedSoDontCallResolveFunction = true;
