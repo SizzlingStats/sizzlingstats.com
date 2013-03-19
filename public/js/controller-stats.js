@@ -30,15 +30,18 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
   });
 
   socket.on('stats:update', function (data) {
-    console.log('Stat update received!');
+    // console.log('Stat update received!');
     parseStats(data, false);
   });
 
   function Player(data) {
+    this.setData(data);
+  }
+  Player.prototype.setData = function(data) {
     for (var key in data) {
       this[key] = data[key];
     }
-  }
+  };
   Player.prototype.sumOf = function(statistic) {
     return sumArray2(this[statistic]);
   };
@@ -120,12 +123,9 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
   , ['BB', 'Buildings Built', 'sumOf("buildingsbuilt")']
   ];
 
+  $scope.players = [];
 
   var parseStats = function(data, reinitializeSelectedRounds) {
-    // Stupid hack -- need to keep both a hash and and array of players,
-    //  because AngularJS's orderBy function doesn't work on a hash.
-    $scope.playersArr = [];
-    $scope.players = {};
 
     // Stupid placeholder object for when things go wrong
     if (!data  || typeof data !== 'object') {
@@ -134,10 +134,27 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
       , bluname: 'BLU'
       , redscore: []
       , bluscore: []
-      , players: {}
       }};
     }
     var stats = $scope.stats = data.stats;
+
+    // Stupid hack. So many stupid hacks.
+    if (reinitializeSelectedRounds) {
+      $scope.players = [];
+      angular.forEach(stats.players, function (playerdata, steamid) {
+        $scope.players.push(new Player(playerdata));
+      });
+    } else {
+      angular.forEach($scope.players, function (player, index) {
+        if (stats.players[player.steamid]) {
+          player.setData(stats.players[player.steamid]);
+          delete(stats.players[player.steamid]);
+        }
+      });
+      angular.forEach(stats.players, function (playerdata, steamid) {
+        $scope.players.push(new Player(playerdata));
+      });
+    }
 
 
     // If redscore.length is greater than the current number of rounds, then
@@ -164,13 +181,6 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
     // Total playable time
     var playableTime = $scope.playableTime = sumArray(stats.roundduration);
 
-    // Construct player objects
-    angular.forEach(stats.players, function(playerdata, steamid) {
-      var player = $scope.players[steamid] = new Player(playerdata);
-      // stupid hack
-      $scope.playersArr.push(player);
-    });
-
     // Calculate total midfights won for each team
     var totalMidfightsWon = [0,0,0,0];
     var filteredTeamfirstcapArr = filterBySelectedRounds(stats.teamfirstcap);
@@ -181,7 +191,7 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
     // Calculate total damage and frags for each team
     var totalDamage = [0,0,0,0];
     var totalFrags = [0,0,0,0];
-    angular.forEach($scope.players, function(player, steamid) {
+    angular.forEach($scope.players, function(player) {
       totalDamage[player.team] += sumArray(player.damagedone);
       totalFrags[player.team] += sumArray(player.kills);
     });
@@ -249,7 +259,8 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
     var denominator = den.length ? sumArray2(den) : den;
     if (typeof numerator !== 'number') return '-';
     if (numerator === 0) return 0;
-    if (denominator === 0) return '&infin;';
+    // if (denominator === 0) return '&infin;';
+    if (denominator === 0) return '∞';
     return Math.round( (numerator/denominator)*100 )/100;
   };
   var filterBySelectedRounds = function(arr) {
@@ -304,8 +315,9 @@ StatsCtrl.resolve = {
         deferred.resolve(data);
       })
       .error(function(data) {
-        window.alert('Something went wrong.');
-        deferred.reject(data);
+        // window.alert('Something went wrong.');
+        // deferred.reject(data);
+        deferred.resolve();
       });
     return deferred.promise;
   }
