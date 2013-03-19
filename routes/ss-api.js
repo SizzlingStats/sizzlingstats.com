@@ -14,8 +14,8 @@ var statsEmitter = require('../emitters').statsEmitter;
 
 module.exports = function(app) {
   app.post('/api/stats/new', isValidVersion, hasValidStats, hasValidGameMode, ssCreateStats);
-  app.post('/api/stats/update', isValidVersion, hasValidStats, hasValidSessionId, ssUpdateStats);
-  app.post('/api/stats/gameover', isValidVersion, hasValidSessionId, ssGameOver);
+  app.post('/api/stats/update', hasValidStats, hasValidSessionId, ssUpdateStats);
+  app.post('/api/stats/gameover', hasValidSessionId, ssGameOver);
 };
 
 // Middleware
