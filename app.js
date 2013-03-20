@@ -56,6 +56,14 @@ if (cluster.isWorker) {
 process.on('SIGTERM', gracefulExit);
 process.on('SIGINT', exit);
 process.on('SIGKILL', exit);
+// This is just for removing the pidfile when nodemon is doing its thing
+process.once('SIGUSR2', function() {
+  npid.remove(__dirname + '/worker' + (cluster.isWorker ? cluster.worker.id : '') +
+              '-' + process.pid + '.pid');
+  process.nextTick(function() {
+    process.kill(process.pid, 'SIGUSR2');
+  });
+});
 
 function gracefulExit () {
   gracefullyExiting = true;
