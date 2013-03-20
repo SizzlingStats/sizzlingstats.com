@@ -70,7 +70,7 @@ playerSchema.pre('save', function(next) {
   };
   request(options, function(err, res, body) {
     // I don't care.
-    if (err) { console.log(err); }
+    // if (err) {console.log(err); }
     // else { console.log(body); }
   });
 
