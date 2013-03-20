@@ -34,12 +34,39 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
     parseStats(data, false);
   });
 
-  function Player(data) {
+  socket.on('stats:liveupdate', function (data) {
+    parseLiveUpdate(data, false);
+  });
+
+  function Player(data, isLiveUpdate) {
+    if (isLiveUpdate) {
+      this.name = data.name;
+      this.steamid = data.steamid;
+      this.team = data.team;
+      delete data.name;
+      delete data.steamid;
+      delete data.team;
+      for (var key in data) {
+        this[key] = [];
+      }
+      return this.setUpdateData(data);
+    }
     this.setData(data);
   }
   Player.prototype.setData = function(data) {
     for (var key in data) {
       this[key] = data[key];
+    }
+  };
+  Player.prototype.setUpdateData = function(data) {
+    // using the liveupdate current round thing
+    for (var key in data) {
+      // if (!this[key]) {
+      //   console.log(key);
+      //   console.log(data);
+      //   console.log(this);
+      // }
+      this[key][$scope.stats.round] = data[key];
     }
   };
   Player.prototype.sumOf = function(statistic) {
@@ -84,7 +111,7 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
   $scope.overallStatsTableData = [
     ['Name', null, 'name']
   , ['C', 'Most Played Class', 'mostPlayedClass()']
-  , ['P', 'Points', 'sumOf("points")']
+  // , ['P', 'Points', 'sumOf("points")']
   , ['FA/D', 'Frags+Assists Per Death', 'fapd()']
   , ['F', 'Frags', 'sumOf("kills")']
   , ['A', 'Assists', 'sumOf("killassists")']
@@ -156,6 +183,14 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
       });
     }
 
+    $scope.redScore = stats.redscore.reduce(function(a,b) { return a + b; },0);
+    $scope.bluScore = stats.bluscore.reduce(function(a,b) { return a + b; },0);
+    // Score Comparison
+    $scope.scoreComparison = $scope.redScore > $scope.bluScore ?
+                                                           '>' :
+                             $scope.redScore < $scope.bluScore ?
+                                                           '<' :
+                                                           '==';
 
     // If redscore.length is greater than the current number of rounds, then
     //  that means a new round just started -- add it to $scope.selectedRounds.
@@ -167,17 +202,47 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
 
     if (reinitializeSelectedRounds) { $scope.initializeSelectedRoundsArray(); }
 
-    var redScore = $scope.redScore =
-                   stats.redscore.reduce(function(a,b) { return a + b; },0);
-    var bluScore = $scope.bluScore =
-                   stats.bluscore.reduce(function(a,b) { return a + b; },0);
-    // Score Comparison
-    $scope.scoreComparison = redScore > bluScore ?
-                             '>' :
-                             redScore < bluScore ?
-                             '<' :
-                             '==';
+    recalculateStats();
+  };
 
+  var parseLiveUpdate = function(data) {
+    var currentRound = $scope.stats.round;
+    var stats = data.stats;
+
+    angular.forEach($scope.players, function (player, index) {
+      if (stats.players[player.steamid]) {
+        player.setUpdateData(stats.players[player.steamid]);
+        delete(stats.players[player.steamid]);
+      }
+    });
+    // note the difference between steamid and identifier because of the bot thing
+    angular.forEach(stats.players, function (playerdata, identifier) {
+      if (!playerdata.mostplayedclass) {
+        return;
+      }
+      $scope.players.push(new Player(playerdata, true));
+    });
+
+    $scope.stats.roundduration[currentRound] = stats.roundduration;
+    $scope.stats.redscore[currentRound] = stats.redscore;
+    $scope.stats.bluscore[currentRound] = stats.bluscore;
+    $scope.stats.teamfirstcap[currentRound] = stats.teamfirstcap;
+
+
+    // If currentRound is greater than $scope.numRounds, then
+    //  that means a new round just started -- add it to $scope.selectedRounds.
+    if (currentRound > $scope.numRounds-1) {
+      $scope.selectedRounds.push(currentRound);
+      $scope.numRounds += 1;
+      // $scope.initializeSelectedRoundsArray();
+    }
+
+    recalculateStats();
+  };
+
+  var recalculateStats = function() {
+    var stats = $scope.stats;
+    var numRounds = $scope.numRounds;
     // Total playable time
     var playableTime = $scope.playableTime = sumArray(stats.roundduration);
 
@@ -197,16 +262,14 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
     });
 
     // Assemble score overview table rows
-    var redRoundScores = stats.redscore.concat(redScore,totalDamage[2]
-                                             , totalFrags[2]
-                                             , totalMidfightsWon[2]);
-    var bluRoundScores = stats.bluscore.concat(bluScore,totalDamage[3]
-                                             , totalFrags[3]
-                                             , totalMidfightsWon[3]);
-    $scope.redtr = '<td class="red">' + escapeHtml(stats.redname) +
-                   '</td><td>' + redRoundScores.join('</td><td>') + '</td>';
-    $scope.blutr = '<td class="blu">' + escapeHtml(stats.bluname) +
-                   '</td><td>' + bluRoundScores.join('</td><td>') + '</td>';
+    $scope.redRoundScores = stats.redscore.concat($scope.redScore
+                                                , totalDamage[2]
+                                                , totalFrags[2]
+                                                , totalMidfightsWon[2]);
+    $scope.bluRoundScores = stats.bluscore.concat($scope.bluScore
+                                                , totalDamage[3]
+                                                , totalFrags[3]
+                                                , totalMidfightsWon[3]);
   };
 
   // Helpers
@@ -273,12 +336,12 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
   var exists = function(n) {
     return (n !== null && n !== undefined);
   };
-  var escapeHtml = $scope.escapeHtml = (function () {
-    var chr = { '"': '&quot;', '&': '&amp;', '<': '&lt;', '>': '&gt;' };
-    return function (text) {
-      return text.replace(/[\"&<>]/g, function (a) { return chr[a]; });
-    };
-  })();
+  // var escapeHtml = $scope.escapeHtml = (function () {
+  //   var chr = { '"': '&quot;', '&': '&amp;', '<': '&lt;', '>': '&gt;' };
+  //   return function (text) {
+  //     return text.replace(/[\"&<>]/g, function (a) { return chr[a]; });
+  //   };
+  // })();
   $scope.secondsToHMS = function(seconds) {
     var h = parseInt(seconds/3600, 10);
     var m = parseInt((seconds-h*3600)/60, 10);

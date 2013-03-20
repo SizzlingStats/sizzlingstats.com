@@ -108,10 +108,10 @@ app.directive('statsTr', ['$compile', function($compile) {
       var data = scope.data(), showClassIcons;
       if (data[1][0] === 'C') { showClassIcons = true; }
 
-      var playerRow = '<td class="player-name"><img class="team' +
-                '{{player.team}} avatar" src="{{player.avatar}}" />' +
-                '<span><a href="/player/{{player.numericid}}">' +
-                '{{player.name}}</a></span></td>';
+      var playerRow = '<td class="player-name"><img class="team{{player.team}}' +
+                ' avatar" src="{{player.avatar}}" /><span><a ng-href=' +
+                '"{{(player.numericid) && \'/player/\'+player.numericid||' +
+                '\'\'}}">{{player.name}}</a></span></td>';
       var i = 1;
       if (showClassIcons) {
         i = 2;

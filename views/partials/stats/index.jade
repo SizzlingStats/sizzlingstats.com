@@ -39,8 +39,12 @@
           th(title='Total Frags', class='has-tip tip-top'): abbr F
           th(title='Midfights Won', class='has-tip tip-top'): abbr MF
       tbody
-        tr(ng-bind-html-unsafe='redtr')
-        tr(ng-bind-html-unsafe='blutr')
+        tr
+          td.red {{stats.redname}}
+          td(ng-repeat='s in redRoundScores') {{s}}
+        tr
+          td.blu {{stats.bluname}}
+          td(ng-repeat='s in bluRoundScores') {{s}}
   .overall-stats
     stats-table(data='overallStatsTableData', split-teams='')
   .class-stats
