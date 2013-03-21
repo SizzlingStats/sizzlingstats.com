@@ -39,7 +39,7 @@ module.exports = function(app) {
   });
 
   statsEmitter.on('updateLiveStats', function (stats) {
-    io.sockets.in(stats._id).emit('stats:liveupdate', { stats: stats }, stats._id);
+    io.sockets.in(stats._id).emit('stats:liveupdate', { stats: stats });
   });
 
 };

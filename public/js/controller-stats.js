@@ -35,7 +35,7 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
   });
 
   socket.on('stats:liveupdate', function (data) {
-    parseLiveUpdate(data, false);
+    parseLiveUpdate(data);
   });
 
   function Player(data, isLiveUpdate) {
@@ -43,13 +43,10 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
       this.name = data.name;
       this.steamid = data.steamid;
       this.team = data.team;
-      delete data.name;
-      delete data.steamid;
-      delete data.team;
       for (var key in data) {
         this[key] = [];
       }
-      return this.setUpdateData(data);
+      return this.setLiveUpdateData(data);
     }
     this.setData(data);
   }
@@ -58,8 +55,11 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
       this[key] = data[key];
     }
   };
-  Player.prototype.setUpdateData = function(data) {
+  Player.prototype.setLiveUpdateData = function(data) {
     // using the liveupdate current round thing
+    delete data.name;
+    delete data.steamid;
+    delete data.team;
     for (var key in data) {
       // if (!this[key]) {
       //   console.log(key);
@@ -172,13 +172,20 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
         $scope.players.push(new Player(playerdata));
       });
     } else {
+      var steamidsToSkip = [];
+      // Check for existing players that can be updated
       angular.forEach($scope.players, function (player, index) {
         if (stats.players[player.steamid]) {
           player.setData(stats.players[player.steamid]);
-          delete(stats.players[player.steamid]);
+          // skip it
+          steamidsToSkip.push(player.steamid);
         }
       });
+      // Create new player objects for steamids that we don't already have
       angular.forEach(stats.players, function (playerdata, steamid) {
+        if (steamidsToSkip.indexOf(steamid) !== -1) {
+          return;
+        }
         $scope.players.push(new Player(playerdata));
       });
     }
@@ -202,31 +209,33 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
 
     if (reinitializeSelectedRounds) { $scope.initializeSelectedRoundsArray(); }
 
-    recalculateStats();
+    calculateStats();
   };
 
   var parseLiveUpdate = function(data) {
     var currentRound = $scope.stats.round;
-    var stats = data.stats;
+    var newStats = data.stats;
 
     angular.forEach($scope.players, function (player, index) {
-      if (stats.players[player.steamid]) {
-        player.setUpdateData(stats.players[player.steamid]);
-        delete(stats.players[player.steamid]);
+      if (newStats.players[player.steamid]) {
+        player.setLiveUpdateData(newStats.players[player.steamid]);
+        delete(newStats.players[player.steamid]);
       }
     });
     // note the difference between steamid and identifier because of the bot thing
-    angular.forEach(stats.players, function (playerdata, identifier) {
+    angular.forEach(newStats.players, function (playerdata, identifier) {
       if (!playerdata.mostplayedclass) {
         return;
       }
-      $scope.players.push(new Player(playerdata, true));
+      var newPlayer = new Player(playerdata, true);
+      $scope.stats.players[playerdata.steamid] = playerdata;
+      $scope.players.push(newPlayer);
     });
 
-    $scope.stats.roundduration[currentRound] = stats.roundduration;
-    $scope.stats.redscore[currentRound] = stats.redscore;
-    $scope.stats.bluscore[currentRound] = stats.bluscore;
-    $scope.stats.teamfirstcap[currentRound] = stats.teamfirstcap;
+    $scope.stats.roundduration[currentRound] = newStats.roundduration;
+    $scope.stats.redscore[currentRound] = newStats.redscore;
+    $scope.stats.bluscore[currentRound] = newStats.bluscore;
+    $scope.stats.teamfirstcap[currentRound] = newStats.teamfirstcap;
 
 
     // If currentRound is greater than $scope.numRounds, then
@@ -237,10 +246,10 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
       // $scope.initializeSelectedRoundsArray();
     }
 
-    recalculateStats();
+    calculateStats();
   };
 
-  var recalculateStats = function() {
+  var calculateStats = function() {
     var stats = $scope.stats;
     var numRounds = $scope.numRounds;
     // Total playable time
