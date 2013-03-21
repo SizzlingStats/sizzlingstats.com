@@ -38,4 +38,8 @@ module.exports = function(app) {
     io.sockets.emit('matches:remove', matchId);
   });
 
+  statsEmitter.on('updateLiveStats', function (stats) {
+    io.sockets.in(stats._id).emit('stats:liveupdate', { stats: stats }, stats._id);
+  });
+
 };

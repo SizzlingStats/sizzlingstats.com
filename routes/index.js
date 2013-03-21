@@ -19,6 +19,7 @@ module.exports = function(app) {
   });
 
   require('./ss-api')(app);
+  require('./log-api')(app);
   require('./api')(app);
 
   // redirect all others to the index (HTML5 history)
