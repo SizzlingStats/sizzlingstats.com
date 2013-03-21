@@ -65,8 +65,8 @@
       li(ng-repeat='chat in stats.chats | filter:bindFilter')
         span.chat-time {{secondsToHMS(chat.time)}}&nbsp;
         span.chat-name(ng-class='{true:"team-message"}[chat.isTeam]'
-                     , class='team{{players[chat.steamid].team}}')
-          b {{players[chat.steamid].name || "spectator"}}
+                     , class='team{{stats.players[chat.steamid].team}}')
+          b {{stats.players[chat.steamid].name || "spectator"}}
         span.chat-message : {{chat.message}}
     dl.sub-nav.no-marg
       dd(ng-class='{active:filterBinds}')
