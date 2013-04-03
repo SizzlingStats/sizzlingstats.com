@@ -43,6 +43,9 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
       this.name = data.name;
       this.steamid = data.steamid;
       this.team = data.team;
+      delete data.name;
+      delete data.steamid;
+      delete data.team;
       for (var key in data) {
         this[key] = [];
       }
