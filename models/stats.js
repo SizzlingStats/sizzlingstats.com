@@ -69,6 +69,8 @@ var statsSchema = new mongoose.Schema({
 , updated: { type: Date }
 , viewCount: Number
 , isLive: { type: Boolean, default: false }
+// FIXME
+, logUpdatesOnly: {type: Boolean, default: false}
 });
 
 statsSchema.options.toObject = {
@@ -147,10 +149,18 @@ statsSchema.statics.createStats = function(stats) {
   new Stats(stats).save(callback);
 };
 
-statsSchema.statics.appendStats = function(newStats, matchId, isEndOfRound, cb) {
+statsSchema.statics.appendStats = function(newStats, matchId, isEndOfRound, isLogUpdate, cb) {
   Stats.findById(matchId, function(err, stats) {
     if (err) return cb(err);
     if (!stats) return cb(new Error('Stats not found'));
+    // FIXME
+    if (!isLogUpdate && stats.logUpdatesOnly) {
+      // If this update isn't from the log parser, and these stats are marked
+      //  for log updates only, then just take the chat messages.
+      stats.chats = appendChats(newChats, stats.chats);
+      stats.save(cb);
+      return;
+    }
 
     var round = stats.round;
 
@@ -255,7 +265,7 @@ statsSchema.statics.appendStats = function(newStats, matchId, isEndOfRound, cb) 
     //  Array.push() to set array elements
     stats.markModified('players');
 
-    stats.chats = appendChats(newStats.chats, stats.chats);
+    // stats.chats = appendChats(newStats.chats, stats.chats);
     if (isEndOfRound) { stats.round += 1; }
 
     stats.updated = new Date();
@@ -265,6 +275,14 @@ statsSchema.statics.appendStats = function(newStats, matchId, isEndOfRound, cb) 
     stats.save(cb);
 
   }); // end Stats.findById()
+};
+
+// FIXME:
+statsSchema.statics.markForLogUpdatesOnly = function (matchId, cb) {
+  Stats.update({_id: matchId}, {logUpdatesOnly: true}, function(err) {
+    if (err) {return cb(err);}
+    cb(null);
+  });
 };
 
 statsSchema.methods.setCountryFlags = function(playerData, cb) {

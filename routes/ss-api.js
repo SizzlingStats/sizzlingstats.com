@@ -137,7 +137,7 @@ var ssCreateStats = function(req, res) {
 var ssUpdateStats = function(req, res) {
   var isEndOfRound = (req.get('endofround') === 'true');
   // Append the new data to the old
-  Stats.appendStats(req.body.stats, req.matchId, isEndOfRound, function(err) {
+  Stats.appendStats(req.body.stats, req.matchId, isEndOfRound, false, function(err) {
     if (err) {
       console.log(err);
       console.trace(err);
@@ -162,12 +162,17 @@ var ssGameOver = function(req, res) {
     }
 
     // If all went well, expire the sessionkey and send HTTP response
-    req.statsSession.expireSessionKey(function(err) {
-      if (err) {
-        console.log(err);
-        console.trace(err);
-      }
-      res.send(202, 'true\n');
-    });
+
+    // delay for 4 seconds in case the logparser is parsing more stuff
+    setTimeout(function () {
+      req.statsSession.expireSessionKey(function(err) {
+        if (err) {
+          console.log(err);
+          console.trace(err);
+        }
+      });
+    }, 4000);
+
+    res.send(202, 'true\n');
   });
 };

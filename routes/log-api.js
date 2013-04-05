@@ -12,23 +12,23 @@ var Player = require('../models/player');
 var statsEmitter = require('../emitters').statsEmitter;
 
 
-module.exports = function(app) {
-
+module.exports = function (app) {
+  app.post('/api/log/matchid', isLocalhost, hasValidSessionId, matchId);
   app.post('/api/log/stats/update', isLocalhost, logUpdateStats);
   app.post('/api/log/stats/roundover', isLocalhost, hasValidSessionId, logRoundOver);
-  app.post('/api/log/stats/gameover', isLocalhost, hasValidSessionId, logGameOver);
+  // app.post('/api/log/stats/gameover', isLocalhost, hasValidSessionId, logGameOver);
 };
 
 // Middleware
 
-var isLocalhost = function(req, res, next) {
+var isLocalhost = function (req, res, next) {
   if ( req.ip !== '127.0.0.1' ) {
     return res.send(401, '\nsizzlingstats.com - Error: Get outta here\n');
   }
   next();
 };
 
-var hasValidSessionId = function(req, res, next) {
+var hasValidSessionId = function (req, res, next) {
   if ( !req.get('sessionid') ) {
     return res.send(401, '\nsizzlingstats.com - Error: No sessionid.\n');
   }
@@ -36,7 +36,7 @@ var hasValidSessionId = function(req, res, next) {
   // Validate sessionid and update the timeout
   Session.findByIdAndUpdate(req.get('sessionid')
                           , { timeout: Date.now()+cfg.stats_session_timeout }
-                          , function(err, session) {
+                          , function (err, session) {
     if (err) {
       console.log(err);
       console.trace(err);
@@ -51,18 +51,35 @@ var hasValidSessionId = function(req, res, next) {
   });
 };
 
+// GET
+
+var matchId = function (req, res) {
+  // This endpoint is for the logStreamHandler to verify the sessionid it gets
+  //  from the log, and to get its respective matchId.
+  res.set('matchid', req.matchId);
+  res.send(200);
+
+  // We can also use it to mark the stats document as one that will be
+  //  "taken over" by the log api, so further api calls to the regular ss-api
+  //  from the plugin are ignored (or only used for chat messages).
+  Stats.markForLogUpdatesOnly(req.matchId, function(err) {
+    // stuff
+    if (err) {console.trace(err);}
+  });
+};
+
 // POST
 
-var logUpdateStats = function(req, res) {
+var logUpdateStats = function (req, res) {
   // Don't save, just send to clients
   statsEmitter.emit('updateLiveStats', req.body.stats);
   res.send(202, 'true\n');
 };
 
-var logRoundOver = function(req, res) {
+var logRoundOver = function (req, res) {
   // var isEndOfRound = (req.get('endofround') === 'true');
   // Append the new data to the old
-  Stats.appendStats(req.body.stats, req.matchId, true, function(err) {
+  Stats.appendStats(req.body.stats, req.matchId, true, true, function (err) {
     if (err) {
       console.log(err);
       console.trace(err);
@@ -72,14 +89,15 @@ var logRoundOver = function(req, res) {
   });
 };
 
-var logGameOver = function(req, res) {
+/*
+var logGameOver = function (req, res) {
   if ( !req.get('matchduration') ) {
     return res.send(403, '\nsizzlingstats.com - Error: Missing matchduration.\n');
   }
   var matchDuration = parseInt(req.get('matchduration'), 10);
   // var newChats = req.body.chats || [];
 
-  Stats.setGameOver(req.matchId, matchDuration, req.body.chats, function(err) {
+  Stats.setGameOver(req.matchId, matchDuration, req.body.chats, function (err) {
     if (err) {
       console.log(err);
       console.trace(err);
@@ -87,12 +105,13 @@ var logGameOver = function(req, res) {
     }
 
     // If all went well, expire the sessionkey and send HTTP response
-    req.statsSession.expireSessionKey(function(err) {
+    req.statsSession.expireSessionKey(function (err) {
       if (err) {
         console.log(err);
         console.trace(err);
       }
-      res.send(202, 'true\n');
     });
+    res.send(202, 'true\n');
   });
 };
+*/
