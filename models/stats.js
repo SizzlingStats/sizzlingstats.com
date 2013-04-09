@@ -157,7 +157,7 @@ statsSchema.statics.appendStats = function(newStats, matchId, isEndOfRound, isLo
     if (!isLogUpdate && stats.logUpdatesOnly) {
       // If this update isn't from the log parser, and these stats are marked
       //  for log updates only, then just take the chat messages.
-      stats.chats = appendChats(newChats, stats.chats);
+      stats.chats = appendChats(newStats.chats, stats.chats);
       stats.save(cb);
       return;
     }
