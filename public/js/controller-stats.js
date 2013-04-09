@@ -139,7 +139,8 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
   ];
   $scope.medicStatsTableData = [
     ['Medics', null, 'name']
-  , ['H', 'Heals Given (Incl Buffs)', 'sumOf("healpoints")']
+    // logstats don't include buffs
+  , ['H', 'Heals Given (Excl Buffs)', 'sumOf("healpoints")']
   , ['U', 'Ubers', 'sumOf("invulns")']
   , ['UD', 'Ubers Dropped', 'sumOf("ubersdropped")']
   ];
