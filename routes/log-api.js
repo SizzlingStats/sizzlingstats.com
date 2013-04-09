@@ -42,7 +42,7 @@ var hasValidSessionId = function (req, res, next) {
       console.trace(err);
       return res.send(500, '\nsizzlingstats.com - Error: Unable to find sessionid\n');
     }
-    if (!session || req.ip !== session.ip) {
+    if (!session) {
       return res.send(401, '\nsizzlingstats.com - Error: Invalid sessionid.\n');
     }
     req.matchId = session.matchId;
