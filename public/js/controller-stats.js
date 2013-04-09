@@ -43,10 +43,11 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
       this.name = data.name;
       this.steamid = data.steamid;
       this.team = data.team;
-      delete data.name;
-      delete data.steamid;
-      delete data.team;
       for (var key in data) {
+        // Skip name, steamid, and team when doing the array stuff
+        if (key === 'name' || key === 'steamid' || key === 'team') {
+          continue;
+        }
         this[key] = [];
       }
       return this.setLiveUpdateData(data);
@@ -60,15 +61,17 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
   };
   Player.prototype.setLiveUpdateData = function(data) {
     // using the liveupdate current round thing
-    delete data.name;
-    delete data.steamid;
-    delete data.team;
     for (var key in data) {
       // if (!this[key]) {
       //   console.log(key);
       //   console.log(data);
       //   console.log(this);
       // }
+
+      // Skip name, steamid, and team when doing the array stuff
+      if (key === 'name' || key === 'steamid' || key === 'team') {
+        continue;
+      }
       this[key][$scope.stats.round] = data[key];
     }
   };
@@ -219,13 +222,15 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
     var currentRound = $scope.stats.round;
     var newStats = data.stats;
 
+    // Update existing players with new data
     angular.forEach($scope.players, function (player, index) {
       if (newStats.players[player.steamid]) {
         player.setLiveUpdateData(newStats.players[player.steamid]);
         delete(newStats.players[player.steamid]);
       }
     });
-    // note the difference between steamid and identifier because of the bot thing
+    // For each new player create a new Player object
+    //  note the difference between steamid and identifier because of the bot thing
     angular.forEach(newStats.players, function (playerdata, identifier) {
       if (!playerdata.mostplayedclass) {
         return;
