@@ -3,7 +3,6 @@
  */
 
 var path = require('path')
-  , analytics = require('no-js-analytics')
   , Download = require('../models/download');
 
 module.exports = function(app) {
@@ -13,10 +12,6 @@ module.exports = function(app) {
   app.get('/partials/:name/:action', partialAction);
 
   app.get('/download/:filename', download);
-
-  app.get('/analytics', function(req, res){
-    res.send(200, analytics.stats());
-  });
 
   require('./ss-api')(app);
   require('./log-api')(app);

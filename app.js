@@ -12,7 +12,6 @@ var cluster = require('cluster')
   , async = require('async')
   , mongoose = require('mongoose')
   , everyauth = require('everyauth')
-  , analytics = require('no-js-analytics')
   , request = require('request')
   , cfg = require('./cfg/cfg')
   , secrets = require('./cfg/secrets')
@@ -213,7 +212,6 @@ app.set('view options', {
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 
-app.use(analytics);
 
 // Sessions
 
