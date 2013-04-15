@@ -3,7 +3,7 @@
 , "version": "0.0.2"
 , "private": true
 , "engines": {
-    "node": "0.8.x"
+    "node": "0.10.x"
   }
 , "dependencies": {
     "airbrake": "git://github.com/dy-dx/node-airbrake.git#errbit"
