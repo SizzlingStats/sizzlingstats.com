@@ -3,7 +3,8 @@
  */
 
 var path = require('path')
-  , Download = require('../models/download');
+  , Download = require('../models/download')
+  , Analytics = require('../models/analytics');
 
 module.exports = function(app) {
   app.get('/', index);
@@ -36,6 +37,9 @@ var index = function(req, res) {
   , loggedIn: req.loggedIn
   , user: req.user || {}
   });
+
+  // Analytics
+  Analytics.trackIp(req.ip, 'users');
 };
 
 var partials = function (req, res) {

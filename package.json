@@ -14,6 +14,7 @@
   , "cron": "1.x.x"
   , "everyauth": "git://github.com/dy-dx/everyauth.git#steam"
   , "express": "3.1.0"
+  , "geoip": "~0.4.9"
   , "hiredis": "0.1.14"
   , "jade": "*"
   , "mongoose": "3.x.x"
