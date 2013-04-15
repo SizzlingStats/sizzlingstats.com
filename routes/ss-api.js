@@ -25,10 +25,11 @@ var isValidVersion = function(req, res, next) {
   // console.log('SS-API headers:', req.headers);
   // console.log('SS-API body:', util.inspect(req.body, false, null, false));
   // Check header for api version
-  if (req.get('sizzlingstats') !== 'v0.1') {
-    return res.send(403, '\nsizzlingstats.com - Error: Unsupported plugin version.\n\n');
+  if (req.get('sizzlingstats') === 'v0.1' || req.get('sizzlingstats') === 'v0.2') {
+    next();
+  } else {
+    res.send(403, '\nsizzlingstats.com - Error: Unsupported plugin version.\n\n');
   }
-  next();
 };
 
 var hasValidSessionId = function(req, res, next) {
@@ -118,7 +119,7 @@ var ssCreateStats = function(req, res) {
         }).save(callback);
       }
       // Create new stats document
-    , async.apply(Stats.createStats, req.body.stats)
+    , async.apply(Stats.createStats, req.body.stats, req.get('sizzlingstats'))
     ]
     // async.waterfall callback
   , function(err, stats) {

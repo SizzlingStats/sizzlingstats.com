@@ -68,6 +68,7 @@ var statsSchema = new mongoose.Schema({
 , created: { type: Date }
 , updated: { type: Date }
 , viewCount: Number
+, pluginVersion: String
 , isLive: { type: Boolean, default: false }
 // FIXME
 , logUpdatesOnly: {type: Boolean, default: false}
@@ -122,7 +123,7 @@ statsSchema.post('remove', function(stats) {
   statsEmitter.emit('removeStats', stats._id);
 });
 
-statsSchema.statics.createStats = function(stats) {
+statsSchema.statics.createStats = function(stats, pluginVersion) {
   var callback = arguments[arguments.length-1];
 
   // 'stats' is the the POST body data (req.body.stats), so massage it
@@ -146,6 +147,9 @@ statsSchema.statics.createStats = function(stats) {
   stats.isLive = true;
   stats.created = stats.updated = new Date();
   stats.viewCount = 0;
+
+  stats.pluginVersion = pluginVersion;
+
   new Stats(stats).save(callback);
 };
 

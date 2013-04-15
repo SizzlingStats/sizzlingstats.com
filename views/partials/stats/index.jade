@@ -1,10 +1,17 @@
 .stats
   .center
+    .panel.radius(ng-show="stats.pluginVersion == 'v0.1'")
+      h2 Your plugin is out of date.
+      h4
+        | Sorry, the autoupdater broke.
+        | Please manually update your SizzlingStats plugin with&#32;
+        a(href='/download/SizzlingStats-0.9.2.2-update.zip', target='_self') this patch
+        | , which fixes the autoupdater. Thanks!
     h3.no-marg
       img.flag.size-32(ng-show="stats.redCountry"
                      , ng-src="/img/flags/32/{{stats.redCountry}}.png")
       span.redname {{stats.redname}}
-      |  {{scoreComparison}} 
+      |  {{scoreComparison}}&#32;
       img.flag.size-32(ng-show="stats.bluCountry"
                      , ng-src="/img/flags/32/{{stats.bluCountry}}.png")
       span.bluname {{stats.bluname}}
@@ -12,7 +19,7 @@
     .stats-details
       .stats-description
         | {{stats.created | date:'M/d/yy h:mma' | lowercase}} //
-        | {{secondsToHMS(playableTime)}} // {{stats.map}} 
+        | {{secondsToHMS(playableTime)}} // {{stats.map}}&#32;
         span.label(ng-show='stats.isLive') Live
       .stats-hostname Server Name: {{stats.hostname}}
       //- .mapname Map: {{stats.map}}
