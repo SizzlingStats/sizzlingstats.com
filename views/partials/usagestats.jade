@@ -1,0 +1,67 @@
+h2 Usage Stats
+h3 Users
+#map-canvas-users(style="width:670px; height: 360px;")
+h3 TF2 Servers
+#map-canvas-tf2servers(style="width:670px; height: 360px;")
+
+script
+  function initialize () {
+    var mapOptions = {
+      zoom: 1
+    , center: new google.maps.LatLng(0, 0)
+    , disableDefaultUI: true
+    , mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    //- FIXME: global
+    usersMap = new google.maps.Map(document.getElementById("map-canvas-users"), mapOptions);
+    tf2serversMap = new google.maps.Map(document.getElementById("map-canvas-tf2servers"), mapOptions);
+
+
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = '/api/analytics';
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.ss_analytics_callback = function (data) {
+    window.console.log(data);
+    var usersHeatmapData = [];
+    var tf2serversHeatmapData = [];
+    if (data[0]._id === 'users') {
+      var users = data[0].geoips;
+      var tf2servers = data[1].geoips;
+    } else {
+      var users = data[1].geoips;
+      var tf2servers = data[0].geoips;
+    }
+
+    // Create LatLng points
+    for (var i=0, user; user=users[i]; ++i) {
+      var latLng = new google.maps.LatLng(user.latitude, user.longitude);
+      usersHeatmapData.push(latLng);
+    }
+    for (var j=0, tf2server; tf2server=tf2servers[j]; ++j) {
+      var latLng = new google.maps.LatLng(tf2server.latitude, tf2server.longitude);
+      tf2serversHeatmapData.push(latLng);
+    }
+
+    var usersHeatmap = new google.maps.visualization.HeatmapLayer({
+      data: usersHeatmapData
+    , dissipating: true
+    , map: usersMap
+    });
+    var tf2serversHeatmap = new google.maps.visualization.HeatmapLayer({
+      data: tf2serversHeatmapData
+    , dissipating: true
+    , map: tf2serversMap
+    });
+  };
+
+  function loadScript () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = "http://maps.googleapis.com/maps/api/js?libraries=geometry,visualization&sensor=false&callback=initialize";
+    document.body.appendChild(script);
+  }
+
+  loadScript();

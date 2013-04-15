@@ -6,7 +6,8 @@ var uuid = require('node-uuid')
   , request = require('request')
   , cfg = require('../cfg/cfg')
   , Stats = require('../models/stats')
-  , Player = require('../models/player');
+  , Player = require('../models/player')
+  , Analytics = require('../models/analytics');
 
 module.exports = function(app) {
   // JSON API
@@ -18,6 +19,8 @@ module.exports = function(app) {
 
   app.get('/api/profile', isLoggedIn, profileShow);
   app.get('/api/generateKey', isLoggedIn, generateKey);
+
+  app.get('/api/analytics', analytics);
 
   app.put('/api/stats/:id', isLoggedIn, statsUpdate);
   app.del('/api/stats/:id', isLoggedIn, statsDestroy);
@@ -219,6 +222,14 @@ var generateKey = function(req, res) {
     return res.send(player.apikey);
   });
 };
+
+var analytics = function (req, res) {
+  Analytics.find({}, function (err, analytics) {
+    return res.send('ss_analytics_callback(' +
+        JSON.stringify(analytics) + ');');
+  });
+};
+
 
 // PUT
 

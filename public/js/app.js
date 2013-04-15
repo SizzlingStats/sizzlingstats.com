@@ -45,11 +45,12 @@ var app = angular.module('myApp', ['myApp.services'])
       })
       .when('/about', {
         templateUrl: 'partials/about'
-      , reloadOnSearch: true
       })
       .when('/download', {
         templateUrl: 'partials/download'
-      , reloadOnSearch: true
+      })
+      .when('/usagestats', {
+        templateUrl: 'partials/usagestats'
       })
       .otherwise({
         redirectTo: '/'

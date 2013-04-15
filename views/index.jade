@@ -20,7 +20,7 @@ block body
             a(href='/download') Download
           li.divider
           //- li(ng-class='{active:isCurrentPath("/usagestats")}')
-          //-   a(href='/download') Usage Stats
+          //-   a(href='/usagestats') Usage Stats
           //- li.divider
         //- Right Nav Section
         ul.right
@@ -70,7 +70,7 @@ block body
                   .nowrap
                     span {{match.hostname}}
                 img.flag.size-16(ng-show="match.redCountry", ng-src="/img/flags/16/{{match.redCountry}}.png")
-                span {{match.redname}} vs 
+                span {{match.redname}} vs&#32;
                 img.flag.size-16(ng-show="match.bluCountry", ng-src="/img/flags/16/{{match.bluCountry}}.png")
                 span {{match.bluname}}
       .columns(class='{{(hideSideBar) && "twelve" || "nine"}}', ng-view)
