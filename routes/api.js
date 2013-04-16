@@ -229,10 +229,19 @@ var analytics = function (req, res) {
   Player.count({}, function (err, playerCount) {
     Stats.count({}, function (err, matchCount) {
       Analytics.find({}, function (err, analytics) {
+        var users, tf2servers;
+        if (analytics[0]._id === 'users') {
+          users = analytics[0];
+          tf2servers = analytics[1];
+        } else {
+          users = analytics[1];
+          tf2servers = analytics[0];
+        }
         return res.send({
           playerCount: playerCount
         , matchCount: matchCount
-        , geoips: analytics
+        , users: users.toObject({ transform: true }).geoips
+        , tf2servers: tf2servers.toObject({ transform: true }).geoips
         });
       });
     });

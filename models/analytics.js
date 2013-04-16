@@ -18,6 +18,16 @@ var analyticsSchema = new mongoose.Schema({
 });
 
 
+// Transform
+analyticsSchema.options.toObject = {
+  // remove private data when serializing
+  transform: function removePrivateFields(doc, ret, options) {
+    for (var i=0, len=ret.geoips.length; i<len; ++i) {
+      delete ret.geoips[i]._id;
+    }
+  }
+};
+
 analyticsSchema.statics.trackIp = function (ip, type) {
   Analytics.findById(type, function (err, analytics) {
     var geoip = analytics.geoips.id(ip);

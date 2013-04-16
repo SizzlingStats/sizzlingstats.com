@@ -5,12 +5,11 @@
 app.controller('UsageStatsCtrl', ['$scope', 'resolveData'
                                , function($scope, resolveData) {
 
-  $scope.playerCount = resolveData.playerCount;
-  $scope.matchCount = resolveData.matchCount;
+  var data = resolveData;
+  $scope.playerCount = data.playerCount;
+  $scope.matchCount = data.matchCount;
 
   // Map Stuff
-  var data = resolveData.geoips;
-  console.log(data);
   var mapOptions = {
     zoom: 1
   , center: new google.maps.LatLng(0, 0)
@@ -23,15 +22,9 @@ app.controller('UsageStatsCtrl', ['$scope', 'resolveData'
 
   var usersHeatmapData = [];
   var tf2serversHeatmapData = [];
-  var users, tf2servers, latLng;
-
-  if (data[0]._id === 'users') {
-    users = data[0].geoips;
-    tf2servers = data[1].geoips;
-  } else {
-    users = data[1].geoips;
-    tf2servers = data[0].geoips;
-  }
+  var users = data.users;
+  var tf2servers = data.tf2servers;
+  var latLng;
 
   // Create LatLng points
   for (var i=0, user; user=users[i]; ++i) {
