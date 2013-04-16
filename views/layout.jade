@@ -32,13 +32,5 @@ html(lang="en", ng-app="myApp")
       script( src='/js/directive-stats.js' )
       script( src='/js/directive-typeahead.js' )
     //- FIXME
-    //- Surely there is a better way to do this?????
     //- script
-      app.service('me', function() {
-        return {
-          id: '#{user.numericid}'
-        , name: '#{user.name}'
-        };
-      });
-    script
       app.service('me', function() {return {id: '#{user.numericid}', name: '#{user.name}'}; });

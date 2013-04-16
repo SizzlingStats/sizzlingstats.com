@@ -4,8 +4,7 @@
 
 /* Controllers */
 
-function MainCtrl($scope, $rootScope, $route, $location, me) {
-  // console.log(me);
+function MainCtrl($scope, $rootScope, $route, $location) {
 
   $rootScope.loading = false;
   $scope.showSideBar = true;
