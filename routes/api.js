@@ -224,9 +224,18 @@ var generateKey = function(req, res) {
 };
 
 var analytics = function (req, res) {
-  Analytics.find({}, function (err, analytics) {
-    return res.send('ss_analytics_callback(' +
-        JSON.stringify(analytics) + ');');
+  // FIXME: You shouldn't chain them like this
+  // FIXME: You should cache this stuff
+  Player.count({}, function (err, playerCount) {
+    Stats.count({}, function (err, matchCount) {
+      Analytics.find({}, function (err, analytics) {
+        return res.send({
+          playerCount: playerCount
+        , matchCount: matchCount
+        , geoips: analytics
+        });
+      });
+    });
   });
 };
 

@@ -51,6 +51,11 @@ var app = angular.module('myApp', ['myApp.services'])
       })
       .when('/usagestats', {
         templateUrl: 'partials/usagestats'
+      , controller: 'UsageStatsCtrl'
+      , resolve: {
+          googleMaps: 'GoogleMaps'
+        , resolveData: 'UsageStatsResolve'
+        }
       })
       .otherwise({
         redirectTo: '/'
