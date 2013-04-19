@@ -12,16 +12,16 @@ block body
       section
         //- Left Nav Section
         ul.left
-          li.divider
-          li(ng-class='{active:isCurrentPath("/about")}')
+          //- li.divider
+          //- li(ng-class='{active:isCurrentPath("/about")}')
             a(href='/about') About
           li.divider
           li(ng-class='{active:isCurrentPath("/download")}')
             a(href='/download') Download
           li.divider
-          //- li(ng-class='{active:isCurrentPath("/usagestats")}')
-          //-   a(href='/usagestats') Usage Stats
-          //- li.divider
+          li(ng-class='{active:isCurrentPath("/usagestats")}')
+            a(href='/usagestats') Usage Stats
+          li.divider
         //- Right Nav Section
         ul.right
           li.search

@@ -8,6 +8,7 @@ app.controller('UsageStatsCtrl', ['$scope', 'resolveData'
   var data = resolveData;
   $scope.playerCount = data.playerCount;
   $scope.matchCount = data.matchCount;
+  $scope.updated = data.updated;
 
   // Map Stuff
   var mapOptions = {
