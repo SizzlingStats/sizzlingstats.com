@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var geoip = require('geoip');
+var cronJob = require('cron').CronJob;
 
 var City = geoip.City;
 var city = new City(__dirname + '/../lib/GeoLiteCity.dat');
@@ -17,16 +18,6 @@ var analyticsSchema = new mongoose.Schema({
 , geoips: [geoipSchema]
 });
 
-
-// Transform
-analyticsSchema.options.toObject = {
-  // remove private data when serializing
-  transform: function removePrivateFields(doc, ret, options) {
-    for (var i=0, len=ret.geoips.length; i<len; ++i) {
-      delete ret.geoips[i]._id;
-    }
-  }
-};
 
 analyticsSchema.statics.trackIp = function (ip, type) {
   Analytics.findById(type, function (err, analytics) {
@@ -52,8 +43,6 @@ analyticsSchema.statics.trackIp = function (ip, type) {
 var Analytics = mongoose.model('Analytics', analyticsSchema);
 
 module.exports = Analytics;
-
-
 
 
 // Startup:

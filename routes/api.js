@@ -7,7 +7,7 @@ var uuid = require('node-uuid')
   , cfg = require('../cfg/cfg')
   , Stats = require('../models/stats')
   , Player = require('../models/player')
-  , Analytics = require('../models/analytics');
+  , AnalyticsCached = require('../models/analytics-cached');
 
 module.exports = function(app) {
   // JSON API
@@ -224,27 +224,8 @@ var generateKey = function(req, res) {
 };
 
 var analytics = function (req, res) {
-  // FIXME: You shouldn't chain them like this
-  // FIXME: You should cache this stuff
-  Player.count({}, function (err, playerCount) {
-    Stats.count({}, function (err, matchCount) {
-      Analytics.find({}, function (err, analytics) {
-        var users, tf2servers;
-        if (analytics[0]._id === 'users') {
-          users = analytics[0];
-          tf2servers = analytics[1];
-        } else {
-          users = analytics[1];
-          tf2servers = analytics[0];
-        }
-        return res.send({
-          playerCount: playerCount
-        , matchCount: matchCount
-        , users: users.toObject({ transform: true }).geoips
-        , tf2servers: tf2servers.toObject({ transform: true }).geoips
-        });
-      });
-    });
+  AnalyticsCached.findOne({}, function (err, analytics) {
+    res.send(analytics);
   });
 };
 
