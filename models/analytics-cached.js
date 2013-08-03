@@ -1,22 +1,22 @@
-var mongoose = require('mongoose')
-  , cronJob = require('cron').CronJob
-  , Stats = require('../models/stats')
-  , Player = require('../models/player')
-  , Analytics = require('../models/analytics');
+// var mongoose = require('mongoose')
+//   , cronJob = require('cron').CronJob
+//   , Stats = require('../models/stats')
+//   , Player = require('../models/player')
+//   , Analytics = require('../models/analytics');
 
-// This is what the public actually sees
-var analyticsCachedSchema = new mongoose.Schema({
-  _id: String // "cache"
-, playerCount: Number
-, matchCount: Number
-, users: Array
-, tf2servers: Array
-, updated: Date
-});
+// // This is what the public actually sees
+// var analyticsCachedSchema = new mongoose.Schema({
+//   _id: String // "cache"
+// , playerCount: Number
+// , matchCount: Number
+// , users: Array
+// , tf2servers: Array
+// , updated: Date
+// });
 
-var AnalyticsCached = mongoose.model('analyticsCached', analyticsCachedSchema);
+// var AnalyticsCached = mongoose.model('analyticsCached', analyticsCachedSchema);
 
-module.exports = AnalyticsCached;
+// module.exports = AnalyticsCached;
 
 
 // // Cron job to cache analytics data once a day at 10am

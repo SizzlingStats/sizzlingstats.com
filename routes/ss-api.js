@@ -9,7 +9,7 @@ var Stats = require('../models/stats');
 var Counter = require('../models/counter');
 var Session = require('../models/session');
 var Player = require('../models/player');
-var Analytics = require('../models/analytics');
+// var Analytics = require('../models/analytics');
 var statsEmitter = require('../emitters').statsEmitter;
 
 
@@ -76,7 +76,7 @@ var hasValidGameMode = function(req, res, next) {
 
 var ssCreateStats = function(req, res) {
   // Analytics
-  Analytics.trackIp(req.ip, 'tf2servers');
+  // Analytics.trackIp(req.ip, 'tf2servers');
 
   // Generate sessionid
   var sessionId
