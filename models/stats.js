@@ -325,6 +325,7 @@ statsSchema.methods.getPlayerData = function(cb) {
   Player
   .find( { _id: { $in : steamids } })
   .select('avatar numericid country')
+  .lean()
   .exec(function(err, players) {
     if (err) { return cb(err); }
 
@@ -375,6 +376,7 @@ statsSchema.statics.findMatchesBySteamId = function(steamId, skip, limit, cb) {
   .skip(skip)
   .limit(limit)
   .select('hostname redname bluname redCountry bluCountry created')
+  .lean()
   .exec(function(err, matches) {
     if (err) { return cb(err); }
 
@@ -394,6 +396,7 @@ statsSchema.statics.findMatchesBySteamIdRanged = function(steamId, comparator
   .skip(skip)
   .limit(limit)
   .select('hostname redname bluname redCountry bluCountry created')
+  .lean()
   .exec(cb);
 };
 

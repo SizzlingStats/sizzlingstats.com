@@ -81,6 +81,7 @@ var matches = function(req, res) {
   .sort({_id:-1})
   .limit(12)
   .select('hostname redname bluname redCountry bluCountry isLive')
+  .lean()
   .exec(function(err, matches) {
     if (err) {
       console.log(err);

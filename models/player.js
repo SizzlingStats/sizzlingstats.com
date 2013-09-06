@@ -162,6 +162,7 @@ playerSchema.statics.findOrUpsertPlayerInfoBySteamIds = function(steamids
 
   Player
     .find( { _id: { $in : steamids }, updated: { $gt : cacheThreshold } } )
+    .lean()
     .exec(function(err, players) {
       if (err) { return callback(err); }
 
