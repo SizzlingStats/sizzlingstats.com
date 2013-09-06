@@ -196,7 +196,7 @@ var test7 = function(callback) {
 var printErrIfExists = function(err) {
   if (err) console.log(err);
 };
-
+var now = Date.now();
 // Run tests
 async.series([
   function(callback) {
@@ -276,6 +276,6 @@ async.series([
     console.log(err);
     assert.ok(!err, 'err should not be present (duh)');
   } else {
-    console.log('test-api.js successfully completed.');
+    console.log('test-api.js successfully completed in', Date.now() - now, 'ms.');
   }
 });
