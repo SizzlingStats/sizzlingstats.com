@@ -15,7 +15,7 @@
   , "everyauth": "git://github.com/dy-dx/everyauth.git#steam"
   , "express": "3.1.0"
   , "hiredis": "0.1.14"
-  , "jade": "*"
+  , "jade": "~0.34"
   , "mongoose": "3.x.x"
   , "node-uuid": "1.4.x"
   , "request": "2.x.x"
