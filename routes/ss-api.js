@@ -9,7 +9,6 @@ var Stats = require('../models/stats');
 var Counter = require('../models/counter');
 var Session = require('../models/session');
 var Player = require('../models/player');
-// var Analytics = require('../models/analytics');
 var statsEmitter = require('../emitters').statsEmitter;
 
 
@@ -75,9 +74,6 @@ var hasValidGameMode = function(req, res, next) {
 // POST
 
 var ssCreateStats = function(req, res) {
-  // Analytics
-  // Analytics.trackIp(req.ip, 'tf2servers');
-
   // Generate sessionid
   var sessionId
     , date = Date.now()
@@ -142,7 +138,7 @@ var ssCreateStats = function(req, res) {
 var ssUpdateStats = function(req, res) {
   var isEndOfRound = (req.get('endofround') === 'true');
   // Append the new data to the old
-  Stats.appendStats(req.body.stats, req.matchId, isEndOfRound, false, function(err) {
+  Stats.appendStats(req.body.stats, req.matchId, isEndOfRound, function(err) {
     if (err) {
       console.log(err);
       console.trace(err);

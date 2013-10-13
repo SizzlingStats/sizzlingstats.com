@@ -279,8 +279,6 @@ var assetManager = require('connect-assetmanager')({
     , 'controller-stats.js'
     , 'controller-player.js'
     , 'controller-profile.js'
-    , 'controller-usagestats.js'
-    // , 'filters.js'
     , 'directive-stats.js'
     , 'directive-typeahead.js'
     // , '*'
