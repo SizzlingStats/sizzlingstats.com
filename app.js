@@ -248,25 +248,25 @@ var assetManager = require('connect-assetmanager')({
   , path: __dirname + '/public/js/'
   , dataType: 'javascript'
   , debug: process.env.NODE_ENV === 'development'
-  // , preManipulate: {
-  //     '^': [
-  //         function(src, path, index, isLast, callback) {
-  //           callback(src.replace(/#socketIoPort#/g, env.port));
-  //         }
-  //       , function(src, path, index, isLast, callback) {
-  //           if (/\.coffee$/.test(path)) {
-  //             callback(coffee.compile(src));
-  //           } else {
-  //             callback(src);
-  //           }
-  //         }
-  //     ]
-  //   }
+  , preManipulate: {
+      '^': [
+        function(src, path, index, isLast, callback) {
+          callback(src.replace(/#socketIoPort#/g, cfg.port));
+        }
+      // , function(src, path, index, isLast, callback) {
+      //     if (/\.coffee$/.test(path)) {
+      //       callback(coffee.compile(src));
+      //     } else {
+      //       callback(src);
+      //     }
+      //   }
+      ]
+    }
   , files: [ // order matters here
-    //   'lib/jquery/jquery-1.9.1.min.js'
-    // , 'lib/angular/angular.js'
-    // , 'lib/foundation/foundation.min.js'
-      'lib/typeahead.js'
+      cfg.dev ? 'lib/jquery/jquery-1.9.1.min.js' : ''
+    , cfg.dev ? 'lib/angular/angular.js' : ''
+    , cfg.dev ? 'lib/foundation/foundation.min.js' : ''
+    , 'lib/typeahead.js'
     , 'lib/foundation/modernizr.foundation.js'
     // , 'lib/foundation/jquery.foundation.mediaQueryToggle.js'
     // , 'lib/foundation/jquery.foundation.navigation.js'

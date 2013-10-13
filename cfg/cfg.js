@@ -1,5 +1,6 @@
 var cfg = {
-  address: process.env.ADDRESS
+  dev: process.env.NODE_ENV !== 'production'
+, address: process.env.ADDRESS
 , port: parseInt(process.env.PORT, 10) || 8001
 , mongo_url: process.env.MONGO_URL || process.env.MONGOHQ_URL ||
                                       'mongodb://localhost/sizzlingstats'
@@ -22,10 +23,10 @@ var cfg = {
 };
 
 if (!cfg.address) {
-  if (process.env.NODE_ENV === 'production') {
-    cfg.address = 'http://sizzlingstats.com';
-  } else {
+  if (cfg.dev) {
     cfg.address = 'http://localhost:' + cfg.port;
+  } else {
+    cfg.address = 'http://sizzlingstats.com';
   }
 }
 module.exports = cfg;
