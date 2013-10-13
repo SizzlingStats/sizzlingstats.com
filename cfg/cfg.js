@@ -16,8 +16,9 @@ var cfg = {
 , stats_session_timeout: 30*60*1000
   // Check for stat-sessions to expire every 15 minutes
 , session_expiry_interval: 15
-  // How long to wait before refreshing steam API info for a player - 3 hours
-, player_metadata_cache_length: 3*60*60*1000
+  //   How long to wait before refreshing steam API info for a player - 1 week
+  // (country, avatar url, steam profile name)
+, player_metadata_cache_length: 7*24*60*60*1000
 };
 
 if (!cfg.address) {
