@@ -208,16 +208,10 @@ statsSchema.statics.appendStats = function(newStats, matchId, isEndOfRound, isLo
               if (oldPlayer.team < 2 && player.team >= 2) {
                 oldPlayer.team = player.team;
               }
-            } else if (field === "mostplayedclass" || field === "playedclasses") {
-              if (oldPlayer[field]) {
-                oldPlayer[field][round] = player[field];
-              }
             } else if (field !== "steamid" && field !== "name") {
 
               if (oldPlayer[field]) {
                 if (oldPlayer[field][round]) {
-                  // Undecided about this one.
-                  // oldPlayer[field][round] += player[field];
                   oldPlayer[field][round] = player[field];
                 } else {
                   // Mongoose doesn't like 'undefined' in number arrays, so push 'null'
