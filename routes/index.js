@@ -4,7 +4,6 @@
 
 var path = require('path')
   , Download = require('../models/download');
-  // , Analytics = require('../models/analytics');
 
 module.exports = function(app) {
   app.get('/', index);
@@ -15,7 +14,6 @@ module.exports = function(app) {
   app.get('/download/:filename', download);
 
   require('./ss-api')(app);
-  require('./log-api')(app);
   require('./api')(app);
 
   // redirect all others to the index (HTML5 history)
@@ -37,9 +35,6 @@ var index = function(req, res) {
   , loggedIn: req.loggedIn
   , user: req.user || {}
   });
-
-  // Analytics
-  // Analytics.trackIp(req.ip, 'users');
 };
 
 var partials = function (req, res) {
