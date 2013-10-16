@@ -26,10 +26,13 @@ var cfg = {
 if (!cfg.address) {
   if (cfg.dev) {
     cfg.address = 'http://localhost:' + cfg.port;
-    cfg.socket_io_address = cfg.socket_io_address || 'http://localhost';
   } else {
     cfg.address = 'http://sizzlingstats.com';
-    cfg.socket_io_address = cfg.socket_io_address || 'http://ws.sizzlingstats.com';
   }
+}
+if (cfg.dev) {
+  cfg.socket_io_address = cfg.socket_io_address || 'http://localhost';
+} else {
+  cfg.socket_io_address = cfg.socket_io_address || 'http://ws.sizzlingstats.com';
 }
 module.exports = cfg;
