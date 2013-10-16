@@ -2,6 +2,7 @@ var cfg = {
   dev: process.env.NODE_ENV !== 'production'
 , address: process.env.ADDRESS
 , port: parseInt(process.env.PORT, 10) || 8001
+, socket_io_address: process.env.SOCKET_IO_ADDRESS
 , mongo_url: process.env.MONGO_URL || process.env.MONGOHQ_URL ||
                                       'mongodb://localhost/sizzlingstats'
 , elasticsearch_url: process.env.ELASTICSEARCH_URL ||
@@ -25,8 +26,10 @@ var cfg = {
 if (!cfg.address) {
   if (cfg.dev) {
     cfg.address = 'http://localhost:' + cfg.port;
+    cfg.socket_io_address = cfg.socket_io_address || 'http://localhost';
   } else {
     cfg.address = 'http://sizzlingstats.com';
+    cfg.socket_io_address = cfg.socket_io_address || 'http://ws.sizzlingstats.com';
   }
 }
 module.exports = cfg;

@@ -251,6 +251,9 @@ var assetManager = require('connect-assetmanager')({
   , preManipulate: {
       '^': [
         function(src, path, index, isLast, callback) {
+          callback(src.replace(/#socketIoHostname#/g, cfg.socket_io_address));
+        }
+      , function(src, path, index, isLast, callback) {
           callback(src.replace(/#socketIoPort#/g, cfg.port));
         }
       // , function(src, path, index, isLast, callback) {
