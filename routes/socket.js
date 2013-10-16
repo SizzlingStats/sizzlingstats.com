@@ -9,14 +9,12 @@ module.exports = function(app) {
 
   io.sockets.on('connection', function(socket) {
 
-    var currentroom;
-
     socket.on('stats:subscribe', function (matchId) {
-      if (currentroom) {
-        socket.leave(currentroom);
+      if (socket.currentRoom) {
+        socket.leave(socket.currentRoom);
       }
       socket.join(matchId);
-      currentroom = matchId;
+      socket.currentRoom = matchId;
     });
 
   });
