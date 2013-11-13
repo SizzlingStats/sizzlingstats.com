@@ -345,6 +345,7 @@ statsSchema.statics.setGameOver = function(matchId, matchDuration, newChats, cb)
 
 statsSchema.statics.findMatchesBySteamId = function(steamId, skip, limit, cb) {
   var query = Stats.find({ 'players.steamid': steamId });
+  var countQuery = Stats.find({ 'players.steamid': steamId }).lean().count();
 
   // TODO: Do these in parallel
   query
@@ -356,7 +357,7 @@ statsSchema.statics.findMatchesBySteamId = function(steamId, skip, limit, cb) {
   .exec(function(err, matches) {
     if (err) { return cb(err); }
 
-    query.count(function(err, count) {
+    countQuery.exec(function(err, count) {
       return cb(err, matches, count);
     });
 
