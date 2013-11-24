@@ -5,12 +5,19 @@ var crypto = require('crypto');
 var util = require('util');
 var async = require('async');
 var cfg = require('../cfg/cfg');
+var secrets = require('../cfg/secrets');
+var AWS = require('aws-sdk');
 var Stats = require('../models/stats');
 var Counter = require('../models/counter');
 var Session = require('../models/session');
 var Player = require('../models/player');
 var statsEmitter = require('../emitters').statsEmitter;
 
+AWS.config.update({accessKeyId: secrets.aws_access_key_id, secretAccessKey: secrets.aws_secret_access_key});
+AWS.config.apiVersions = {
+  s3: '2006-03-01'
+};
+var s3 = new AWS.S3();
 
 module.exports = function(app) {
   app.post('/api/stats/new', isValidVersion, hasValidStats, hasValidGameMode, ssCreateStats);
@@ -70,6 +77,13 @@ var hasValidGameMode = function(req, res, next) {
   }
   res.send(403, '\nsizzlingstats.com - Error: Unsupported gamemode.\n');
 };
+
+// fixme: move this elsewhere
+var getS3UploadUrl = function(matchId) {
+  var s3params = {Bucket: 'sizzlingstv', Expires: cfg.s3_upload_url_expires, Key: 'tests/' + matchId + '.dem'};
+  return s3.getSignedUrl('putObject', s3params);
+};
+
 
 // POST
 
@@ -131,6 +145,7 @@ var ssCreateStats = function(req, res) {
       // Success! Respond to the gameserver with relevant info
       res.set('matchurl', cfg.address + '/stats/' + stats._id + '?ingame');
       res.set('sessionid', sessionId);
+      res.set('stvuploadurl', getS3UploadUrl(stats._id));
       res.send(201, 'true\n');
     });
 };

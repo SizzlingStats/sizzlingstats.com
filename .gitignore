@@ -5,3 +5,4 @@ cfg/secrets.js
 /*.txt
 /*.pid
 /*.ipc
+scripts/scraps/
