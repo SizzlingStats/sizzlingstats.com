@@ -10,7 +10,8 @@ html(lang="en", ng-app="myApp")
     block body
     - if (process.env.NODE_ENV === 'production')
       script( src='//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js' )
-      script( src='//ajax.googleapis.com/ajax/libs/angularjs/1.0.5/angular.min.js' )
+      script( src='//ajax.googleapis.com/ajax/libs/angularjs/1.2.5/angular.min.js' )
+      script( src='//ajax.googleapis.com/ajax/libs/angularjs/1.2.5/angular-route.min.js' )
     script( src='/socket.io/socket.io.js' )
     script( src='/js/all-'+(assetManager.cacheHashes.js || '0')+'.js' )
     //- FIXME

@@ -268,6 +268,7 @@ var assetManager = require('connect-assetmanager')({
   , files: [ // order matters here
       cfg.dev ? 'lib/jquery/jquery-1.9.1.min.js' : ''
     , cfg.dev ? 'lib/angular/angular.js' : ''
+    , cfg.dev ? 'lib/angular/angular-route.js' : ''
     // , 'lib/foundation/foundation.min.js'
     , 'lib/typeahead.js'
     , 'lib/foundation/modernizr.foundation.js'
