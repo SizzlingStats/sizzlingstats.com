@@ -21,9 +21,9 @@ function MainCtrl($scope, $rootScope, $route, $location) {
   $rootScope.$on('$routeChangeSuccess', function() {
     $rootScope.loading = false;
     // TODO: FIXME
-    $scope.hideSideBar = !$route.current.$route ||
-                  ($route.current.$route.templateUrl === 'partials/player') ||
-                  ($route.current.$route.templateUrl === 'partials/profile');
+    $scope.hideSideBar = !$route.current.$$route ||
+                  ($route.current.$$route.templateUrl === 'partials/player') ||
+                  ($route.current.$$route.templateUrl === 'partials/profile');
   });
   $scope.isCurrentPath = function(path) {
     return path === $location.path();

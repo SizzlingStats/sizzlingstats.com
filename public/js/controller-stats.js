@@ -8,9 +8,9 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
   var lastRoute = $route.current;
   $scope.$on('$locationChangeSuccess', function(event) {
     // Only do it for the stats path.
-    if ($route.current.$route &&
-        $route.current.$route.templateUrl === 'partials/stats') {
-    // if (lastRoute && $route.current.$route.templateUrl === 'partials/stats') {
+    if ($route.current.$$route &&
+        $route.current.$$route.templateUrl === 'partials/stats') {
+    // if (lastRoute && $route.current.$$route.templateUrl === 'partials/stats') {
       // Grab the new matchid before we stop the routechange
       var matchId = $route.current.params.id;
       // This stops the routechange from succeeding
