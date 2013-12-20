@@ -2,16 +2,11 @@
  * /routes/index.js
  */
 
-var path = require('path')
-  , Download = require('../models/download');
-
 module.exports = function(app) {
   app.get('/', index);
   app.get('/partials/profile', isLoggedIn);
   app.get('/partials/:name', partials);
   app.get('/partials/:name/:action', partialAction);
-
-  app.get('/download/:filename', download);
 
   require('./ss-api')(app);
   require('./api')(app);
@@ -43,24 +38,4 @@ var partials = function (req, res) {
 
 var partialAction = function (req, res) {
   res.render('partials/' + req.params.name + '/' + req.params.action);
-};
-
-var download = function(req, res) {
-  var parent = path.normalize(__dirname + '/../');
-  var file = parent + 'downloads/' + req.params.filename;
-
-  res.download(file, function(err) {
-    if (err) {
-      return res.send(404);
-    }
-    Download.findByIdAndUpdate(req.params.filename
-                             , { $inc: {downloadCount:1} }
-                             , {upsert: true}
-                             , function(err) {
-      if (err) {
-        console.log(err);
-        console.trace(err);
-      }
-    });
-  });
 };
