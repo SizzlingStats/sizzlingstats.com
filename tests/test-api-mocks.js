@@ -31,7 +31,7 @@ module.exports = {
    */
 
   statsHeaders1: {
-    "sizzlingstats": "v0.1"
+    "sizzlingstats": "v0.2"
   }
 
 , statsBody1: {"stats": {
@@ -63,7 +63,7 @@ module.exports = {
    */
 
 , statsHeaders2: {
-    "sizzlingstats": "v0.1"
+    "sizzlingstats": "v0.2"
   , "endofround": "false"
   , "sessionid": "something"
   }
@@ -98,7 +98,7 @@ module.exports = {
    */
 
 , statsHeaders3: {
-    "sizzlingstats": "v0.1"
+    "sizzlingstats": "v0.2"
   , "endofround": "false"
   , "sessionid": "something"
   }
@@ -134,7 +134,7 @@ module.exports = {
    */
 
 , statsHeaders4: {
-    "sizzlingstats": "v0.1"
+    "sizzlingstats": "v0.2"
   , "endofround": "true"
   , "sessionid": "something"
   }
@@ -170,7 +170,7 @@ module.exports = {
    */
 
 , statsHeaders5: {
-    "sizzlingstats": "v0.1"
+    "sizzlingstats": "v0.2"
   , "endofround": "true"
   , "sessionid": "something"
   }
@@ -208,7 +208,7 @@ module.exports = {
    */
 
 , statsHeaders6: {
-    "sizzlingstats": "v0.1"
+    "sizzlingstats": "v0.2"
   , "endofround": "true"
   , "sessionid": "something"
   }
@@ -245,7 +245,7 @@ module.exports = {
    */
 
 , statsHeaders7: {
-    "sizzlingstats": "v0.1"
+    "sizzlingstats": "v0.2"
   , "sessionid": "something"
   , "matchduration": "222"
   }

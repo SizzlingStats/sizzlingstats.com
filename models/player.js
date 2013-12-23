@@ -54,7 +54,7 @@ playerSchema.pre('save', function(next) {
   // Update the frequency of whatever name this guy has & move to front of array
   var foundName = player.previousNames.id(player.name);
   if (foundName) {
-    foundName = foundName.remove(true);
+    foundName = foundName.remove();
     foundName.frequency++;
   } else {
     foundName = { _id: player.name, frequency: 1 };
