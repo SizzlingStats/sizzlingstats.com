@@ -1,16 +1,5 @@
 .stats
   .center
-    .panel.radius(ng-show="stats.pluginVersion == 'v0.1'")
-      h2 Your plugin is out of date.
-      h4
-        | Sorry, the autoupdater broke.
-        | Please manually update your SizzlingStats plugin with&#32;
-        a(href='/download/SizzlingStats-0.9.2.2-update.zip', target='_self') this patch
-        | , which fixes the autoupdater. Thanks!
-      h4
-        | Bitte manuell aktualisieren SizzlingStats plugin mit&#32;
-        a(href='/download/SizzlingStats-0.9.2.2-update.zip', target='_self') diesem Patch
-        | , der die autoupdater behebt. Danke!
     h3.no-marg
       img.flag.size-32(ng-show="stats.redCountry"
                      , ng-src="/img/flags/32/{{stats.redCountry}}.png")
@@ -34,6 +23,7 @@
         //- a(ng-href='{{(stats.owner.numericid) && "/player/"+stats.owner.numericid || "javascript:"}}') {{stats.owner.name || '&#60;claim this server&#62;'}}
         a(ng-href='{{(stats.owner.numericid) && "/player/"+stats.owner.numericid||"javascript:"}}')
           | {{stats.owner.name}}
+      a.stats-stv-url(ng-show="stats.stvUrl", ng-href="{{stats.stvUrl}}") Download STV Demo
       .stats-edit-button(ng-show='stats.iHaveOwnership')
         a.button.small(href='/stats/{{stats._id}}/edit') Edit these stats
     table.score-table
