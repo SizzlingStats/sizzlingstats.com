@@ -21,7 +21,7 @@ var cfg = {
   //   How long to wait before refreshing steam API info for a player - 1 week
   // (country, avatar url, steam profile name)
 , player_metadata_cache_length: 7*24*60*60*1000
-, s3_upload_url_expires: 2*60*60 // 2 hours (unit is in seconds)
+, s3_upload_url_expires: 3*60*60 // 3 hours (unit is in seconds)
 };
 
 if (!cfg.address) {
