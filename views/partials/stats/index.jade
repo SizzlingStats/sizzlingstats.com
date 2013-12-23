@@ -41,7 +41,7 @@
         tr
           th
           th.score-table-round-header(
-            ng-repeat='n in stats.redscore'
+            ng-repeat='n in stats.redscore track by $index'
           , ng-click='clickRoundHeader($index)'
           , ng-class='{"deselected-round":selectedRounds.indexOf($index)==-1}')
             acronym R{{$index + 1}}
@@ -52,10 +52,10 @@
       tbody
         tr
           td.red {{stats.redname}}
-          td(ng-repeat='s in redRoundScores') {{s}}
+          td(ng-repeat='s in redRoundScores track by $index') {{s}}
         tr
           td.blu {{stats.bluname}}
-          td(ng-repeat='s in bluRoundScores') {{s}}
+          td(ng-repeat='s in bluRoundScores track by $index') {{s}}
   .overall-stats
     stats-table(data='overallStatsTableData', split-teams='')
   .class-stats

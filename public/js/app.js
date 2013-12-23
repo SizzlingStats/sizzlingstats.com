@@ -4,7 +4,7 @@
 
 // Declare app level module which depends on filters, and services
 // var app = angular.module('myApp', ['myApp.services', 'myApp.directives'])
-var app = angular.module('myApp', ['myApp.services'])
+var app = angular.module('myApp', ['ngRoute', 'myApp.services'])
   .config(['$routeProvider', '$locationProvider'
                            , function($routeProvider, $locationProvider) {
     $routeProvider
