@@ -50,8 +50,8 @@ app.directive('statsTable', ['$compile', function($compile) {
       };
     }
 
-  , link: function(scope, element, attrs) {
-      var data = scope.data(), criteria = scope.criteria(), showClassIcons;
+  , link: function(scope, element, attrs, ctrl) {
+      var data = scope.data(), showClassIcons;
       if (data[1][0] === 'C') { showClassIcons = true; }
       var $table = angular.element('<table class="stats-table">');
 
@@ -85,14 +85,23 @@ app.directive('statsTable', ['$compile', function($compile) {
                   ' | orderBy:sortPredicate()" stats-tr></tr>';
         return $compile( row )(scope);
       };
+
+      var createSplitTable = ctrl.createSplitTable = function () {
+        scope.$tbody.html( scope.rows('{team:2}') );
+        scope.$tbody.append( scope.header() );
+        scope.$tbody.append( scope.rows('{team:3}') );
+      };
+
+      var createCombinedTable = ctrl.createCombinedTable = function () {
+        $tbody.html( scope.rows(attrs.filter) );
+      };
+
       if (attrs.filter) {
-        $tbody.append( scope.rows(attrs.filter) );
+        createCombinedTable();
       } else {
         // If no attrs.filter, assume this is the main stats table,
         //  which we "split" by default.
-        scope.$tbody.append( scope.rows('{team:2}') );
-        scope.$tbody.append( scope.header() );
-        scope.$tbody.append( scope.rows('{team:3}') );
+        createSplitTable();
       }
 
       $table.append( $tbody );
@@ -126,37 +135,10 @@ app.directive('statsTr', ['$compile', function($compile) {
   };
 }]);
 
-
-// app.directive('statsTr', [function() {
-//   return {
-//     restrict: 'A'
-//   , link: function(scope, element, attrs) {
-//       var data = scope.data(), showClassIcons;
-//       if (data[1][0] === 'C') { showClassIcons = true; }
-
-//       var playerRow = '<td class="player-name"><img class="team' +
-//                 scope.player.team + ' avatar" src="' +
-//                 (scope.player.avatar || '') + '" /><span><a href="/player/' +
-//                 (scope.player.numericid || '') + '">' +
-//                 scope.$parent.$parent.escapeHtml(scope.player.name) +
-//                 '</a></span></td>';
-//       var i = 1;
-//       if (showClassIcons) {
-//         i = 2;
-//         playerRow += '<td><img class="class-icon" src="/img/classicons/' +
-//                      scope.player.mostPlayedClass() + '.png"></img></td>';
-//       }
-//       for (var len=data.length; i<len; i++) {
-//         playerRow += '<td>' + eval("scope.player." + data[i][2]) + '</td>';
-//       }
-//       element.html(playerRow);
-//     }
-//   };
-// }]);
-
 app.directive('splitTeams', [function() {
   return {
     restrict: 'A'
+  , require: '^statsTable'
   , template: '<dl class="sub-nav no-marg", ng-init="split=true">' +
                 '<dd ng-class="{active:split}">' +
                   '<a href="javascript:" ng-click="splitTeams(true)">' +
@@ -164,16 +146,13 @@ app.directive('splitTeams', [function() {
                 '<dd ng-class="{active:!split}">' +
                   '<a href="javascript:" ng-click="splitTeams(false)">' +
                     'All</a></dd></dl>'
-  , link: function(scope, element, attrs) {
+  , link: function(scope, element, attrs, statsTableCtrl) {
       scope.splitTeams = function(split) {
         if (split === scope.split) { return; }
-        scope.$tbody.empty();
         if (split) {
-          scope.$tbody.append( scope.rows('{team:2}') );
-          scope.$tbody.append( scope.header() );
-          scope.$tbody.append( scope.rows('{team:3}') );
+          statsTableCtrl.createSplitTable();
         } else {
-          scope.$tbody.append( scope.rows() );
+          statsTableCtrl.createCombinedTable();
         }
         scope.split = split;
       };
