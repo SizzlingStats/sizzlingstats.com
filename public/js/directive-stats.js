@@ -39,15 +39,6 @@ app.directive('statsTable', ['$compile', function($compile) {
           return player.playedClasses() & 1 << classId;
         };
       };
-      $scope.hasBeenPlayed = function(classId) {
-        var hasBeenPlayed = false;
-        angular.forEach($scope.$parent.players, function(player) {
-          if (player.playedClasses() & 1 << classId) {
-            hasBeenPlayed = true;
-          }
-        });
-        return hasBeenPlayed;
-      };
     }
 
   , link: function(scope, element, attrs, ctrl) {

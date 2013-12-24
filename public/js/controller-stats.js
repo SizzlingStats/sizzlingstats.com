@@ -325,6 +325,16 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
   $scope.bindFilter = function(chat) {
     return (!$scope.filterBinds || !chat.isBind);
   };
+
+  $scope.hasBeenPlayed = function (classId) {
+    for (var i = 0, player; player = $scope.players[i]; i++) {
+      if (player.playedClasses() & 1 << classId) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   var sumArray = $scope.sumArray = function(arr) {
     if (!arr || !arr.length) return 0;
     return filterBySelectedRounds(arr).reduce(function(a,b) { return a + b; },0);

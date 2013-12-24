@@ -61,16 +61,16 @@
   .class-stats
     stats-table(data='medicStatsTableData'
               , filter='classFilter(6)'
-              , ng-show='hasBeenPlayed(6)')
+              , ng-if='hasBeenPlayed(6)')
     stats-table(data='sniperStatsTableData'
               , filter='classFilter(7)'
-              , ng-show='hasBeenPlayed(7)')
+              , ng-if='hasBeenPlayed(7)')
     stats-table(data='spyStatsTableData'
               , filter='classFilter(8)'
-              , ng-show='hasBeenPlayed(8)')
+              , ng-if='hasBeenPlayed(8)')
     stats-table(data='engineerStatsTableData'
               , filter='classFilter(5)'
-              , ng-show='hasBeenPlayed(5)')
+              , ng-if='hasBeenPlayed(5)')
   .chat-log
     ul
       li(ng-repeat='chat in stats.chats | filter:bindFilter')
