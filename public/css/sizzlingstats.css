@@ -240,6 +240,11 @@ td:first-child, th:first-child {
   text-align: left;
   line-height: 1.2;
 }
+.stats-stv-url {
+  display: inline-block;
+  margin-top: 10px;
+  font-weight: bold;
+}
 
 .score-table {
   margin: 15px auto 15px;

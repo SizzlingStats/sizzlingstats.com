@@ -14,13 +14,14 @@ var cfg = {
 , redis_db: parseInt(process.env.REDIS_DB, 10) || 2
 , redis_password: process.env.REDIS_PASSWORD
 , session_prefix: (process.env.SESSION_PREFIX) || 'ss_sess'
-  // Stats Sessions are valid for only 30 minutes since last update
-, stats_session_timeout: 30*60*1000
-  // Check for stat-sessions to expire every 15 minutes
-, session_expiry_interval: 15
+  // Stats Sessions are valid for only 1 hour since last update
+, stats_session_timeout: 1*60*60*1000
+  // Check for stat-sessions to expire every 20 minutes
+, session_expiry_interval: 20
   //   How long to wait before refreshing steam API info for a player - 1 week
   // (country, avatar url, steam profile name)
 , player_metadata_cache_length: 7*24*60*60*1000
+, s3_upload_url_expires: 3*60*60 // 3 hours (unit is in seconds)
 };
 
 if (!cfg.address) {

@@ -65,6 +65,7 @@ var statsSchema = new mongoose.Schema({
     numericid: String
   , name: String
   }
+, stvUrl: { type: String }
 , created: { type: Date }
 , updated: { type: Date }
 , viewCount: Number
@@ -342,6 +343,21 @@ statsSchema.statics.setGameOver = function(matchId, matchDuration, newChats, cb)
 
   });
 };
+
+statsSchema.statics.setStvUrl = function (matchId, url, cb) {
+  Stats.findById(matchId, function(err, stats) {
+    if (err) {
+      return cb(err);
+    }
+    if (!stats) {
+      return cb(new Error('setStvUrl() - Stats not found'));
+    }
+
+    stats.stvUrl = url;
+    stats.save(cb);
+  });
+};
+
 
 statsSchema.statics.findMatchesBySteamId = function(steamId, skip, limit, cb) {
   var query = Stats.find({ 'players.steamid': steamId });
