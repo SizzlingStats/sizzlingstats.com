@@ -1,5 +1,7 @@
 var cfg = {
-  dev: process.env.NODE_ENV !== 'production'
+  ENV: process.env.NODE_ENV || 'development'
+, dev: process.env.NODE_ENV !== 'production'
+
 , address: process.env.ADDRESS
 , port: parseInt(process.env.PORT, 10) || 8001
 , socket_io_address: process.env.SOCKET_IO_ADDRESS
