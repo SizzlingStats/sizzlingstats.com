@@ -265,12 +265,9 @@ var assetManager = require('connect-assetmanager')({
       //   }
       ]
     }
-  , files: [ // order matters here
-      cfg.dev ? 'lib/jquery/jquery-2.0.3.js' : ''
-    , cfg.dev ? 'lib/angular/angular.js' : ''
-    , cfg.dev ? 'lib/angular/angular-route.js' : ''
+  , files: cfg.devScripts.concat([ // order matters here
     // , 'lib/foundation/foundation.min.js'
-    , 'lib/typeahead.js'
+      'lib/typeahead.js'
     , 'lib/foundation/modernizr.foundation.js'
     // , 'lib/foundation/jquery.foundation.mediaQueryToggle.js'
     // , 'lib/foundation/jquery.foundation.navigation.js'
@@ -286,7 +283,7 @@ var assetManager = require('connect-assetmanager')({
     , 'directive-stats.js'
     , 'directive-typeahead.js'
     // , '*'
-    ]
+    ])
   },
   css: {
     route: /\/css\/all-[a-z0-9]+\.css/
@@ -330,7 +327,7 @@ if (app.get('env') === 'development') {
 
 app.use(app.router);
 
-if (app.get('env') === 'development') {
+if (app.get('env') !== 'production') {
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 } else {
   // Airbrake
