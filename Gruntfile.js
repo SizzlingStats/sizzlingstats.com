@@ -33,8 +33,7 @@ module.exports = function(grunt) {
         , '!**/node_modules/**'
         ]
       , tasks: [
-          'env:test'
-        , 'mochaTest'
+          'test'
         ]
       }
     }
@@ -60,4 +59,5 @@ module.exports = function(grunt) {
 
   grunt.registerTask('test', ['env:test', 'mochaTest']);
   grunt.registerTask('default', 'test');
+  grunt.registerTask('ci', 'test');
 };

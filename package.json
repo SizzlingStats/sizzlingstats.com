@@ -9,6 +9,7 @@
 , "scripts": {
     "start": "node app.js --use_strict"
   , "test": "grunt test"
+  , "ci": "grunt ci"
   }
 , "dependencies": {
     "airbrake": "git://github.com/dy-dx/node-airbrake.git#errbit"
