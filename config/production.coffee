@@ -9,6 +9,8 @@ module.exports =
     mongo_url: process.env.MONGO_URL || 'mongodb://localhost/sizzlingstats'
     elasticsearch_url: process.env.ELASTICSEARCH_URL || 'http://localhost:9200/sizzlingstats'
 
+    s3_stv_key: 'stv/'
+
     airbrake_host: 'sizzlingerrbit.herokuapp.com'
 
     devScripts: []

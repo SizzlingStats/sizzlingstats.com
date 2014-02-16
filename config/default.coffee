@@ -24,6 +24,9 @@ module.exports =
     #   How long to wait before refreshing steam API info for a player - 1 week
     # (country, avatar url, steam profile name)
     player_metadata_cache_length: 7*24*60*60*1000
+
+    s3_stv_bucket: 'sizzlingstv'
+    s3_stv_key: 'tests/'
     # 3*60*60 == 3 hours (unit is in seconds)
     s3_upload_url_expires: 3*60*60
 
