@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var cfg = require('../cfg/cfg');
+var cfg = require('../config/cfg');
 var cronJob = require('cron').CronJob;
 var Stats = require('./stats');
 

@@ -1,5 +1,5 @@
 var cluster = require('cluster')
-  , cfg = require('./cfg/cfg')
+  , cfg = require('./config/cfg')
   , server = require('./server');
 
 // Start server

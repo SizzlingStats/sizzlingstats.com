@@ -13,8 +13,8 @@ var cluster = require('cluster')
   , mongoose = require('mongoose')
   , everyauth = require('everyauth')
   , request = require('request')
-  , cfg = require('./cfg/cfg')
-  , secrets = require('./cfg/secrets')
+  , cfg = require('./config/cfg')
+  , secrets = require('./config/secrets')
   , airbrake = require('airbrake').createClient(secrets.airbrake_key, null, cfg.airbrake_host)
   , Player = require('./models/player');
 require('colors');
