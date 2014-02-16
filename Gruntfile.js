@@ -4,6 +4,7 @@
 module.exports = function(grunt) {
 
   grunt.initConfig({
+
     mochaTest: {
       test: {
         options: {
@@ -23,6 +24,7 @@ module.exports = function(grunt) {
         ]
       }
     }
+
   , watch: {
       scripts: {
         files: [
@@ -31,16 +33,31 @@ module.exports = function(grunt) {
         , '!**/node_modules/**'
         ]
       , tasks: [
-          'mochaTest'
+          'env:test'
+        , 'mochaTest'
         ]
       }
     }
+
+  , env : {
+      options : {
+        // Shared Options Hash
+      }
+    , dev : {
+        NODE_ENV : 'development'
+      }
+    , test : {
+        NODE_ENV : 'test'
+      }
+    }
+
   });
 
   
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-env');
 
-  grunt.registerTask('test', 'mochaTest');
-  grunt.registerTask('default', 'mochaTest');
+  grunt.registerTask('test', ['env:test', 'mochaTest']);
+  grunt.registerTask('default', 'test');
 };

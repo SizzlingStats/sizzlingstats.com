@@ -1,5 +1,7 @@
+require('coffee-script/register');
+
 var cluster = require('cluster')
-  , cfg = require('./config/cfg')
+  , cfg = require('config').cfg
   , server = require('./server');
 
 // Start server
