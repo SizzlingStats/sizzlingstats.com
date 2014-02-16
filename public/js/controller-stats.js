@@ -133,7 +133,6 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
   , ['REV', 'Revenges', 'sumOf("revenge")']
   // , ['', '', 'sumOf("buildingsdestroyed")']
   // , ['', '', 'sumOf("crits")']
-  // , ['', '', 'sumOf("teleports")']
   // , ['', '', 'sumOf("resupplypoints")']
   // , ['', '', 'sumOf("bonuspoints")']
   ];
@@ -155,6 +154,7 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
   $scope.engineerStatsTableData = [
     ['Engineers', null, 'name']
   , ['BB', 'Buildings Built', 'sumOf("buildingsbuilt")']
+  , ['T', 'Teleports', 'sumOf("teleports")']
   ];
 
   $scope.players = [];
