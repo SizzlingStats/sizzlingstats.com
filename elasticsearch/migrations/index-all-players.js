@@ -1,7 +1,7 @@
 var mongoose = require('mongoose')
   , request = require('request')
   , async = require('async')
-  , cfg = require('../../cfg/cfg')
+  , cfg = require('config').cfg
   , Player = require('../../models/player');
 mongoose.connect(cfg.mongo_url);
 

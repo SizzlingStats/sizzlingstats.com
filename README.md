@@ -1,5 +1,9 @@
 # sizzlingstats.com
 
+[![Build Status](https://travis-ci.org/dy-dx/sizzlingstats.com.png?branch=master)](https://travis-ci.org/dy-dx/sizzlingstats.com)
+[![Dependency Status](https://david-dm.org/dy-dx/sizzlingstats.com.png)](https://david-dm.org/dy-dx/sizzlingstats.com)
+[![devDependency Status](https://david-dm.org/dy-dx/sizzlingstats.com/dev-status.png)](https://david-dm.org/dy-dx/sizzlingstats.com#info=devDependencies)
+
 Website for viewing live statistics for competitive TF2 matches, collected by SizzlingCalamari's stats plugin.
 
 Runs on node.js, express, socket.io, mongodb and redis.

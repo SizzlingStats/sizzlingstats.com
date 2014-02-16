@@ -1,6 +1,8 @@
 .DS_Store
 node_modules
-cfg/secrets.js
+config/secrets.js
+config/secrets.coffee
+config/runtime.json
 *.log
 /*.txt
 /*.pid

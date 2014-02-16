@@ -1,8 +1,8 @@
 var mongoose = require('mongoose')
   , async = require('async')
   , request = require('request')
-  , cfg = require('../cfg/cfg')
-  , secrets = require('../cfg/secrets')
+  , cfg = require('config').cfg
+  , secrets = require('config').secrets
   , steamapi = process.env.STEAM_API || secrets.steamapi;
 
 var playerSchema = new mongoose.Schema({

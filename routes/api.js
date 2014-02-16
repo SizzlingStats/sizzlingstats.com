@@ -4,7 +4,7 @@
 
 var uuid = require('node-uuid')
   , request = require('request')
-  , cfg = require('../cfg/cfg')
+  , cfg = require('config').cfg
   , Stats = require('../models/stats')
   , Player = require('../models/player');
 
