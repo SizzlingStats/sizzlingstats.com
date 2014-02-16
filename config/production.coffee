@@ -1,6 +1,5 @@
 module.exports =
   cfg:
-
     ENV: 'production'
 
     port: +process.env.PORT || 8001
@@ -13,3 +12,6 @@ module.exports =
     airbrake_host: 'sizzlingerrbit.herokuapp.com'
 
     devScripts: []
+
+
+  secrets: require('./secrets')
