@@ -400,3 +400,21 @@ footer {
 .stats {
   display: inline-block;
 }
+
+
+/* Tip of the Hats */
+html {
+  height:100%;
+}
+body {
+  background: none;
+  height: 100%;
+  width: 100%;
+  display: table;
+}
+.toth {
+  display: table-cell;
+  margin: auto;
+  text-align: center;
+  vertical-align: middle;
+}

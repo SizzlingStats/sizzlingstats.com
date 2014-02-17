@@ -54,31 +54,31 @@ block body
     .alert-box.loading
       | Loading...
   //- Main Content
-  .row
-    .ingame(style="margin-top: 0;", ng-view)
-      //- content
-    //- if (typeof(query.ingame) == 'undefined')
-    //-   .three.columns(ng-hide='hideSideBar')
-    //-     //- listmatches
-    //-     section(ng-controller='SideBarCtrl')
-    //-       ul.tabs.vertical.sidebar-nav
-    //-         li.nav-header.center
-    //-           h5 Recent Matches
-    //-         li(ng-cloak, ng-repeat='match in matches | orderBy:"-_id" | limitTo: 12', ng-class="{active: isActive(), 'live-match': match.isLive}")
-    //-           a(href='/stats/{{match._id}}')
-    //-             .nowrap
-    //-               span.label.right(ng-show='match.isLive') Live
-    //-               .nowrap
-    //-                 span {{match.hostname}}
-    //-             img.flag.size-16(ng-show="match.redCountry", ng-src="/img/flags/16/{{match.redCountry}}.png")
-    //-             span {{match.redname}} vs&#32;
-    //-             img.flag.size-16(ng-show="match.bluCountry", ng-src="/img/flags/16/{{match.bluCountry}}.png")
-    //-             span {{match.bluname}}
-    //-   .columns(class='{{(hideSideBar) && "twelve" || "nine"}}', ng-view)
-    //-     //- content
-    //- else
-    //-   .ingame(ng-view)
-    //-     //- content
-    //- hr
-    //- footer
-    //-   p &copy; 2013 Chris "dy/dx" Kim &amp; Jordan "SizzlingCalamari" Cristiano
+  //- .row
+    if (typeof(query.ingame) == 'undefined')
+      .three.columns(ng-hide='hideSideBar')
+        //- listmatches
+        section(ng-controller='SideBarCtrl')
+          ul.tabs.vertical.sidebar-nav
+            li.nav-header.center
+              h5 Recent Matches
+            li(ng-cloak, ng-repeat='match in matches | orderBy:"-_id" | limitTo: 12', ng-class="{active: isActive(), 'live-match': match.isLive}")
+              a(href='/stats/{{match._id}}')
+                .nowrap
+                  span.label.right(ng-show='match.isLive') Live
+                  .nowrap
+                    span {{match.hostname}}
+                img.flag.size-16(ng-show="match.redCountry", ng-src="/img/flags/16/{{match.redCountry}}.png")
+                span {{match.redname}} vs&#32;
+                img.flag.size-16(ng-show="match.bluCountry", ng-src="/img/flags/16/{{match.bluCountry}}.png")
+                span {{match.bluname}}
+      .columns(class='{{(hideSideBar) && "twelve" || "nine"}}', ng-view)
+        //- content
+    else
+      .ingame(ng-view)
+        //- content
+    hr
+    footer
+      p &copy; 2013 Chris "dy/dx" Kim &amp; Jordan "SizzlingCalamari" Cristiano
+  .toth(ng-view)
+    //- content

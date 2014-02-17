@@ -14,7 +14,7 @@
         | {{stats.created | date:'M/d/yy h:mma' | lowercase}} //
         | {{secondsToHMS(playableTime)}} // {{stats.map}}&#32;
         span.label(ng-show='stats.isLive') Live
-      .stats-hostname Server Name: {{stats.hostname}}
+      //- .stats-hostname Server Name: {{stats.hostname}}
       //- .mapname Map: {{stats.map}}
       //- .date Date: {{stats.created | date:'medium'}}
       //- .match-duration(ng-show='stats.matchDuration') Match Duration: {{secondsToHMS(stats.matchDuration)}}
