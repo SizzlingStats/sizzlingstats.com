@@ -47,7 +47,8 @@
           td.blu {{stats.bluname}}
           td(ng-repeat='s in bluRoundScores track by $index') {{s}}
   .overall-stats
-    stats-table(data='overallStatsTableData', split-teams='')
+    stats-table(data='overallStatsTableData')
+    //- stats-table(data='overallStatsTableData', split-teams='')
   //- .class-stats
     stats-table(data='medicStatsTableData'
               , filter='classFilter(6)'

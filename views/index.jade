@@ -1,82 +1,84 @@
 extends layout
 
 block body
-  if (typeof(query.ingame) == 'undefined')
-    nav.top-bar
-      ul
-        li.name
-          h1
-            a(href='/') SizzlingStats
-        li.toggle-topbar
-          a(href='javascript:')
-      section
-        //- Left Nav Section
-        ul.left
-          //- li.divider
-          //- li(ng-class='{active:isCurrentPath("/about")}')
-            a(href='/about') About
-          li.divider
-          li(ng-class='{active:isCurrentPath("/download")}')
-            a(href='/download') Download
-          li.divider
-        //- Right Nav Section
-        ul.right
-          li.search
-            form.collapse
-              input(type='search', placeholder='Player Search', typeahead='')
-          li.divider.show-for-medium-and-up
-          if (loggedIn)
-            li.has-dropdown
-              a(href='javascript:')
-                img.top-bar-avatar(src=user.avatar)
-                span
-                  | &nbsp;
-                  = user.name
-                span.caret
-              ul.dropdown
-                li.divider
-                li
-                  a(href='/profile') Profile
-                li.divider
-                li
-                  a(href='/logout/', target='_self') Sign Out
-          else
-            li
-              a.sits(href='/auth/steam', target='_self')
-                img(src='/img/sits_small.png')
-  else
-    nav.top-bar.attached
-      ul
-        li.name
-          h1
-            a(href='javascript:') SizzlingStats.com Alpha
+  //- if (typeof(query.ingame) == 'undefined')
+  //-   nav.top-bar
+  //-     ul
+  //-       li.name
+  //-         h1
+  //-           a(href='/') SizzlingStats
+  //-       li.toggle-topbar
+  //-         a(href='javascript:')
+  //-     section
+  //-       //- Left Nav Section
+  //-       ul.left
+  //-         //- li.divider
+  //-         //- li(ng-class='{active:isCurrentPath("/about")}')
+  //-           a(href='/about') About
+  //-         li.divider
+  //-         li(ng-class='{active:isCurrentPath("/download")}')
+  //-           a(href='/download') Download
+  //-         li.divider
+  //-       //- Right Nav Section
+  //-       ul.right
+  //-         li.search
+  //-           form.collapse
+  //-             input(type='search', placeholder='Player Search', typeahead='')
+  //-         li.divider.show-for-medium-and-up
+  //-         if (loggedIn)
+  //-           li.has-dropdown
+  //-             a(href='javascript:')
+  //-               img.top-bar-avatar(src=user.avatar)
+  //-               span
+  //-                 | &nbsp;
+  //-                 = user.name
+  //-               span.caret
+  //-             ul.dropdown
+  //-               li.divider
+  //-               li
+  //-                 a(href='/profile') Profile
+  //-               li.divider
+  //-               li
+  //-                 a(href='/logout/', target='_self') Sign Out
+  //-         else
+  //-           li
+  //-             a.sits(href='/auth/steam', target='_self')
+  //-               img(src='/img/sits_small.png')
+  //- else
+  //-   nav.top-bar.attached
+  //-     ul
+  //-       li.name
+  //-         h1
+  //-           a(href='javascript:') SizzlingStats.com Alpha
   #loading(ng-cloak, ng-show='loading')
     .alert-box.loading
       | Loading...
   //- Main Content
   .row
-    if (typeof(query.ingame) == 'undefined')
-      .three.columns(ng-hide='hideSideBar')
-        //- listmatches
-        section(ng-controller='SideBarCtrl')
-          ul.tabs.vertical.sidebar-nav
-            li.nav-header.center
-              h5 Recent Matches
-            li(ng-cloak, ng-repeat='match in matches | orderBy:"-_id" | limitTo: 12', ng-class="{active: isActive(), 'live-match': match.isLive}")
-              a(href='/stats/{{match._id}}')
-                .nowrap
-                  span.label.right(ng-show='match.isLive') Live
-                  .nowrap
-                    span {{match.hostname}}
-                img.flag.size-16(ng-show="match.redCountry", ng-src="/img/flags/16/{{match.redCountry}}.png")
-                span {{match.redname}} vs&#32;
-                img.flag.size-16(ng-show="match.bluCountry", ng-src="/img/flags/16/{{match.bluCountry}}.png")
-                span {{match.bluname}}
-      .columns(class='{{(hideSideBar) && "twelve" || "nine"}}', ng-view)
-        //- content
-    else
-      .ingame(ng-view)
-        //- content
-    hr
-    footer
-      p &copy; 2013 Chris "dy/dx" Kim &amp; Jordan "SizzlingCalamari" Cristiano
+    .ingame(style="margin-top: 0;", ng-view)
+      //- content
+    //- if (typeof(query.ingame) == 'undefined')
+    //-   .three.columns(ng-hide='hideSideBar')
+    //-     //- listmatches
+    //-     section(ng-controller='SideBarCtrl')
+    //-       ul.tabs.vertical.sidebar-nav
+    //-         li.nav-header.center
+    //-           h5 Recent Matches
+    //-         li(ng-cloak, ng-repeat='match in matches | orderBy:"-_id" | limitTo: 12', ng-class="{active: isActive(), 'live-match': match.isLive}")
+    //-           a(href='/stats/{{match._id}}')
+    //-             .nowrap
+    //-               span.label.right(ng-show='match.isLive') Live
+    //-               .nowrap
+    //-                 span {{match.hostname}}
+    //-             img.flag.size-16(ng-show="match.redCountry", ng-src="/img/flags/16/{{match.redCountry}}.png")
+    //-             span {{match.redname}} vs&#32;
+    //-             img.flag.size-16(ng-show="match.bluCountry", ng-src="/img/flags/16/{{match.bluCountry}}.png")
+    //-             span {{match.bluname}}
+    //-   .columns(class='{{(hideSideBar) && "twelve" || "nine"}}', ng-view)
+    //-     //- content
+    //- else
+    //-   .ingame(ng-view)
+    //-     //- content
+    //- hr
+    //- footer
+    //-   p &copy; 2013 Chris "dy/dx" Kim &amp; Jordan "SizzlingCalamari" Cristiano
