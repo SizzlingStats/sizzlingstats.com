@@ -1,0 +1,409 @@
+/* sizzlingstats css stylesheet */
+[ng\:cloak],[ng-cloak],.ng-cloak{display:none !important;}
+
+
+#loading {
+  position: fixed;
+  z-index: 9999;
+  left: 30%;
+  top: 32px;
+  margin-left: -25px;
+}
+.loading {
+  position: relative;
+  display: inline;
+  padding: 8px 14px;
+}
+
+
+/*** Utility Classes ***/
+
+.no-marg {
+  margin: 0 !important;
+}
+.no-marg-top {
+  margin-top: 0;
+}
+.no-marg-bottom {
+  margin-bottom: 0;
+}
+.nowrap {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.inline-block {
+  display: inline-block;
+}
+
+
+/*** Top-Bar ***/
+
+.top-bar { min-height:45px; margin:0 0 30px 0; }
+
+.toggle-topbar {
+  width: 50%;
+  .caret {
+    content: "";
+    display: block;
+    width: 0;
+    height: 0;
+    border: solid 8px;
+    border-color: white transparent transparent transparent;
+    padding: 0;
+    position: absolute;
+    top: 50%;
+    right: 22.5px;
+    margin-top: -4px;
+  }
+}
+.top-bar.expanded .toggle-topbar {
+  .caret {
+    border-color: transparent transparent #ccc transparent;
+    top: auto;
+    bottom: 50%;
+    margin-bottom: -4px;
+  }
+}
+
+.top-bar:not(.expanded) .has-dropdown span {
+  display: inline-block;
+  max-width: 155px;
+}
+
+.sits {
+  padding: 0 13px !important;
+  img { padding-bottom: 2px; }
+}
+
+/* Twitter typeahead.js suggestion styling */
+.search form {
+  position: relative;
+  top: 8px;
+  height: 32px;
+}
+.twitter-typeahead {
+  vertical-align: top;
+  width: 100% !important;
+}
+.tt-hint {
+  /*color: #999;*/
+  color: #ccc;
+}
+.tt-query {
+  top: 0 !important;
+}
+.tt-dropdown-menu {
+  width: 320px;
+  margin-top: 12px;
+  padding: 8px 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  -webkit-border-radius: 8px;
+     -moz-border-radius: 8px;
+          border-radius: 8px;
+  -webkit-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+     -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+          box-shadow: 0 5px 10px rgba(0,0,0,.2);
+}
+.tt-is-under-cursor {
+  background-color: #0097cf;
+}
+.tt-is-under-cursor span {
+  color: #fff;
+}
+.FUCK-CSS {
+  margin: 0;
+  padding: 3px 16px !important;
+  color: #222 !important;
+  height: 38px !important;
+  line-height: 32px !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.FUCK-CSS span {
+  margin-left: 8px;
+}
+
+/* Foundation Dropdown Menu Hacks */
+.top-bar-avatar {
+  margin: -1px 0 0 -4px;
+  border-radius: 3px;
+}
+.dropdown {
+  width: 100%;
+  padding: 0 !important;
+}
+.dropdown a {
+  line-height: 42px !important;
+  height: 44px !important;
+  padding: 0 15px !important;
+  font-weight: bold !important;
+}
+.dropdown .divider {
+  height: 2px !important;
+  margin-top: -1px;
+}
+.dropdown li {
+  padding: 0 !important;
+}
+.dropdown li:hover {
+  color: #d9d9d9 !important;
+  background: black !important;
+}
+
+
+/*** Sidebar ***/
+
+.side-nav {
+  li {
+    margin: 0;
+    border-left: 3px solid #ccc;
+    line-height: 1;
+    &:last-child a {
+      border-width: 1px 1px 1px 0;
+    }
+    &:not(.active) a:hover {
+      background: #ebebeb;
+    }
+  }
+
+  a {
+    padding: 7px 5px 7px 8px;
+    border: solid #e6e6e6;
+    border-width: 1px 1px 0 0;
+    background: #f2f2f2;
+    color: #555 !important;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.5) inset;
+  }
+
+  .active {
+    border-top: 1px solid #4d4d4d;
+    border-left: 4px solid #1a1a1a;
+    a {
+      background: #4d4d4d;
+      border: none;
+      color: #fff !important;
+      box-shadow: none;
+    }
+  }
+}
+
+.nav-header {
+  border-left: none !important;
+}
+
+
+
+/*** Stats ***/
+
+.redname {
+  color: #D06553;
+}
+.bluname {
+  color: #79B3D2;
+}
+
+table {
+  border-spacing: 0;
+  border-radius: 4px;
+}
+td, th {
+  text-align: center !important;
+  border-left: 1px solid #ddd;
+  border-top: 1px solid #ddd;
+}
+th {
+  font-size: 14px;
+  abbr, acronym { border-bottom: 1px solid #ddd; }
+}
+thead th {
+  border-top: none;
+  &:first-child { border-radius: 3px 0 0 0; }
+  &:last-child { border-radius: 0 3px 0 0; }
+}
+tr:last-child td {
+  &:first-child { border-radius: 0 0 0 3px; }
+  &:last-child { border-radius: 0 0 3px 0; }
+}
+td:first-child, th:first-child {
+  border-left: none;
+  text-align: left !important;
+}
+
+.flag {
+  margin-right: 0.1em;
+  vertical-align: text-bottom;
+}
+.size-16 {
+  width: 16px;
+  height: 16px;
+}
+.size-32 {
+  vertical-align: bottom;
+  width: 32px;
+  height: 32px;
+}
+
+.stats {
+  font-size: 13px !important;
+}
+.stats-details {
+  margin-top: 5px;
+  display: inline-block;
+  text-align: left;
+  line-height: 1.2;
+}
+.stats-stv-url {
+  display: inline-block;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.score-table {
+  margin: 15px auto 15px;
+}
+.score-table-round-header {
+  color: #0088cc;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.score-table-round-header:hover {
+  color: #005580;
+  background-color: #f5f5f5;
+}
+.deselected-round {
+  color: #999999;
+  background-color: #f5f5f5;
+}
+.score-table td, .score-table th {
+  padding: 1px 3px;
+  line-height: 18px;
+}
+.score-table td {
+  border-top: 1px;
+  border-top-style: solid;
+  border-top-color: #DDD;
+  line-height: 14px;
+}
+.overall-stats {
+  display: inline-block;
+  white-space: nowrap;
+  table { margin-right: 0 !important; }
+}
+
+.team2 {
+  color: #D06553;
+}
+.team3 {
+  color: #6DA1BD;
+}
+.avatar {
+  float: left;
+  width: 20px;
+  height: 20px;
+  margin: 0 4px 0 0;
+  border: 3px solid;
+  border-radius: 4px;
+  &.team2 { border-color: #D06553; }
+  &.team3 { border-color: #79B3D2; }
+}
+.player-name a {
+  color: #222;
+  &:hover { text-decoration: underline; }
+}
+.class-icon {
+  width: 20px;
+  height: 20px;
+}
+.stats-table {
+  width: auto;
+  display: inline-table;
+  vertical-align: top;
+  margin-right: 20px;
+}
+.stats-table th {
+  /* black double arrow */
+  /*background-image: url(data:image/gif;base64,R0lGODlhFQAJAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAkAAAIXjI+AywnaYnhUMoqt3gZXPmVg94yJVQAAOw==);*/
+  /* white double arrow */
+  /* background-image: url(data:image/gif;base64,R0lGODlhFQAJAIAAAP///////yH5BAEAAAEALAAAAAAVAAkAAAIXjI+AywnaYnhUMoqt3gZXPmVg94yJVQAAOw==); */
+  /* image */
+  /* background-image: url(black-bg.gif); */
+  background-repeat: no-repeat;
+  background-position: center right;
+  padding: 3px 5px 4px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.stats-table td {
+  padding: 0 3px;
+}
+.stats-table td:first-child {
+  line-height: 1.5;
+}
+
+.class-stats table {
+  margin-bottom: 12px;
+}
+
+.chat-log ul {
+  margin: 0;
+  list-style: none;
+  font-size: 13px;
+}
+.chat-time {
+  font-size: 12px;
+}
+.team-message:after {
+  content: " (team)";
+  color: #333;
+}
+
+footer {
+  font-size: 13px;
+}
+
+.sort-false, .sort-true {
+  color: white;
+  background-color: #2ba6cb;
+  padding-right: 18px !important;
+  abbr, acronym {
+    color: white !important;
+  }
+}
+
+.sort-true {
+  /* black asc arrow */
+  /* background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjB+gC+jP2ptn0WskLQA7); */
+  /* white asc arrow */
+  background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAAP///////yH5BAEAAAEALAAAAAAVAAQAAAINjB+gC+jP2ptn0WskLQA7);
+}
+.sort-false {
+  /* black desc arrow */
+  /* background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjI8Bya2wnINUMopZAQA7); */
+  /* white desc arrow */
+  background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAAP///////yH5BAEAAAEALAAAAAAVAAQAAAINjI8Bya2wnINUMopZAQA7);
+}
+
+
+
+/*** Hacks for in-game browser ***/
+
+.ingame {
+  margin: -10px auto 0;
+  text-align: center;
+}
+.class-stats, .chat-log {
+  text-align: left;
+}
+.stats {
+  display: inline-block;
+}

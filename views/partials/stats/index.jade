@@ -1,5 +1,5 @@
 .stats
-  .center
+  .text-center
     h3.no-marg
       img.flag.size-32(ng-show="stats.redCountry"
                      , ng-src="/img/flags/32/{{stats.redCountry}}.png")
@@ -35,10 +35,10 @@
           , ng-click='clickRoundHeader($index)'
           , ng-class='{"deselected-round":selectedRounds.indexOf($index)==-1}')
             acronym R{{$index + 1}}
-          th(title='Total Score', class='has-tip tip-top'): abbr T
-          th(title='Total Damage', class='has-tip tip-top'): abbr DMG
-          th(title='Total Frags', class='has-tip tip-top'): abbr F
-          th(title='Midfights Won', class='has-tip tip-top'): abbr MF
+          th.has-tip.tip-top(data-tooltip='', title='Total Score'): abbr T
+          th.has-tip.tip-top(data-tooltip='', title='Total Damage'): abbr DMG
+          th.has-tip.tip-top(data-tooltip='', title='Total Frags'): abbr F
+          th.has-tip.tip-top(data-tooltip='', title='Midfights Won'): abbr MF
       tbody
         tr
           td.red {{stats.redname}}

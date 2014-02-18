@@ -2,14 +2,15 @@ extends layout
 
 block body
   if (typeof(query.ingame) == 'undefined')
-    nav.top-bar
-      ul
+    nav.top-bar(data-topbar='')
+      ul.title-area
         li.name
           h1
             a(href='/') SizzlingStats
         li.toggle-topbar
           a(href='javascript:')
-      section
+            .caret
+      section.top-bar-section
         //- Left Nav Section
         ul.left
           //- li.divider
@@ -21,31 +22,31 @@ block body
           li.divider
         //- Right Nav Section
         ul.right
-          li.search
+          //- li.search
+          //-   form.collapse
+          //-     input(type='search', placeholder='Player Search', typeahead='')
+          li.search.has-form
+            //- .row.collapse
+              //- .large-8.small-9.columns
             form.collapse
               input(type='search', placeholder='Player Search', typeahead='')
           li.divider.show-for-medium-and-up
           if (loggedIn)
             li.has-dropdown
-              a(href='javascript:')
+              a.nowrap(href='javascript:')
                 img.top-bar-avatar(src=user.avatar)
                 span
                   | &nbsp;
                   = user.name
-                span.caret
               ul.dropdown
-                li.divider
-                li
-                  a(href='/profile') Profile
-                li.divider
-                li
-                  a(href='/logout/', target='_self') Sign Out
+                li: a(href='/profile') Profile
+                li: a(href='/logout/', target='_self') Sign Out
           else
             li
               a.sits(href='/auth/steam', target='_self')
                 img(src='/img/sits_small.png')
   else
-    nav.top-bar.attached
+    nav.top-bar(data-topbar='')
       ul
         li.name
           h1
@@ -56,23 +57,22 @@ block body
   //- Main Content
   .row
     if (typeof(query.ingame) == 'undefined')
-      .three.columns(ng-hide='hideSideBar')
+      .medium-3.columns(ng-hide='hideSideBar')
         //- listmatches
-        section(ng-controller='SideBarCtrl')
-          ul.tabs.vertical.sidebar-nav
-            li.nav-header.center
-              h5 Recent Matches
-            li(ng-cloak, ng-repeat='match in matches | orderBy:"-_id" | limitTo: 12', ng-class="{active: isActive(), 'live-match': match.isLive}")
-              a(href='/stats/{{match._id}}')
+        ul.side-nav(ng-controller='SideBarCtrl')
+          li.nav-header.text-center
+            h5 Recent Matches
+          li(ng-cloak, ng-repeat='match in matches | orderBy:"-_id" | limitTo: 12', ng-class="{active: isActive(), 'live-match': match.isLive}")
+            a.nowrap(href='/stats/{{match._id}}')
+              .nowrap
+                span.label.right(ng-show='match.isLive') Live
                 .nowrap
-                  span.label.right(ng-show='match.isLive') Live
-                  .nowrap
-                    span {{match.hostname}}
-                img.flag.size-16(ng-show="match.redCountry", ng-src="/img/flags/16/{{match.redCountry}}.png")
-                span {{match.redname}} vs&#32;
-                img.flag.size-16(ng-show="match.bluCountry", ng-src="/img/flags/16/{{match.bluCountry}}.png")
-                span {{match.bluname}}
-      .columns(class='{{(hideSideBar) && "twelve" || "nine"}}', ng-view)
+                  span {{match.hostname}}
+              img.flag.size-16(ng-show="match.redCountry", ng-src="/img/flags/16/{{match.redCountry}}.png")
+              span {{match.redname}} vs&#32;
+              img.flag.size-16(ng-show="match.bluCountry", ng-src="/img/flags/16/{{match.bluCountry}}.png")
+              span {{match.bluname}}
+      .columns(class='{{(hideSideBar) && "medium-12" || "medium-9"}}', ng-view)
         //- content
     else
       .ingame(ng-view)

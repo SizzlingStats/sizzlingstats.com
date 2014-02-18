@@ -24,6 +24,7 @@
   , "express": "~3.4.8"
   , "jade": "~1.1.5"
   , "mongoose": "~3.8.7"
+  , "node-sass": "~0.8.1"
   , "node-uuid": "~1.4.1"
   , "request": "~2.33.0"
   , "socket.io": "~0.9.16"
