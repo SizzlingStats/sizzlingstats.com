@@ -46,7 +46,7 @@ block body
               a.sits(href='/auth/steam', target='_self')
                 img(src='/img/sits_small.png')
   else
-    nav.top-bar(data-topbar='')
+    nav.top-bar
       ul
         li.name
           h1
@@ -65,7 +65,7 @@ block body
           li(ng-cloak, ng-repeat='match in matches | orderBy:"-_id" | limitTo: 12', ng-class="{active: isActive(), 'live-match': match.isLive}")
             a.nowrap(href='/stats/{{match._id}}')
               .nowrap
-                span.label.right(ng-show='match.isLive') Live
+                .label.right.live-label(ng-show='match.isLive') Live
                 .nowrap
                   span {{match.hostname}}
               img.flag.size-16(ng-show="match.redCountry", ng-src="/img/flags/16/{{match.redCountry}}.png")
@@ -77,6 +77,8 @@ block body
     else
       .ingame(ng-view)
         //- content
+  .row
     hr
-    footer
-      p &copy; 2013 Chris "dy/dx" Kim &amp; Jordan "SizzlingCalamari" Cristiano
+    .small-11.small-centered.columns
+      footer
+        p &copy; 2013 Chris "dy/dx" Kim &amp; Jordan "SizzlingCalamari" Cristiano

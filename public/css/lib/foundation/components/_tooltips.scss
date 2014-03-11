@@ -36,11 +36,12 @@ $tooltip-pip-size: 5px !default;
       font-weight: $has-tip-font-weight;
       color: $has-tip-font-color;
 
-      &:hover,
-      &:focus {
-        border-bottom: $has-tip-border-bottom-hover;
-        color: $has-tip-font-color-hover;
-      }
+      /** OVERRIDDEN **/
+      // &:hover,
+      // &:focus {
+      //   border-bottom: $has-tip-border-bottom-hover;
+      //   color: $has-tip-font-color-hover;
+      // }
 
       &.tip-left,
       &.tip-right { float: none !important; }

@@ -39,7 +39,14 @@
 
 /*** Top-Bar ***/
 
-.top-bar { min-height:45px; margin:0 0 30px 0; }
+.top-bar {
+  min-height: 45px;
+  margin: 0 0 30px 0;
+  input[type="search"] {
+    border-radius: 2px;
+    font-size: 1rem;
+  }
+}
 
 .toggle-topbar {
   width: 50%;
@@ -79,7 +86,7 @@
 /* Twitter typeahead.js suggestion styling */
 .search form {
   position: relative;
-  top: 8px;
+  top: 7px;
   height: 32px;
 }
 .twitter-typeahead {
@@ -158,10 +165,14 @@
 /*** Sidebar ***/
 
 .side-nav {
+  .nav-header {
+    border-left: none !important;
+  }
+
   li {
     margin: 0;
     border-left: 3px solid #ccc;
-    line-height: 1;
+    line-height: 1rem;
     &:last-child a {
       border-width: 1px 1px 1px 0;
     }
@@ -189,11 +200,13 @@
       box-shadow: none;
     }
   }
+
+  .live-label {
+    padding: 0.1rem 0.2rem;
+  }
+
 }
 
-.nav-header {
-  border-left: none !important;
-}
 
 
 
@@ -217,7 +230,6 @@ td, th {
 }
 th {
   font-size: 14px;
-  abbr, acronym { border-bottom: 1px solid #ddd; }
 }
 thead th {
   border-top: none;
@@ -242,9 +254,17 @@ td:first-child, th:first-child {
   height: 16px;
 }
 .size-32 {
-  vertical-align: bottom;
-  width: 32px;
-  height: 32px;
+  vertical-align: text-top;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+@media only screen and (min-width: 40.063em) {
+  .size-32 {
+    vertical-align: text-bottom;
+    width: 2rem;
+    height: 2rem;
+  }
 }
 
 .stats {
@@ -255,6 +275,9 @@ td:first-child, th:first-child {
   display: inline-block;
   text-align: left;
   line-height: 1.2;
+  .live-label {
+    padding: 0.2rem;
+  }
 }
 .stats-stv-url {
   display: inline-block;
@@ -272,6 +295,9 @@ td:first-child, th:first-child {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  acronym {
+    border-bottom: none;
+  }
 }
 .score-table-round-header:hover {
   color: #005580;
@@ -294,7 +320,10 @@ td:first-child, th:first-child {
 .overall-stats {
   display: inline-block;
   white-space: nowrap;
-  table { margin-right: 0 !important; }
+  table {
+    margin-bottom: 0;
+    margin-right: 0 !important;
+  }
 }
 
 .team2 {
@@ -313,9 +342,12 @@ td:first-child, th:first-child {
   &.team2 { border-color: #D06553; }
   &.team3 { border-color: #79B3D2; }
 }
-.player-name a {
-  color: #222;
-  &:hover { text-decoration: underline; }
+.player-name {
+  span { vertical-align: middle; }
+  a {
+    color: #222;
+    &:hover { text-decoration: underline; }
+  }
 }
 .class-icon {
   width: 20px;
@@ -326,7 +358,13 @@ td:first-child, th:first-child {
   display: inline-table;
   vertical-align: top;
   margin-right: 20px;
+  acronym {
+    border: 0;
+    text-transform: none;
+    font-weight: normal;
+  }
 }
+
 .stats-table th {
   /* black double arrow */
   /*background-image: url(data:image/gif;base64,R0lGODlhFQAJAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAkAAAIXjI+AywnaYnhUMoqt3gZXPmVg94yJVQAAOw==);*/
@@ -336,7 +374,8 @@ td:first-child, th:first-child {
   /* background-image: url(black-bg.gif); */
   background-repeat: no-repeat;
   background-position: center right;
-  padding: 3px 5px 4px;
+  padding: 2px 5px;
+  line-height: 1.125rem;
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -345,9 +384,6 @@ td:first-child, th:first-child {
 }
 .stats-table td {
   padding: 0 3px;
-}
-.stats-table td:first-child {
-  line-height: 1.5;
 }
 
 .class-stats table {
@@ -367,19 +403,24 @@ td:first-child, th:first-child {
   color: #333;
 }
 
-footer {
-  font-size: 13px;
+.stats .sub-nav {
+  a {
+    padding: 0
+  }
+  dd.active a {
+    padding: .1875rem .5625rem;
+    border-radius: 100px;
+  }
 }
 
 .sort-false, .sort-true {
   color: white;
-  background-color: #2ba6cb;
+  background-color: #008cba;
   padding-right: 18px !important;
   abbr, acronym {
     color: white !important;
   }
 }
-
 .sort-true {
   /* black asc arrow */
   /* background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjB+gC+jP2ptn0WskLQA7); */
@@ -393,6 +434,11 @@ footer {
   background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAAP///////yH5BAEAAAEALAAAAAAVAAQAAAINjI8Bya2wnINUMopZAQA7);
 }
 
+
+
+footer p {
+  font-size: 0.875rem;
+}
 
 
 /*** Hacks for in-game browser ***/

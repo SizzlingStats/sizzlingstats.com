@@ -13,7 +13,7 @@
       .stats-description
         | {{stats.created | date:'M/d/yy h:mma' | lowercase}} //
         | {{secondsToHMS(playableTime)}} // {{stats.map}}&#32;
-        span.label(ng-show='stats.isLive') Live
+        span.label.live-label(ng-show='stats.isLive') Live
       .stats-hostname Server Name: {{stats.hostname}}
       //- .mapname Map: {{stats.map}}
       //- .date Date: {{stats.created | date:'medium'}}
@@ -25,7 +25,7 @@
           | {{stats.owner.name}}
       a.stats-stv-url(ng-show="stats.stvUrl", ng-href="{{stats.stvUrl}}") Download STV Demo
       .stats-edit-button(ng-show='stats.iHaveOwnership')
-        a.button.small(href='/stats/{{stats._id}}/edit') Edit these stats
+        a.button.tiny(href='/stats/{{stats._id}}/edit') Edit these stats
     table.score-table
       thead
         tr

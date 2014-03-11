@@ -38,7 +38,11 @@
 // We use these to control various global styles
 // $body-bg: #fff;
 // $body-font-color: #222;
+
+/** OVERRIDDEN **/
 // $body-font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+$body-font-family: "Helvetica", Helvetica, Arial, sans-serif;
+
 // $body-font-weight: normal;
 // $body-font-style: normal;
 
@@ -114,7 +118,9 @@
 
 // We use these to control header font styles
 // $header-font-family: $body-font-family;
+/** OVERRIDDEN **/
 // $header-font-weight: 300;
+$header-font-weight: bold;
 // $header-font-style: normal;
 // $header-font-color: #222;
 // $header-line-height: 1.4;
@@ -187,7 +193,9 @@
 // $blockquote-cite-link-color: $blockquote-cite-font-color;
 
 // Acronym styles
+/** OVERRIDDEN **/
 // $acronym-underline: 1px dotted #ddd;
+$acronym-underline: 1px solid #ddd;
 
 // We use these to control padding and margin
 // $microformat-padding: rem-calc(10 12);
@@ -319,7 +327,9 @@
 
 // We use this to control the display property.
 // $button-display: inline-block;
+/** OVERRIDDEN **/
 // $button-margin-bottom: rem-calc(20);
+$button-margin-bottom: 0;
 
 // We use these to control button text styles.
 // $button-font-family: $body-font-family;
@@ -617,7 +627,9 @@
 
 // We use these to style the label text
 // $label-font-sizing: rem-calc(11);
+/** OVERRIDDEN **/
 // $label-font-weight: normal;
+$label-font-weight: bold;
 // $label-font-color: #333;
 // $label-font-color-alt: #fff;
 // $label-font-family: $body-font-family;
@@ -1028,8 +1040,12 @@
 // $include-html-table-classes: $include-html-classes;
 
 // These control the background color for the table and even rows
+/** OVERRIDDEN **/
 // $table-bg: #fff;
+$table-bg: #f9f9f9;
+/** OVERRIDDEN **/
 // $table-even-row-bg: #f9f9f9  ;
+$table-even-row-bg: #fff;
 
 // These control the table cell border style
 // $table-border-style: solid;
@@ -1037,7 +1053,9 @@
 // $table-border-color: #ddd;
 
 // These control the table head styles
+/** OVERRIDDEN **/
 // $table-head-bg: #f5f5f5  ;
+$table-head-bg: #fff;
 // $table-head-font-size: rem-calc(14);
 // $table-head-font-color: #222;
 // $table-head-font-weight: bold;
@@ -1095,12 +1113,18 @@
 
 // $include-html-tooltip-classes: $include-html-classes;
 
+/** OVERRIDDEN **/
 // $has-tip-border-bottom: dotted 1px #ccc;
+$has-tip-border-bottom: none;
 // $has-tip-font-weight: bold;
 // $has-tip-font-color: #333;
+/** OVERRIDDEN **/
 // $has-tip-border-bottom-hover: dotted 1px scale-color($primary-color, $lightness: -55%);
+$has-tip-border-bottom-hover: none;
 // $has-tip-font-color-hover: $primary-color;
+/** OVERRIDDEN **/
 // $has-tip-cursor-type: help;
+$has-tip-cursor-type: default;
 
 // $tooltip-padding: rem-calc(12);
 // $tooltip-bg: #333;
@@ -1152,8 +1176,12 @@
 // $topbar-link-font-size: rem-calc(13);
 // $topbar-link-hover-lightness: -10%; // Darken by 10%
 // $topbar-link-bg-hover: #272727  ;
+/** OVERRIDDEN **/
 // $topbar-link-bg-active: $primary-color;
+$topbar-link-bg-active: #272727;
+/** OVERRIDDEN **/
 // $topbar-link-bg-active-hover: scale-color($primary-color, $lightness: -14%);
+$topbar-link-bg-active-hover: #272727;
 // $topbar-link-font-family: $body-font-family;
 
 // $topbar-button-font-size: 0.75rem;

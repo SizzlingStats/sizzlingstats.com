@@ -388,9 +388,11 @@ $microformat-abbr-font-decoration: none !default;
     acronym {
       text-transform: uppercase;
       font-size: 90%;
-      color: $body-font-color;
+      /** OVERRIDDEN **/
+      // color: $body-font-color;
       border-bottom: $acronym-underline;
-      cursor: $cursor-help-value;
+      /** OVERRIDDEN **/
+      // cursor: $cursor-help-value;
     }
     abbr {
       text-transform: none;

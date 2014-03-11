@@ -71,7 +71,9 @@ $sub-nav-item-divider-margin: rem-calc(12) !default;
   li {
     float: $default-float;
     display: inline;
-    margin-#{$default-float}: rem-calc(16);
+    /** OVERRIDDEN **/
+    // margin-#{$default-float}: rem-calc(16);
+    margin-#{$default-float}: rem-calc(10);
     margin-bottom: rem-calc(10);
     font-family: $sub-nav-font-family;
     font-weight: $sub-nav-font-weight;
