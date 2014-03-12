@@ -248,7 +248,7 @@ var assetManager = require('connect-assetmanager')({
     route: /\/js\/all-[a-z0-9]+\.js/
   , path: __dirname + '/public/js/'
   , dataType: 'javascript'
-  , debug: process.env.NODE_ENV === 'development'
+  , debug: app.get('env') === 'development'
   , preManipulate: {
       '^': [
         function(src, path, index, isLast, callback) {
@@ -290,7 +290,7 @@ var assetManager = require('connect-assetmanager')({
     route: /\/css\/all-[a-z0-9]+\.css/
   , path: __dirname + '/public/css/'
   , dataType: 'css'
-  , debug: process.env.NODE_ENV === 'development'
+  , debug: app.get('env') === 'development'
   , preManipulate: {
       '^': [
         function(src, path, index, isLast, callback) {
