@@ -17,7 +17,7 @@
   , "aws-sdk": "~1.18.0"
   , "colors": "~0.6.2"
   , "config": "~0.4.35"
-  , "connect-assetmanager": "~0.0.28"
+  , "connect-assetmanager": "git://github.com/dy-dx/connect-assetmanager.git#feat/watch-path"
   , "connect-redis": "~1.4.6"
   , "cron": "~1.0.3"
   , "everyauth": "git://github.com/dy-dx/everyauth.git#steam"
