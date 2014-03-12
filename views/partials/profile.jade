@@ -1,15 +1,15 @@
 h2 My Profile
 .row
-  .five.columns
-    .panel.center
+  .medium-5.columns
+    .panel.text-center
       img(ng-src='{{player.avatar.slice(0, -4) + "_full.jpg"}}')
       br
-      span.align-left(style='margin:0 auto;display:inline-block;line-height:1.5')
+      span.text-left(style='margin:0 auto;display:inline-block;line-height:1.5')
         | {{player._id}}
         br
         a(href='http://steamcommunity.com/profiles/{{player.numericid}}')
           | Steam Profile
-  .seven.columns
+  .medium-7.columns
     h3 My API Key
     p {{player.apikey}}
     a.button(href='javascript:', ng-click='generateKey()') Generate new key

@@ -10,6 +10,7 @@ var cluster = require('cluster')
   , server = http.createServer(app)
   , npid = require('./lib/pid')
   , async = require('async')
+  , sass = require('node-sass')
   , mongoose = require('mongoose')
   , everyauth = require('everyauth')
   , request = require('request')
@@ -266,13 +267,13 @@ var assetManager = require('connect-assetmanager')({
       ]
     }
   , files: cfg.devScripts.concat([ // order matters here
-    // , 'lib/foundation/foundation.min.js'
-      'lib/typeahead.js'
-    , 'lib/foundation/modernizr.foundation.js'
-    // , 'lib/foundation/jquery.foundation.mediaQueryToggle.js'
-    // , 'lib/foundation/jquery.foundation.navigation.js'
-    , 'lib/foundation/jquery.foundation.tooltips.js'
-    , 'lib/foundation/jquery.foundation.topbar.js'
+      'lib/modernizr.js'
+    , 'lib/typeahead.js'
+
+    , 'lib/foundation/foundation.js'
+    , 'lib/foundation/foundation.tooltip.js'
+    , 'lib/foundation/foundation.topbar.js'
+
     , 'lib/foundation/app.js'
     , 'app.js'
     , 'services.js'
@@ -290,27 +291,26 @@ var assetManager = require('connect-assetmanager')({
   , path: __dirname + '/public/css/'
   , dataType: 'css'
   , debug: process.env.NODE_ENV === 'development'
-    // preManipulate: {
-    //   '^': [
-    //     function(src, path, index, isLast, callback) {
-    //       if (/\.styl$/.test(path)) {
-    //         stylus(src)
-    //           .set('compress', false)
-    //           .set('filename', path)
-    //           .set('paths', [ __dirname, app.paths.public ])
-    //           .render(function(err, css) {
-    //             callback(err || css);
-    //           });
-    //       } else {
-    //         callback(src);
-    //       }
-    //     }
-    //   ]
-    // },
+  , preManipulate: {
+      '^': [
+        function(src, path, index, isLast, callback) {
+          if (/\.scss$/.test(path)) {
+            sass.render({
+              file: path
+            , success: callback
+            , error: callback
+            });
+          } else {
+            callback(src);
+          }
+        }
+      ]
+    }
   , files: [ // order matters here
-      'foundation.css'
+      // 'foundation.css'
+      'app.scss'
     , 'typeahead.css'
-    , 'sizzlingstats.css'
+    , 'sizzlingstats.scss'
     ]
   }
 });

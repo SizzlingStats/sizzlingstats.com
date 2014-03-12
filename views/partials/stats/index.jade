@@ -1,5 +1,5 @@
 .stats
-  .center
+  .text-center
     h3.no-marg
       img.flag.size-32(ng-show="stats.redCountry"
                      , ng-src="/img/flags/32/{{stats.redCountry}}.png")
@@ -13,7 +13,7 @@
       .stats-description
         | {{stats.created | date:'M/d/yy h:mma' | lowercase}} //
         | {{secondsToHMS(playableTime)}} // {{stats.map}}&#32;
-        span.label(ng-show='stats.isLive') Live
+        span.label.live-label(ng-show='stats.isLive') Live
       .stats-hostname Server Name: {{stats.hostname}}
       //- .mapname Map: {{stats.map}}
       //- .date Date: {{stats.created | date:'medium'}}
@@ -25,7 +25,7 @@
           | {{stats.owner.name}}
       a.stats-stv-url(ng-show="stats.stvUrl", ng-href="{{stats.stvUrl}}") Download STV Demo
       .stats-edit-button(ng-show='stats.iHaveOwnership')
-        a.button.small(href='/stats/{{stats._id}}/edit') Edit these stats
+        a.button.tiny(href='/stats/{{stats._id}}/edit') Edit these stats
     table.score-table
       thead
         tr
@@ -35,10 +35,10 @@
           , ng-click='clickRoundHeader($index)'
           , ng-class='{"deselected-round":selectedRounds.indexOf($index)==-1}')
             acronym R{{$index + 1}}
-          th(title='Total Score', class='has-tip tip-top'): abbr T
-          th(title='Total Damage', class='has-tip tip-top'): abbr DMG
-          th(title='Total Frags', class='has-tip tip-top'): abbr F
-          th(title='Midfights Won', class='has-tip tip-top'): abbr MF
+          th.has-tip.tip-top.radius(data-tooltip='', title='Total Score'): abbr T
+          th.has-tip.tip-top.radius(data-tooltip='', title='Total Damage'): abbr DMG
+          th.has-tip.tip-top.radius(data-tooltip='', title='Total Frags'): abbr F
+          th.has-tip.tip-top.radius(data-tooltip='', title='Midfights Won'): abbr MF
       tbody
         tr
           td.red {{stats.redname}}

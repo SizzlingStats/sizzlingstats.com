@@ -57,8 +57,8 @@ app.directive('statsTable', ['$compile', function($compile) {
                       ')" ng-class="sortClass(' + index +
                       ')"><acronym>' + datum[0] + '</acronym></th>';
           } else {
-            header += '<th class="has-tip tip-top" title="' + datum[1] +
-                      '" ng-click="sortBy(' + index +
+            header += '<th data-tooltip class="has-tip tip-top radius" title="' +
+                      datum[1] + '" ng-click="sortBy(' + index +
                       ')" ng-class="sortClass(' + index + ')"><abbr>' +
                       datum[0] + '</abbr></th>';
           }

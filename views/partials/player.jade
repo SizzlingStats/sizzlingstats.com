@@ -1,8 +1,8 @@
-.five.columns
+.medium-5.columns
   h2 {{player.name}}
-  .panel.center
+  .panel.text-center
     img(ng-src='{{player.avatar.slice(0, -4) + "_full.jpg"}}')
-    span.align-left(style='margin:0 auto;display:inline-block;line-height:1.5') 
+    span.text-left(style='margin:0 auto;display:inline-block;line-height:1.5') 
       | {{player._id}}
       br
       a(href='http://steamcommunity.com/profiles/{{player.numericid}}')
@@ -11,9 +11,9 @@
       | Country: {{player.country}}
       br
       | Updated: {{player.updated | date:'M/d/yy h:mma' | lowercase}}
-.seven.columns
+.medium-7.columns
   h3 Matches Played
-  ul.tabs.vertical.sidebar-nav
+  ul.side-nav
     li(ng-cloak, ng-repeat='match in matches')
       a(href='/stats/{{match._id}}')
         | {{match.hostname}}
