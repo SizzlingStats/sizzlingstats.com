@@ -1126,9 +1126,13 @@ $has-tip-border-bottom-hover: none;
 // $has-tip-cursor-type: help;
 $has-tip-cursor-type: default;
 
+/** OVERRIDDEN **/
 // $tooltip-padding: rem-calc(12);
+$tooltip-padding: rem-calc(5);
 // $tooltip-bg: #333;
+/** OVERRIDDEN **/
 // $tooltip-font-size: rem-calc(14);
+$tooltip-font-size: rem-calc(12);
 // $tooltip-font-weight: normal;
 // $tooltip-font-color: #fff;
 // $tooltip-line-height: 1.3;

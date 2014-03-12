@@ -72,6 +72,14 @@ $tooltip-pip-size: 5px !default;
         top: -($tooltip-pip-size * 2);
       }
 
+      /** OVERRIDDEN **/
+      /** (ADDED) **/
+      &.tip-top>.nub {
+        border-color: $tooltip-bg transparent transparent transparent;
+        top: auto;
+        bottom: -($tooltip-pip-size * 2);
+      }
+
       &.radius {
         @include radius($tooltip-radius);
       }

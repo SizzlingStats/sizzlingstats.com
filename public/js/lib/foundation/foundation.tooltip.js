@@ -168,7 +168,9 @@
     },
 
     small : function () {
-      return matchMedia(Foundation.media_queries.small).matches;
+      /** OVERRIDDEN **/
+      // return matchMedia(Foundation.media_queries.small).matches;
+      return false;
     },
 
     inheritable_classes : function (target) {
