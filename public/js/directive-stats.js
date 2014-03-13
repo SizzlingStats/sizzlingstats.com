@@ -65,7 +65,20 @@ app.directive('statsTable', ['$compile', function($compile) {
         }
         return $compile( header + '</tr>' )(scope);
       };
-      $table.append( $thead.append( scope.header() ) );
+      // $table.append( $thead.append( scope.header() ) );
+
+
+      scope.teamHeader = function (teamColor) {
+        var teamHeader = '<tr class="team-header"><th colspan="6">{{$parent.stats.' +
+                         teamColor + 'name}}</th><th colspan="10">{{$parent.' + 
+                         teamColor + 'Score}}</th></tr>';
+        return $compile(teamHeader)(scope);
+      };
+
+      $thead.append( scope.teamHeader('red') );
+      $thead.append( scope.header() );
+
+      $table.append($thead);
 
 
       // Table Body
@@ -79,6 +92,7 @@ app.directive('statsTable', ['$compile', function($compile) {
 
       var createSplitTable = ctrl.createSplitTable = function () {
         scope.$tbody.html( scope.rows('{team:2}') );
+        scope.$tbody.append( scope.teamHeader('blu') );
         scope.$tbody.append( scope.header() );
         scope.$tbody.append( scope.rows('{team:3}') );
       };

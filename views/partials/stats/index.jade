@@ -1,6 +1,6 @@
 .stats
   .text-center
-    h3.no-marg
+    //- h3.no-marg
       img.flag.size-32(ng-show="stats.redCountry"
                      , ng-src="/img/flags/32/{{stats.redCountry}}.png")
       span.redname {{stats.redname}}
@@ -26,7 +26,7 @@
       //- a.stats-stv-url(ng-show="stats.stvUrl", ng-href="{{stats.stvUrl}}") Download STV Demo
       //- .stats-edit-button(ng-show='stats.iHaveOwnership')
         a.button.tiny(href='/stats/{{stats._id}}/edit') Edit these stats
-    table.score-table
+    //- table.score-table
       thead
         tr
           th
