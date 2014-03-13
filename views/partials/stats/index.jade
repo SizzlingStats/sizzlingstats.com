@@ -9,7 +9,7 @@
                      , ng-src="/img/flags/32/{{stats.bluCountry}}.png")
       span.bluname {{stats.bluname}}
       |  {{redScore}} - {{bluScore}}
-    .stats-details
+    //- .stats-details
       .stats-description
         | {{stats.created | date:'M/d/yy h:mma' | lowercase}} //
         | {{secondsToHMS(playableTime)}} // {{stats.map}}&#32;
