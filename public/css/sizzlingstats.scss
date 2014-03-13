@@ -333,7 +333,6 @@ td:first-child, th:first-child {
   color: #6DA1BD;
 }
 .avatar {
-  float: left;
   width: 20px;
   height: 20px;
   margin: 0 4px 0 0;
@@ -362,6 +361,9 @@ td:first-child, th:first-child {
     border: 0;
     text-transform: none;
     font-weight: normal;
+  }
+  img {
+    max-width: none;
   }
 }
 
