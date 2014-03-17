@@ -114,6 +114,9 @@
      -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
           box-shadow: 0 5px 10px rgba(0,0,0,.2);
 }
+.tt-suggestion {
+  float: none !important;
+}
 .tt-is-under-cursor {
   background-color: #0097cf;
 }
@@ -129,6 +132,8 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  background-color: #fff !important;
+  &:hover { background-color: #272727 !important; }
 }
 .FUCK-CSS span {
   margin-left: 8px;
@@ -333,7 +338,6 @@ td:first-child, th:first-child {
   color: #6DA1BD;
 }
 .avatar {
-  float: left;
   width: 20px;
   height: 20px;
   margin: 0 4px 0 0;
@@ -362,6 +366,9 @@ td:first-child, th:first-child {
     border: 0;
     text-transform: none;
     font-weight: normal;
+  }
+  img {
+    max-width: none;
   }
 }
 
