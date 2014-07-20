@@ -5,6 +5,7 @@ module.exports =
     port: +process.env.PORT || 8001
     address: process.env.ADDRESS || 'http://sizzlingstats.com'
     socket_io_address: process.env.SOCKET_IO_ADDRESS || 'http://ws.sizzlingstats.com'
+    socket_io_port: process.env.SOCKET_IO_PORT || 80
 
     mongo_url: process.env.MONGO_URL || 'mongodb://localhost/sizzlingstats'
     elasticsearch_url: process.env.ELASTICSEARCH_URL || 'http://localhost:9200/sizzlingstats'

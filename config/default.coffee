@@ -5,6 +5,7 @@ module.exports =
     port: port
     address: process.env.ADDRESS || 'http://localhost:' + port
     socket_io_address: process.env.SOCKET_IO_ADDRESS || 'http://localhost'
+    socket_io_port: process.env.SOCKET_IO_PORT || port
 
     mongo_url: process.env.MONGO_URL || 'mongodb://localhost/sizzlingstats'
 
