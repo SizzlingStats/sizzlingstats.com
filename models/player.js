@@ -113,6 +113,33 @@ playerSchema.statics.steamIdToNumericId = function(steamid) {
   return converted;
 };
 
+playerSchema.statics.steamId3Regex = /\[U\:1\:\d{1,15}\]$/;
+
+playerSchema.statics.steamId3ToSteamId2 = function(steamid) {
+  steamid = steamid.substring(0, steamid.length - 1);
+
+  var parts = steamid.split(":");
+  var w = Number(parts[2]);
+
+  var y = 0;
+  if (w % 2 != 0) {
+    y = 1;
+  }
+  var z = (w - y) / 2
+
+  return "STEAM_0:" + y + ":" + z;
+};
+
+playerSchema.statics.steamId2ToSteamId3 = function(steamid) {
+  var parts = steamid.split(":");
+  var y = Number(parts[1]);
+  var z = Number(parts[2]);
+
+  var w = z*2+y;
+
+  return "[U:1:" + w + "]";
+};
+
 playerSchema.statics.numericIdToSteamId = function(numericId) {
   // Unfortunately this limits us to the max steamId 0:1:999999999
   var scid = parseInt(numericId.substr(-10),10);

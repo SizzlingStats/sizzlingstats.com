@@ -82,6 +82,10 @@ statsSchema.options.toObject = {
     }
     var playerData = options.playerData;
     ret.players = ret.players.reduce(function(reduced, item) {
+      if (Player.steamId3Regex.test(item.steamid)) {
+        item.steamid = Player.steamId3ToSteamId2( item.steamid );
+      }
+
       if (playerData[item.steamid]) {
         item.avatar = playerData[item.steamid].avatar;
         item.numericid = playerData[item.steamid].numericid;
@@ -98,7 +102,11 @@ statsSchema.pre('save', function(next) {
   // Create an array of all players' steamids
   var steamids = [];
   for (var i=0, len=stats.players.length; i<len; i++) {
-    steamids.push(stats.players[i].steamid);
+    if (Player.steamId3Regex.test(stats.players[i].steamid)) {
+      steamids.push(Player.steamId3ToSteamId2(stats.players[i].steamid));
+    } else {
+      steamids.push(stats.players[i].steamid);
+    }
   }
 
   // Notify Players collection that new stats have come in
@@ -271,8 +279,14 @@ statsSchema.methods.setCountryFlags = function(playerData, cb) {
   var bluCountries = [];
   // Fill out the team info for all the players
   for (var i=0,player; player=this.players[i]; i++) {
-    if (playerData[player.steamid]) {
-      playerData[player.steamid].team = player.team;
+    // We don't want to modify this.players[] which gets saved to the db
+    var steamid = player.steamid;
+    if (Player.steamId3Regex.test(player.steamid)) {
+      steamid = Player.steamId3ToSteamId2(player.steamid);
+    }
+
+    if (playerData[steamid]) {
+      playerData[steamid].team = player.team;
     }
   }
   // Push the country info into the arrays
@@ -295,7 +309,11 @@ statsSchema.methods.getPlayerData = function(cb) {
   // Create an array of all players' steamids
   var steamids = [];
   for (var i=0, len=this.players.length; i<len; i++) {
-    steamids.push(this.players[i].steamid);
+    if (Player.steamId3Regex.test(this.players[i].steamid)) {
+      steamids.push(Player.steamId3ToSteamId2(this.players[i].steamid));
+    } else {
+      steamids.push(this.players[i].steamid);
+    }
   }
 
   // Lookup all steamids in database for the names
@@ -360,8 +378,15 @@ statsSchema.statics.setStvUrl = function (matchId, url, cb) {
 
 
 statsSchema.statics.findMatchesBySteamId = function(steamId, skip, limit, cb) {
-  var query = Stats.find({ 'players.steamid': steamId });
-  var countQuery = Stats.find({ 'players.steamid': steamId }).lean().count();
+  // Find both the old and new formats so player history is preserved
+  var steamId3 = Player.steamId2ToSteamId3(steamId);
+  var query = Stats.find({
+    $or: [ {'players.steamid': steamId}, {'players.steamid': steamId3} ]
+  });
+
+  var countQuery = Stats.find({
+    $or: [ {'players.steamid': steamId}, {'players.steamid': steamId3} ]
+  }).lean().count();
 
   // TODO: Do these in parallel
   query
@@ -384,7 +409,11 @@ statsSchema.statics.findMatchesBySteamIdRanged = function(steamId, comparator
                                                         , sort, skip, limit, cb) {
   // Stats.find( { '_id': {$lt: current} } )
   // Stats.find({ 'players.steamid': steamId })
-  Stats.find({ 'players.steamid': steamId, _id: comparator })
+  var steamId3 = Player.steamId2ToSteamId3(steamId);
+  Stats.find({
+    $or: [ {'players.steamid': steamId}, {'players.steamid': steamId3} ],
+    _id: comparator
+  })
   .sort({_id:sort})
   .skip(skip)
   .limit(limit)
