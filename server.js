@@ -200,7 +200,7 @@ everyauth.debug = false;
 //   next();
 // });
 
-app.enable('trust proxy');
+app.set('trust proxy', true);
 app.use(express.limit('200kb'));
 app.use(express.favicon(__dirname + '/public/img/favicon.png'
                       , { maxAge: 14 * 24 * 60 * 60 * 1000 } ));
@@ -348,38 +348,20 @@ if (app.get('env') !== 'production') {
 require('./routes')(app);
 
 // Hook Socket.io into Express
-app.io = require('socket.io').listen(server);
-app.io.enable('browser client minification');
-app.io.enable('browser client etag');
-app.io.enable('browser client gzip');
-app.io.set('log level', 1);
-app.io.set('transports', [
-  'websocket'
-// , 'flashsocket'
-, 'htmlfile'
-, 'xhr-polling'
-, 'jsonp-polling'
-]);
-// Redis store for socket.io
-var socketRedisStore = require('socket.io/lib/stores/redis')
-  , socketRedis = require('socket.io/node_modules/redis')
-  , socketPub = socketRedis.createClient(cfg.redis_port, cfg.redis_host)
-  , socketSub = socketRedis.createClient(cfg.redis_port, cfg.redis_host)
-  , socketClient = socketRedis.createClient(cfg.redis_port, cfg.redis_host);
-async.applyEach([ socketPub.select.bind(socketPub)
-                , socketSub.select.bind(socketSub)
-                , socketClient.select.bind(socketClient)
-                ], cfg.redis_db, function(err) {
+app.io = require('socket.io')(server);
+// Redis adapter for socket.io
+var socketRedisAdapter = require('socket.io-redis')
+  , socketRedis = require('socket.io-redis/node_modules/redis')
+  , pub = socketRedis.createClient(cfg.redis_port, cfg.redis_host)
+  , sub = socketRedis.createClient(cfg.redis_port, cfg.redis_host)
+async.applyEach([ pub.select.bind(pub), sub.select.bind(sub) ]
+                , cfg.redis_db, function (err) {
   if (err) {
     console.log(err);
     console.trace(err);
     return false;
   }
-  app.io.set('store', new socketRedisStore({
-    redisPub: socketPub
-  , redisSub: socketSub
-  , redisClient: socketClient
-  }));
+  app.io.adapter( socketRedisAdapter({pubClient: pub, subClient: sub}) );
 
   var socket = require('./routes/socket')(app);
 });

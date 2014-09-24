@@ -9,7 +9,7 @@
 angular.module('myApp.services', []).
   value('version', '0.1').
   factory('socket', function ($rootScope) {
-    var socket = io.connect('#socketIoHostname#', {port: '#socketIoPort#'});
+    var socket = io('#socketIoHostname#:#socketIoPort#');
     return {
       on: function (eventName, callback) {
         socket.on(eventName, function () {

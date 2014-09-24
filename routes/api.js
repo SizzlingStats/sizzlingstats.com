@@ -20,7 +20,7 @@ module.exports = function(app) {
   app.get('/api/generateKey', isLoggedIn, generateKey);
 
   app.put('/api/stats/:id', isLoggedIn, statsUpdate);
-  app.del('/api/stats/:id', isLoggedIn, statsDestroy);
+  app.delete('/api/stats/:id', isLoggedIn, statsDestroy);
 
   // all others
   app.all('/api/*', function(req, res) { res.send(404); } );
