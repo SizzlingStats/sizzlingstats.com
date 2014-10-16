@@ -256,7 +256,7 @@ var assetManager = require('connect-assetmanager')({
           callback(src.replace(/#socketIoHostname#/g, cfg.socket_io_address));
         }
       , function(src, path, index, isLast, callback) {
-          callback(src.replace(/#socketIoPort#/g, cfg.port));
+          callback(src.replace(/#socketIoPort#/g, cfg.socket_io_port));
         }
       // , function(src, path, index, isLast, callback) {
       //     if (/\.coffee$/.test(path)) {
