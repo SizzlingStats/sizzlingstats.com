@@ -12,15 +12,15 @@
   , "ci": "grunt ci"
   }
 , "dependencies": {
-    "airbrake": "git://github.com/dy-dx/node-airbrake.git#errbit"
+    "airbrake": "git+https://github.com/dy-dx/node-airbrake.git#errbit"
   , "async": "~0.9.0"
   , "aws-sdk": "~2.0.17"
   , "colors": "~0.6.2"
   , "config": "~1.2.1"
-  , "connect-assetmanager": "git://github.com/dy-dx/connect-assetmanager.git#feat/watch-path"
+  , "connect-assetmanager": "git+https://github.com/dy-dx/connect-assetmanager.git#feat/watch-path"
   , "connect-redis": "~1.4.7"
   , "cron": "~1.0.4"
-  , "everyauth": "git://github.com/dy-dx/everyauth.git#steam"
+  , "everyauth": "git+https://github.com/dy-dx/everyauth.git#steam"
   , "express": "~3.17.4"
   , "jade": "~1.7.0"
   , "mongoose": "~3.8.7"
