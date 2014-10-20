@@ -9,7 +9,8 @@ var playerSchema = new mongoose.Schema({
 // steamid
   _id: { type: String, required: true }
 // numeric 64-bit steamid
-, numericid: { type: String, required: true, index: { unique: true } }
+// , numericid: { type: String, required: true, index: { unique: true } }
+, numericid: { type: String, required: true }
 , name: String
 , previousNames: [{
     _id: String
@@ -83,6 +84,7 @@ playerSchema.pre('save', function(next) {
 // });
 
 playerSchema.statics.steamIdToNumericId = function(steamid) {
+  steamid = Player.steamId3ToSteamId2(steamid);
   var parts = steamid.split(":");
   var iServer = Number(parts[1]);
   var iAuthID = Number(parts[2]);
@@ -113,19 +115,14 @@ playerSchema.statics.steamIdToNumericId = function(steamid) {
   return converted;
 };
 
-playerSchema.statics.steamId3Regex = /\[U\:1\:\d{1,15}\]$/;
-
 playerSchema.statics.steamId3ToSteamId2 = function(steamid) {
-  steamid = steamid.substring(0, steamid.length - 1);
-
-  var parts = steamid.split(":");
+  var parts = steamid.slice(0, -1).split(':');
   var w = Number(parts[2]);
-
   var y = 0;
-  if (w % 2 != 0) {
+  if (w % 2 !== 0) {
     y = 1;
   }
-  var z = (w - y) / 2
+  var z = (w - y) / 2;
 
   return "STEAM_0:" + y + ":" + z;
 };
@@ -134,7 +131,6 @@ playerSchema.statics.steamId2ToSteamId3 = function(steamid) {
   var parts = steamid.split(":");
   var y = Number(parts[1]);
   var z = Number(parts[2]);
-
   var w = z*2+y;
 
   return "[U:1:" + w + "]";
@@ -145,7 +141,8 @@ playerSchema.statics.numericIdToSteamId = function(numericId) {
   var scid = parseInt(numericId.substr(-10),10);
   var srv = scid % 2;
   var auth = ((scid - srv) - 7960265728) / 2;
-  return "STEAM_0:" + srv + ":" + auth;
+  var steamid2 = "STEAM_0:" + srv + ":" + auth;
+  return Player.steamId2ToSteamId3(steamid2);
 };
 
 // This takes in an array of already validated numericIds
