@@ -33,7 +33,7 @@ module.exports =
 
     devScripts: [
       # order matters here
-      'lib/jquery/jquery-2.1.0.js'
+      'lib/jquery/jquery-2.1.1.js'
       'lib/angular/angular.js'
       'lib/angular/angular-route.js'
     ]
