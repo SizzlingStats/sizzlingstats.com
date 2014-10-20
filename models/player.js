@@ -9,8 +9,7 @@ var playerSchema = new mongoose.Schema({
 // steamid
   _id: { type: String, required: true }
 // numeric 64-bit steamid
-// , numericid: { type: String, required: true, index: { unique: true } }
-, numericid: { type: String, required: true }
+, numericid: { type: String, required: true, index: { unique: true } }
 , name: String
 , previousNames: [{
     _id: String
