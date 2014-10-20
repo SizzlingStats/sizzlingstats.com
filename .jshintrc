@@ -1,0 +1,5 @@
+{
+  "boss"      : true
+, "laxcomma"  : true
+, "node"      : true
+}

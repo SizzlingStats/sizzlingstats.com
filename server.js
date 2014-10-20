@@ -353,7 +353,7 @@ app.io = require('socket.io')(server);
 var socketRedisAdapter = require('socket.io-redis')
   , socketRedis = require('socket.io-redis/node_modules/redis')
   , pub = socketRedis.createClient(cfg.redis_port, cfg.redis_host)
-  , sub = socketRedis.createClient(cfg.redis_port, cfg.redis_host)
+  , sub = socketRedis.createClient(cfg.redis_port, cfg.redis_host);
 async.applyEach([ pub.select.bind(pub), sub.select.bind(sub) ]
                 , cfg.redis_db, function (err) {
   if (err) {

@@ -6,6 +6,8 @@ var cluster = require('cluster')
 
 // Start server
 server.listen(cfg.port, function () {
-  cluster.isWorker && process.send('online');
+  if (cluster.isWorker) {
+    process.send('online');
+  }
   console.log("Express server listening on port %d in %s mode", cfg.port, cfg.ENV);
 });
