@@ -15,7 +15,7 @@
     "airbrake": "git+https://github.com/dy-dx/node-airbrake.git#errbit"
   , "async": "~0.9.0"
   , "aws-sdk": "~2.0.21"
-  , "colors": "~0.6.2"
+  , "colors": "~1.0.3"
   , "config": "~1.5.0"
   , "connect-assetmanager": "git+https://github.com/dy-dx/connect-assetmanager.git#feat/watch-path"
   , "connect-redis": "~1.4.7"
