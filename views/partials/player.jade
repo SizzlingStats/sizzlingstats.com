@@ -1,8 +1,8 @@
-.medium-5.columns
+.medium-5.columns.playerprofile
   h2 {{player.name}}
   .panel.text-center
     img(ng-src='{{player.avatar.slice(0, -4) + "_full.jpg"}}')
-    span.text-left(style='margin:0 auto;display:inline-block;line-height:1.5') 
+    .playerprofile-details
       | {{player._id}}
       br
       a(href='http://steamcommunity.com/profiles/{{player.numericid}}')
@@ -14,18 +14,16 @@
 .medium-7.columns
   h3 Matches Played
   ul.side-nav
-    li(ng-cloak, ng-repeat='match in matches')
+    li.playerprofile-match(ng-cloak, ng-repeat='match in matches')
       a(href='/stats/{{match._id}}')
-        | {{match.hostname}}
-        br
-        img.flag.size-16(ng-show="match.redCountry"
-                       , ng-src="/img/flags/16/{{match.redCountry}}.png")
-        | {{match.redname}} vs 
-        img.flag.size-16(ng-show="match.bluCountry"
-                       , ng-src="/img/flags/16/{{match.bluCountry}}.png")
-        | {{match.bluname}}
-        br
-        | {{match.created | date:'M/d/yy h:mma' | lowercase}}
+        .playerprofile-match-detail {{match.hostname}}
+        .playerprofile-match-detail
+          img.flag.size-16(ng-if="match.redCountry", ng-src="/img/flags/16/{{match.redCountry}}.png")
+          | {{match.redname}} vs&nbsp;
+          img.flag.size-16(ng-if="match.bluCountry", ng-src="/img/flags/16/{{match.bluCountry}}.png")
+          | {{match.bluname}}
+        .playerprofile-match-detail
+          | {{match.created | date:'M/d/yy h:mma' | lowercase}} &#8211; {{match.map}}
   .pagination-centered
     ul.pagination
       li.arrow(ng-class="{'unavailable': pageNumCurrent==1}")

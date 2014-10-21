@@ -368,7 +368,7 @@ statsSchema.statics.findMatchesBySteamId = function(steamId, skip, limit, cb) {
   .sort({_id:-1})
   .skip(skip)
   .limit(limit)
-  .select('hostname redname bluname redCountry bluCountry created')
+  .select('hostname map redname bluname redCountry bluCountry created')
   .lean()
   .exec(function(err, matches) {
     if (err) { return cb(err); }

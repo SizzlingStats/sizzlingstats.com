@@ -1,10 +1,9 @@
 h2 My Settings
 .row
-  .medium-5.columns
+  .medium-5.columns.playerprofile
     .panel.text-center
       img(ng-src='{{player.avatar.slice(0, -4) + "_full.jpg"}}')
-      br
-      span.text-left(style='margin:0 auto;display:inline-block;line-height:1.5')
+      .playerprofile-details
         | {{player._id}}
         br
         a(href='http://steamcommunity.com/profiles/{{player.numericid}}')
@@ -13,7 +12,3 @@ h2 My Settings
     h3 My API Key
     p {{player.apikey}}
     a.button(href='javascript:', ng-click='generateKey()') Generate new key
-
-//- .row
-//-   .five.columns
-//-     pre(ng-model='player') {{player | json}}
