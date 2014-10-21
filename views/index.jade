@@ -39,7 +39,8 @@ block body
                   | &nbsp;
                   = user.name
               ul.dropdown
-                li: a(href='/profile') Profile
+                li: a(href='/player/#{user.numericid}') Profile
+                li: a(href='/settings') Settings
                 li: a(href='/logout/', target='_self') Sign Out
           else
             li

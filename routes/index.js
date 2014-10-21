@@ -4,7 +4,7 @@
 
 module.exports = function(app) {
   app.get('/', index);
-  app.get('/partials/profile', isLoggedIn);
+  app.get('/partials/settings', isLoggedIn);
   app.get('/partials/:name', partials);
   app.get('/partials/:name/:action', partialAction);
 

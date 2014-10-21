@@ -2,7 +2,7 @@
 /*global angular, console, app*/
 'use strict';
 
-app.controller('ProfileCtrl', ['$scope', '$http', 'resolveData'
+app.controller('SettingsCtrl', ['$scope', '$http', 'resolveData'
                             , function($scope, $http, resolveData) {
   $scope.player = resolveData;
 
@@ -26,9 +26,9 @@ app.controller('ProfileCtrl', ['$scope', '$http', 'resolveData'
 
 }]);
 
-app.factory('ProfileCtrlResolveData', ['$q', '$http', function($q, $http) {
+app.factory('SettingsCtrlResolveData', ['$q', '$http', function($q, $http) {
   var deferred = $q.defer();
-  $http.get('/api/profile')
+  $http.get('/api/settings')
     .success(function(data) {
       deferred.resolve(data);
     })

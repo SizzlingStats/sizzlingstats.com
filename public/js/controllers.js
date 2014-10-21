@@ -23,7 +23,7 @@ function MainCtrl($scope, $rootScope, $route, $location) {
     // TODO: FIXME
     $scope.hideSideBar = !$route.current.$$route ||
                   ($route.current.$$route.templateUrl === 'partials/player') ||
-                  ($route.current.$$route.templateUrl === 'partials/profile');
+                  ($route.current.$$route.templateUrl === 'partials/settings');
   });
   $scope.isCurrentPath = function(path) {
     return path === $location.path();

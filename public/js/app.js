@@ -36,11 +36,11 @@ var app = angular.module('myApp', ['ngRoute', 'myApp.services'])
       , resolve: PlayerCtrl.resolve
       , reloadOnSearch: true
       })
-      .when('/profile', {
-        templateUrl: 'partials/profile'
-      , controller: 'ProfileCtrl'
+      .when('/settings', {
+        templateUrl: 'partials/settings'
+      , controller: 'SettingsCtrl'
       , resolve: {
-          resolveData: 'ProfileCtrlResolveData'
+          resolveData: 'SettingsCtrlResolveData'
         }
       })
       .when('/about', {

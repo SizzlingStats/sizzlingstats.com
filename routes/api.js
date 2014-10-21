@@ -16,7 +16,7 @@ module.exports = function(app) {
   app.get('/api/player/:id/matches', playerMatches);
   app.get('/api/playersearch', playerSearch);
 
-  app.get('/api/profile', isLoggedIn, profileShow);
+  app.get('/api/settings', isLoggedIn, settingsShow);
   app.get('/api/generateKey', isLoggedIn, generateKey);
 
   app.put('/api/stats/:id', isLoggedIn, statsUpdate);
@@ -188,7 +188,7 @@ var playerSearch = function(req, res) {
   });
 };
 
-var profileShow = function(req, res) {
+var settingsShow = function(req, res) {
   Player.findById(req.user._id, function(err, player) {
     if (err) {
       console.log(err);
