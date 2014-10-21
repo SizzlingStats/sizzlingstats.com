@@ -395,7 +395,7 @@ StatsCtrl.resolve = {
   resolvedData: function($q, $http, $route, $rootScope) {
     // hack. FIXME
     if ($rootScope.statsCtrlIsLoadedSoDontCallResolveFunction) {
-      // return;
+      return;
     }
     var deferred = $q.defer();
     $http({
