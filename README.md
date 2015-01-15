@@ -13,7 +13,7 @@ Runs on node.js, express, socket.io, mongodb and redis.
 
 (The MIT License)
 
-Copyright (c) 2012-2014 Christopher Kim \<christopherjkim AT [Google's mail service]\>
+Copyright (c) 2012-2015 Christopher Kim \<christopherjkim AT [Google's mail service]\>
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
