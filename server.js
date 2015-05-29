@@ -8,6 +8,7 @@ var cluster = require('cluster')
   , app = module.exports = express()
   , http = require('http')
   , server = http.createServer(app)
+  , session = require('express-session')
   , npid = require('./lib/pid')
   , async = require('async')
   , sass = require('node-sass')
@@ -217,7 +218,7 @@ app.use(express.methodOverride());
 // Sessions
 
 // app.store = new express.session.MemoryStore;
-var RedisStore = require('connect-redis')(express);
+var RedisStore = require('connect-redis')(session);
 app.store = new RedisStore({
   prefix: cfg.session_prefix
 , host: cfg.redis_host
@@ -226,8 +227,8 @@ app.store = new RedisStore({
 , pass: cfg.redis_password
 });
 
-app.use(express.cookieParser());
-app.use(express.session({
+// app.use(express.cookieParser());
+app.use(session({
   proxy: true
 , store: app.store
 , secret: secrets.session
