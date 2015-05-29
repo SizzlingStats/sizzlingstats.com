@@ -273,7 +273,7 @@ var assetManager = require('connect-assetmanager')({
     , 'lib/typeahead.js'
 
     , 'lib/foundation/foundation.js'
-    , 'lib/foundation/foundation.tooltip.js'
+    , 'lib/foundation/foundation.tooltip-5.1.1.js'
     , 'lib/foundation/foundation.topbar.js'
 
     , 'lib/foundation/app.js'
@@ -301,8 +301,13 @@ var assetManager = require('connect-assetmanager')({
           if (/\.scss$/.test(path)) {
             sass.render({
               file: path
-            , success: callback
-            , error: callback
+            }, function (err, result) {
+              if (err) {
+                console.log(err);
+                callback(err);
+              } else {
+                callback(result.css.toString());
+              }
             });
           } else {
             callback(src);

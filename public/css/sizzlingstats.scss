@@ -45,6 +45,7 @@
   input[type="search"] {
     border-radius: 2px;
     font-size: 1rem;
+    height: auto;
   }
 }
 
@@ -199,8 +200,8 @@
     border-top: 1px solid #4d4d4d;
     border-left: 4px solid #1a1a1a;
     a {
-      background: #4d4d4d;
-      border: none;
+      background: #4d4d4d !important;
+      border: none !important;
       color: #fff !important;
       box-shadow: none;
     }
