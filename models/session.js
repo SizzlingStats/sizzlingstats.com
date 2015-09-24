@@ -7,8 +7,8 @@ var Stats = require('./stats');
 
 var sessionSchema = new mongoose.Schema({
   _id: String, // sessionid
-  ip: String, // Not sure if this is actually a string
-  matchId: Number, // Change this to mongoose.Schema.Types.ObjectId?
+  ip: String, // Server IP, as a string (can be ipv4 or 6)
+  matchId: Number, // Numeric match id. Mongo ids don't have to be ObjectId's
   timeout: Number // Numeric date of last update + cfg.statsSessionTimeout
 });
 

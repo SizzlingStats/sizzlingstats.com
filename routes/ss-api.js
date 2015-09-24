@@ -1,5 +1,5 @@
 /*
- * Serve JSON to our AngularJS client
+ * Handle webhooks called by SizzlingStats plugin
  */
 var crypto = require('crypto');
 var util = require('util');

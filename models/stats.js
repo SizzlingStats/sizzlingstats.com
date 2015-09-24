@@ -46,6 +46,7 @@ var statsSchema = new mongoose.Schema({
   , invulns: [Number]
   , teleports: [Number]
   , damagedone: [Number]
+  , overkillDamage: [Number]
   , crits: [Number]
   , resupplypoints: [Number]
   , bonuspoints: [Number]
@@ -81,15 +82,17 @@ statsSchema.options.toObject = {
       return;
     }
     var playerData = options.playerData;
-    ret.players = ret.players.reduce(function(reduced, item) {
-      if (playerData[item.steamid]) {
-        item.avatar = playerData[item.steamid].avatar;
-        item.numericid = playerData[item.steamid].numericid;
-        item.country = playerData[item.steamid].country;
-      }
-      reduced[item.steamid] = item;
-      return reduced;
-    }, {});
+    if (ret.players) {
+      ret.players = ret.players.reduce(function(reduced, item) {
+        if (playerData[item.steamid]) {
+          item.avatar = playerData[item.steamid].avatar;
+          item.numericid = playerData[item.steamid].numericid;
+          item.country = playerData[item.steamid].country;
+        }
+        reduced[item.steamid] = item;
+        return reduced;
+      }, {});
+    }
   }
 };
 
