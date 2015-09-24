@@ -49,6 +49,9 @@ var app = angular.module('myApp', ['ngRoute', 'myApp.services'])
       .when('/download', {
         templateUrl: 'partials/download'
       })
+      .when('/faq', {
+        templateUrl: 'partials/faq'
+      })
       .otherwise({
         redirectTo: '/'
       });
