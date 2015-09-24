@@ -3,6 +3,8 @@
 # Usage:
 # ./start.sh [Number of workers]
 
+export PATH="$(npm bin):$PATH"
+
 # Start 3 cluster workers by default.
 # TODO: The number of CPUs should be the max number of workers
 NUM_WORKERS=3
