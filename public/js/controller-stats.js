@@ -76,13 +76,20 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
     }
   };
   Player.prototype.sumOf = function(statistic) {
-    return sumArray2(this[statistic]);
+    return sumArray2(result(this, statistic));
   };
   Player.prototype.perMinute = function(statistic) {
-    return ratio($scope.playableTime/60, this[statistic]);
+    return ratio($scope.playableTime/60, result(this, statistic));
   };
   Player.prototype.fapd = function() {
     return ratio(this.deaths, this.kills, this.killassists);
+  };
+  Player.prototype.totaldamage = function() {
+    var arr = [];
+    for (var i = 0, len = Math.max(this.damagedone.length, this.overkillDamage.length); i < len; i++) {
+      arr[i] = ((this.damagedone[i] || 0) + (this.overkillDamage[i] || 0));
+    }
+    return arr;
   };
   Player.prototype.mostPlayedClass = function() {
       if (this.mostplayedclass.length == 1) {
@@ -123,8 +130,10 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
   , ['A', 'Assists', 'sumOf("killassists")']
   , ['D', 'Deaths', 'sumOf("deaths")']
   , ['S', 'Suicides', 'sumOf("suicides")']
-  , ['DPM', 'Damage Per Minute', 'perMinute("damagedone")']
-  , ['DMG', 'Damage', 'sumOf("damagedone")']
+  , ['TDPM', 'Total Damage Per Minute', 'perMinute("totaldamage")']
+  , ['RDPM', 'Real Damage Per Minute', 'perMinute("damagedone")']
+  , ['TD', 'Total Damage', 'sumOf("totaldamage")']
+  , ['RD', 'Real Damage', 'sumOf("damagedone")']
   , ['MP', 'Medic Picks', 'sumOf("medpicks")']
   , ['HR', 'Heals Received (Excl Buffs)', 'sumOf("healsreceived")']
   , ['CPC', 'Capture Points Captured', 'sumOf("captures")']
@@ -364,6 +373,13 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
   var exists = function(n) {
     return (n !== null && n !== undefined);
   };
+  // underscore / lodash result - http://devdocs.io/lodash/index#result
+  var result = function(object, key) {
+    if (angular.isFunction(object[key])) {
+      return object[key]();
+    }
+    return object[key];
+  }
   // var escapeHtml = $scope.escapeHtml = (function () {
   //   var chr = { '"': '&quot;', '&': '&amp;', '<': '&lt;', '>': '&gt;' };
   //   return function (text) {
