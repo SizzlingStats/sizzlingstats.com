@@ -132,7 +132,7 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
   , ['S', 'Suicides', 'sumOf("suicides")']
   , ['DPM', 'Damage Per Minute', 'perMinute("damagedone")']
   , ['ODPM', 'Overkill Damage Per Minute', 'perMinute("totaldamage")']
-  , ['DMG', 'Real Damage', 'sumOf("damagedone")']
+  , ['DMG', 'Damage', 'sumOf("damagedone")']
   , ['ODMG', 'Overkill Damage', 'sumOf("totaldamage")']
   , ['MP', 'Medic Picks', 'sumOf("medpicks")']
   , ['HR', 'Heals Received (Excl Buffs)', 'sumOf("healsreceived")']
