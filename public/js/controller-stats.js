@@ -86,7 +86,7 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
   };
   Player.prototype.totaldamage = function() {
     var arr = [];
-    for (var i = 0, len = Math.max(this.damagedone.length, this.overkillDamage.length); i < len; i++) {
+    for (var i = 0, len = Math.min(this.damagedone.length, this.overkillDamage.length); i < len; i++) {
       arr[i] = ((this.damagedone[i] || 0) + (this.overkillDamage[i] || 0));
     }
     return arr;
@@ -130,10 +130,10 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
   , ['A', 'Assists', 'sumOf("killassists")']
   , ['D', 'Deaths', 'sumOf("deaths")']
   , ['S', 'Suicides', 'sumOf("suicides")']
-  , ['TDPM', 'Total Damage Per Minute', 'perMinute("totaldamage")']
-  , ['RDPM', 'Real Damage Per Minute', 'perMinute("damagedone")']
-  , ['TD', 'Total Damage', 'sumOf("totaldamage")']
-  , ['RD', 'Real Damage', 'sumOf("damagedone")']
+  , ['DPM', 'Damage Per Minute', 'perMinute("damagedone")']
+  , ['ODPM', 'Overkill Damage Per Minute', 'perMinute("totaldamage")']
+  , ['DMG', 'Damage', 'sumOf("damagedone")']
+  , ['ODMG', 'Overkill Damage', 'sumOf("totaldamage")']
   , ['MP', 'Medic Picks', 'sumOf("medpicks")']
   , ['HR', 'Heals Received (Excl Buffs)', 'sumOf("healsreceived")']
   , ['CPC', 'Capture Points Captured', 'sumOf("captures")']
@@ -348,6 +348,8 @@ function StatsCtrl($scope, $rootScope, $route, $http, socket, resolvedData) {
     if (!arr || !arr.length) return 0;
     return filterBySelectedRounds(arr).reduce(function(a,b) { return a + b; },0);
   };
+  // The difference between this and sumarray, is that if the values don't exist,
+  // sumArray returns `0` and sumArray2 returns `'-'`
   var sumArray2 = $scope.sumArray2 = function(arr) {
     if (!arr || !arr.length) return '-';
     var filteredArr = filterBySelectedRounds(arr);
