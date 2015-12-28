@@ -75,7 +75,7 @@ var statsShow = function(req, res) {
 
 var matches = function(req, res) {
   var limitCount = req.params.limit;
-  if (limitCount < 1 || limitCount == null || ) {
+  if (limitCount < 1 || limitCount == null) {
     limitCount = 12; //Default Value if one is not specified
   }
   Stats.find({})
