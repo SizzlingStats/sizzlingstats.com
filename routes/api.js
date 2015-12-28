@@ -11,7 +11,7 @@ var uuid = require('node-uuid')
 module.exports = function(app) {
   // JSON API
   app.get('/api/stats/:id', statsShow);
-  app.get('/api/matches', matches);
+  app.get('/api/matches/:limit', matches);
   app.get('/api/player/:id', player);
   app.get('/api/player/:id/matches', playerMatches);
   app.get('/api/playersearch', playerSearch);
@@ -74,9 +74,13 @@ var statsShow = function(req, res) {
 };
 
 var matches = function(req, res) {
+	var limitCount = req.params.limit;
+	if (limitCount == 0) {
+		limitCount = 12; //Default Value if one is not specified
+	}
   Stats.find({})
   .sort({_id:-1})
-  .limit(12)
+  .limit(limitCount)
   .select('hostname redname bluname redCountry bluCountry isLive')
   .lean()
   .exec(function(err, matches) {
