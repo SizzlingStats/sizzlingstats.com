@@ -78,6 +78,7 @@ var matches = function(req, res) {
   if (limitCount < 1 || limitCount == null) {
     limitCount = 12; //Default Value if one is not specified
   }
+  limitCount = Math.min(limitCount, 100); //Limits Count to a Maximum of 100
   Stats.find({})
   .sort({_id:-1})
   .limit(limitCount)
