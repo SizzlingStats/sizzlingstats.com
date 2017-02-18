@@ -5,6 +5,8 @@ services:
   - mongodb
   - redis-server
   - elasticsearch
-script: "npm run-script ci"
-before_script:
+script:
+  - "npm run-script ci"
+install:
+  - npm install
   - npm install -g grunt-cli
