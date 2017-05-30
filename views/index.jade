@@ -2,7 +2,7 @@ extends layout
 
 block body
   if (typeof(query.ingame) == 'undefined')
-    nav.top-bar(data-topbar='')
+    nav.top-bar(data-topbar='' ng-non-bindable)
       ul.title-area
         li.name
           h1
