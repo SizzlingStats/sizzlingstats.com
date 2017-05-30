@@ -8,6 +8,8 @@ Website for viewing live statistics for competitive TF2 matches, collected by Si
 
 Runs on node.js, express, socket.io, mongodb and redis.
 
+## Shoutouts
+Shoutout to [Cameron Dawe](http://www.spam404.com/) for reporting an AngularJS injection vulnerability.
 
 ## License
 
