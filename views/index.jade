@@ -2,7 +2,7 @@ extends layout
 
 block body
   if (typeof(query.ingame) == 'undefined')
-    nav.top-bar(data-topbar='' ng-non-bindable)
+    nav.top-bar(data-topbar='')
       ul.title-area
         li.name
           h1
@@ -37,7 +37,7 @@ block body
             li.has-dropdown
               a.nowrap(href='javascript:')
                 img.top-bar-avatar(src=user.avatar)
-                span
+                span(ng-non-bindable)
                   | &nbsp;
                   = user.name
               ul.dropdown
